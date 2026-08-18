@@ -1,0 +1,51 @@
+POKER LOOP 1.0 — PROTÓTIPO V0.1.2
+CLAREZA CONCEITUAL
+
+OBJETIVO
+Esta atualização é propositalmente pequena. Ela corrige apenas os exercícios 4/12 e 5/12, que estavam abstratos demais durante o uso real do protótipo.
+
+ARQUIVOS ALTERADOS
+- lib/exercises.ts
+
+O QUE MUDOU
+1. Exercício 4/12
+   - Explicação de range advantage e nut advantage reescrita em linguagem concreta.
+   - “Região mais forte” foi substituído pela ideia explícita de “combinações entre as mãos mais fortes possíveis naquele board”.
+   - Feedback expandido reforça que um range pode ser forte no conjunto sem dominar na mesma intensidade as melhores mãos possíveis.
+
+2. Exercício 5/12
+   - A pergunta dupla e abstrata foi removida.
+   - Agora testa uma única relação: qual conceito ajuda mais, como ponto de partida, a pensar na FREQUÊNCIA de c-bet.
+   - Resposta: range advantage.
+   - O papel de nut advantage no sizing aparece apenas no feedback expandido.
+
+DECISÃO DE DESIGN
+O exercício 5 não foi dividido em duas perguntas. Os exercícios 8/12 e 9/12 já trabalham incentivos de sizing; adicionar mais uma questão aumentaria o treino sem necessidade e repetiria conteúdo. O objetivo desta versão é clareza, não volume.
+
+INSTALAÇÃO
+Extraia o conteúdo deste ZIP por cima de:
+C:\Users\welli\Documents\Projetos\poker-loop\
+
+Permita substituir o arquivo existente.
+
+Depois execute:
+npm run dev
+
+TESTES MANUAIS
+- Abrir o treino recomendado.
+- Conferir o exercício 4/12: a diferença entre range advantage e nut advantage deve estar compreensível sem conhecimento prévio da expressão “região mais forte”.
+- Conferir o exercício 5/12: deve haver apenas duas opções, Range advantage e Nut advantage.
+- Responder corretamente e incorretamente para revisar os feedbacks.
+- Confirmar que a sessão continua com 12 exercícios.
+
+NÃO ALTERADO
+- Scheduler
+- Progresso
+- Layout
+- Cartas visuais
+- Demais exercícios
+- Persistência
+
+GIT SUGERIDO
+git add lib/exercises.ts LEIA-ME-V0.1.2.txt
+git commit -m "v0.1.2: melhora clareza conceitual dos exercicios 4 e 5"

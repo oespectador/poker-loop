@@ -1,0 +1,38 @@
+POKER LOOP 1.0 — PROTÓTIPO V0.2
+MOTOR ADAPTATIVO VERIFICÁVEL
+
+OBJETIVO
+Esta é uma atualização de marco, não um micro-patch. Ela corrige a principal limitação do protótipo anterior: o treino parecia adaptativo, mas o histórico quase não participava da montagem da sessão.
+
+PRINCIPAIS MUDANÇAS
+- Histórico passa a influenciar a sessão.
+- Foco da Home é aplicado ao treino.
+- Erro prioriza outra variação do mesmo conceito alguns exercícios depois.
+- Pistas agora diferenciam guided / supported / independent.
+- Resolver supported sem abrir pista conta como independente.
+- Suporte pode diminuir em sessões futuras e voltar após erro recente.
+- Progresso ficou mais conservador: “Consistente” exige evidência em duas sessões e exercícios diferentes.
+- Tentativas são persistidas a cada resposta.
+- Linguagem acumulada: Herói/Vilão; sem “região mais forte”. Para nut advantage, falar concretamente de combinações entre as mãos mais fortes possíveis.
+
+ARQUIVOS MAIS RELEVANTES ALTERADOS
+- lib/trainingEngine.ts
+- lib/types.ts
+- lib/exercises.ts
+- app/session/TrainingSession.tsx
+- app/page.tsx
+- app/progress/page.tsx
+- app/globals.css
+- package.json
+- README.md
+
+INSTALAÇÃO
+Extraia por cima de:
+C:\Users\welli\Documents\Projetos\poker-loop\
+
+Depois:
+npm run dev
+
+IMPORTANTE
+Os 6 itens de transferência/retenção continuam reservados e não entram no treino normal.
+A biblioteca de desenvolvimento ainda é pequena; a V0.2 valida foco, ordem e apoio adaptativo antes de expandirmos conteúdo.

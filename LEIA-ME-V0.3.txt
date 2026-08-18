@@ -1,0 +1,58 @@
+POKER LOOP 1.0 — V0.3 · LEITURA DE RANGE
+
+TIPO DE ATUALIZAÇÃO
+Milestone de conteúdo + pequena evolução do scheduler. Não cria novas páginas.
+
+ARQUIVOS ALTERADOS
+- lib/exercises.ts
+- lib/types.ts
+- lib/trainingEngine.ts
+- app/page.tsx
+- README.md
+
+PRINCIPAL NOVIDADE
+Novo pacote com 12 exercícios de desenvolvimento: "Leitura de Range pelas Ações".
+A pergunta mental central é:
+"Quais das mãos mais fortes ainda fazem sentido nesta linha?"
+
+O pacote NÃO ensina:
+- call = capped;
+- check = capped;
+- uncapped = sizing pequeno;
+- capped = range fraco.
+
+COMO O PACOTE ENTRA NO TREINO
+- 4 itens inéditos por sessão, em ordem pedagógica;
+- 8 vagas restantes continuam adaptativas;
+- próxima sessão introduz os 4 seguintes;
+- após os 12 terem sido vistos, o scheduler volta a tratá-los normalmente;
+- escolher manualmente outra habilidade não faz itens inéditos saltarem fora de ordem.
+
+CONTEÚDO RESERVADO
+Foram adicionados também 3 itens de transferência e 3 de retenção do novo pacote.
+Somados aos anteriores, existem 12 itens reservados, ainda fora do scheduler normal.
+
+FONTES
+As transcrições recentes foram usadas como matéria-prima para boundary cases e drills.
+Tendências contextuais foram mantidas como heurísticas, não como regras universais.
+O futuro pacote de calibração/exploit permanece separado.
+
+INSTALAÇÃO
+Extrair por cima de:
+C:\Users\welli\Documents\Projetos\poker-loop\
+
+Depois:
+npm run dev
+
+TESTE RECOMENDADO
+1. Não limpe o progresso da V0.2.1.
+2. Entre por Hoje.
+3. Confira se os 4 primeiros exercícios novos aparecem juntos no começo.
+4. Termine a sessão.
+5. Na próxima, confira se entram os exercícios 5–8.
+6. Teste Treinar > Sizing e veja se itens inéditos futuros não aparecem fora da ordem.
+
+VALIDAÇÃO
+Os módulos puros passaram no TypeScript estrito.
+O scheduler foi simulado em três sessões sucessivas.
+A build Next.js completa não foi executada porque as dependências não estão instaladas neste ambiente.

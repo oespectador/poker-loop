@@ -1,0 +1,42 @@
+POKER LOOP 1.0 — V0.2.1 HOTFIX DO MOTOR
+
+Objetivo
+Corrigir dois comportamentos do V0.2 que não estavam aparecendo como prometido:
+1) sessões repetiam praticamente a mesma ordem;
+2) exercícios com suporte não exibiam pistas opcionais porque muitos itens não tinham texto de pista.
+
+Arquivos alterados
+- app/session/TrainingSession.tsx
+- lib/exercises.ts
+- lib/trainingEngine.ts
+
+O que mudou
+- A primeira sessão continua em ordem pedagógica fixa.
+- A partir da segunda sessão, a ordem usa histórico + foco + erros recentes + uma pequena variação por sessão para desempatar exercícios de prioridade semelhante.
+- A variação não substitui o motor adaptativo: foco e erros continuam pesando mais que a mudança de ordem.
+- Exercícios guided/supported relevantes agora possuem supportNote.
+- Exercícios supported exibem “Ver uma pista” antes da resposta.
+- Se a pista não for aberta e a resposta for dada, a tentativa conta como independente.
+- “Entender melhor” foi renomeado para “Ver explicação completa”, deixando claro que é feedback pós-resposta, não pista.
+
+Como instalar
+Extraia o conteúdo deste ZIP por cima de:
+C:\Users\welli\Documents\Projetos\poker-loop\
+permitindo substituir os arquivos.
+
+Como testar
+1. Rode: npm run dev
+2. Primeira sessão: observe que algumas questões supported mostram “Ver uma pista”.
+3. Responda uma supported sem abrir a pista; depois teste outra abrindo a pista.
+4. Termine a sessão e inicie outra: a ordem não deve ser idêntica.
+5. Erre propositalmente uma questão de leitura de range e observe se outra questão relacionada é antecipada alguns exercícios depois.
+6. “Ver explicação completa” só deve aparecer depois da resposta, quando houver conteúdo expandido.
+
+Validação realizada
+- lib/types.ts + lib/exercises.ts + lib/trainingEngine.ts passaram em TypeScript strict isolado.
+- TrainingSession.tsx e os arquivos TS alterados passaram por transpile/syntax check do TypeScript.
+- Simulação do scheduler com três seeds de sessão gerou ordens diferentes mantendo prioridade de leitura de range.
+- Todos os exercícios development marcados guided/supported possuem supportNote.
+
+Observação
+Não houve mudança de escopo, páginas ou novas features. Este pacote corrige o comportamento prometido no V0.2.

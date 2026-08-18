@@ -1,0 +1,87 @@
+POKER LOOP 1.0 — V0.4 · DA LEITURA À DECISÃO
+
+TIPO DE ATUALIZAÇÃO
+Milestone de conteúdo + generalização do scheduler de microblocos. Não cria novas páginas.
+
+ARQUIVOS ALTERADOS
+- lib/exercises.ts
+- lib/types.ts
+- lib/trainingEngine.ts
+- app/page.tsx
+- app/progress/page.tsx
+- package.json
+- README.md
+
+PRINCIPAL NOVIDADE
+Novo pacote com 12 exercícios de desenvolvimento: "Da Leitura à Decisão".
+A sequência mental é:
+range → objetivo → mãos-alvo → resposta ao size → ação/sizing.
+
+O PACOTE NÃO ENSINA
+- capped = size pequeno/grande;
+- value = apostar só porque a mão é forte;
+- blefe grande = automaticamente melhor;
+- 75%, 125% ou 175% como sizings universais;
+- tendências de live poker como default do NL2 online;
+- EV exato sem dados suficientes.
+
+COMO O PACOTE ENTRA NO TREINO
+- O pacote V0.3 de Leitura de Range precisa ser apresentado primeiro.
+- Depois, a V0.4 entra em 3 microblocos de 4 itens.
+- Se uma sessão for interrompida, o microbloco atual é concluído antes do seguinte.
+- Errar durante a primeira apresentação não embaralha a ordem pedagógica.
+- Itens inéditos de pacotes futuros/atuais não vazam pelo preenchimento adaptativo.
+- Treinos manuais de outra habilidade não antecipam o pacote.
+
+BIBLIOTECA
+- 36 exercícios de desenvolvimento no scheduler normal após todos terem sido apresentados.
+- 18 exercícios reservados de retenção/transferência continuam fora do scheduler normal.
+
+CONTEÚDO V0.4
+Bloco 1 — A ação tem função?
+1. Raise contra range polar.
+2. Objetivo do blefe × tamanho.
+3. Value depende de quem paga.
+4. A ação anterior já filtrou o range.
+
+Bloco 2 — Mãos-alvo e resposta ao tamanho
+5. Qual grupo determina value sizing.
+6. Qual grupo determina bluff sizing.
+7. Sensível ao tamanho.
+8. Pouco sensível ao tamanho.
+
+Bloco 3 — Da resposta ao sizing
+9. Fronteira de call para value.
+10. Fronteira de fold para bluff.
+11. Fold adicional tem custo.
+12. Integração range → alvo → resposta → sizing.
+
+INSTALAÇÃO
+Extraia por cima de:
+C:\Users\welli\Documents\Projetos\poker-loop\
+
+Permita substituir os arquivos.
+Não é necessário limpar o progresso.
+
+Depois:
+npm run dev
+
+TESTE RECOMENDADO
+1. Se a V0.3 ainda não foi concluída, confirme que ela continua sendo apresentada antes da V0.4.
+2. Termine os 12 itens de Leitura de Range.
+3. Volte ao Hoje. O foco deve mudar para Decisão integrada enquanto a V0.4 tiver itens inéditos.
+4. A primeira sessão da V0.4 deve começar pelos itens 01–04.
+5. A seguinte deve começar por 05–08; depois 09–12.
+6. Saia após 01–02 e confira se a próxima retoma apenas 03–04 antes das revisões.
+7. Erre um item de introdução e confirme que a sequência do microbloco não muda.
+8. Em Treinar > Sizing, conceitos inéditos futuros não devem aparecer fora de ordem.
+
+VALIDAÇÃO EXECUTADA
+- TypeScript estrito dos módulos puros: aprovado.
+- 36 exercícios de desenvolvimento + 18 reservados: IDs e respostas validados.
+- Simulação V0.3 → V0.4: aprovada.
+- Simulação de interrupção no meio do bloco: aprovada.
+- Simulação de erro durante introdução sem reordenar o bloco: aprovada.
+- Treino manual de Sizing sem vazamento de itens inéditos: aprovado.
+- Sintaxe dos TSX alterados: aprovada.
+- A build Next.js completa não foi executada porque as dependências do projeto não estão instaladas neste ambiente.

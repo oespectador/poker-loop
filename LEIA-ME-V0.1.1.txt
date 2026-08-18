@@ -1,0 +1,52 @@
+POKER LOOP 1.0 — PROTÓTIPO V0.1.1
+Clareza e Cartas Visuais
+
+OBJETIVO DESTA ATUALIZAÇÃO
+Esta é uma atualização pequena do Protótipo V0.1. Não adiciona novas ferramentas nem altera o motor de treino. O foco é tornar os exercícios mais claros e visualmente legíveis.
+
+ALTERAÇÕES
+1. Boards que aparecem como alternativas agora são renderizados como cartas visuais, no mesmo padrão do board principal.
+2. Hero/Villain foram substituídos na interface por Herói/Vilão.
+3. Exercício 3/12 foi reescrito para deixar explícito que a pergunta é sobre quantas combinações muito fortes existem no range de call do Vilão.
+4. Exercício 8/12 foi simplificado para explicar melhor o incentivo de apostar maior quando o Herói domina a região mais forte e mãos piores ainda podem pagar com equity relevante.
+5. Exercício 9/12 foi reescrito sem os termos “nutted” e “preserva”.
+6. Foi feita uma revisão de consistência nos demais exercícios e nos itens reservados de transferência/retenção.
+
+ARQUIVOS ALTERADOS
+- app/components/PokerBoard.tsx
+- app/session/TrainingSession.tsx
+- app/globals.css
+- lib/exercises.ts
+
+COMO INSTALAR
+1. Feche o servidor de desenvolvimento se ele estiver rodando (Ctrl+C no terminal).
+2. Extraia o CONTEÚDO deste ZIP diretamente em:
+   C:\Users\welli\Documents\Projetos\poker-loop\
+3. Quando o Windows perguntar, permita substituir os arquivos existentes.
+4. No VS Code, abra a pasta poker-loop.
+5. Rode:
+   npm run dev
+
+Não extraia criando uma pasta poker-loop dentro de outra pasta poker-loop.
+
+DADOS E PROGRESSO
+Esta atualização não altera as chaves de armazenamento nem limpa dados. O progresso local existente deve continuar intacto.
+
+TESTES MANUAIS RECOMENDADOS
+- Abrir o treino e confirmar que 1/12 mostra os dois boards como cartas grandes dentro das alternativas.
+- Confirmar que 2/12 continua mostrando o board principal normalmente.
+- Conferir a clareza de 3/12, 8/12 e 9/12.
+- Confirmar que não aparecem Hero, Villain, “nutted” ou “preserva” no texto dos exercícios.
+- Confirmar que os boards de comparação posteriores também aparecem como cartas.
+- Responder uma questão corretamente e outra incorretamente para verificar feedback e botão Continuar.
+- Testar em largura menor de navegador para verificar se as cartas das alternativas continuam legíveis.
+
+VALIDAÇÃO FEITA NESTE PACOTE
+- Os 3 arquivos TypeScript/TSX modificados foram transpilados com o compilador TypeScript sem erros sintáticos.
+- Biblioteca continua com 12 exercícios de desenvolvimento, 3 de transferência e 3 de retenção.
+- O ZIP foi testado quanto à integridade.
+- Não foi possível executar o build completo porque a instalação das dependências expirou neste ambiente.
+
+GIT (OPCIONAL)
+git add app/components/PokerBoard.tsx app/session/TrainingSession.tsx app/globals.css lib/exercises.ts
+git commit -m "v0.1.1 clareza e cartas visuais"
