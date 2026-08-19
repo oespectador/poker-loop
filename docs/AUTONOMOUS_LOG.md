@@ -100,3 +100,42 @@ Foram executados localmente `npm test`, `npm run typecheck`, `npm run build` e `
 ### Correção da configuração de cache
 
 Como o repositório não possui `package-lock.json`, a configuração explícita de cache do npm foi removida do `actions/setup-node`. O workflow continua usando Node 20 e executando instalação, testes, typecheck e build sem alterar o produto ou adicionar um lockfile.
+
+## 2026-08-19 — Validação estática da biblioteca e semântica de suporte
+
+### Objetivo
+
+Caracterizar automaticamente a integridade da biblioteca V0.4 e proteger a classificação já existente das tentativas por nível de suporte, sem alterar estratégia, conteúdo pedagógico, UI, storage ou scheduler.
+
+### Alterações
+
+- criado um validador puro para IDs de exercícios e opções, labels duplicados após remoção de espaços nas extremidades, resposta correta, presença de pista, purpose das coleções e composição de `allExercises`;
+- explicitado o contrato atual dos pacotes estruturados `range-actions` e `range-to-decision`: 12 sequências obrigatórias, únicas e contínuas em cada pacote de desenvolvimento; `foundations` permanece fora desse contrato sequencial;
+- extraída de `TrainingSession` somente a função pura que classifica o suporte efetivamente usado, mantendo o componente como consumidor da mesma lógica;
+- adicionados testes positivos sobre a biblioteca real, testes negativos de cada família de validação e testes explícitos das quatro regras de suporte;
+- tornado `npm test` capaz de executar todos os arquivos compilados no diretório de testes sem glob do shell.
+
+### Invariantes protegidos
+
+- `guided` é registrado como `guided`;
+- `supported` com pista aberta é registrado como `supported`;
+- `supported` sem pista aberta é registrado como `independent`;
+- `independent` é registrado como `independent`;
+- as coleções ativa e reservada mantêm purposes compatíveis, e `allExercises` continua sendo sua concatenação ordenada;
+- os dois pacotes estruturados possuem as sequências 1–12 sem lacunas ou duplicatas;
+- exercícios que exibem suporte na experiência atual (`guided` e `supported`) possuem `supportNote`.
+
+### Testes executados
+
+- `npm test`: 20 testes aprovados;
+- `npm run typecheck`: aprovado;
+- `npm run build`: aprovado;
+- `git diff --check`: aprovado.
+
+### Violações, riscos e limitações
+
+Nenhuma inconsistência real foi encontrada na biblioteca atual. O validador caracteriza o contrato fechado da V0.4 para os dois pacotes estruturados conhecidos, inclusive a quantidade exata de 12 itens e o intervalo permitido de 1 a 12; adicionar outro pacote estruturado exigirá declarar deliberadamente sua sequência esperada. Não houve mudança em exercícios, packageSequence, prompts, respostas, feedback, pistas ou comportamento visível.
+
+### Decisão humana pendente
+
+Nenhuma.

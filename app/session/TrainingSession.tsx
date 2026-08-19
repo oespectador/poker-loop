@@ -5,8 +5,9 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { PokerBoard } from "../components/PokerBoard";
 import { appendAttempts, readAttempts } from "@/lib/storage";
+import { attemptSupport } from "@/lib/support";
 import { buildRecommendedSession, reprioritizeAfterError, skillLabels } from "@/lib/trainingEngine";
-import type { Attempt, Exercise, Skill, SupportLevel } from "@/lib/types";
+import type { Attempt, Exercise, Skill } from "@/lib/types";
 
 function parseBoardLabel(label: string): string[] | null {
   const cards = label.trim().split(/\s+/);
@@ -16,12 +17,6 @@ function parseBoardLabel(label: string): string[] | null {
 
 function isSkill(value: string | null): value is Skill {
   return value === "board-reading" || value === "range-reading" || value === "sizing" || value === "integrated-decision";
-}
-
-function attemptSupport(exercise: Exercise, hintRevealed: boolean): SupportLevel {
-  if (exercise.support === "guided") return "guided";
-  if (exercise.support === "supported" && hintRevealed) return "supported";
-  return "independent";
 }
 
 export default function TrainingSession() {

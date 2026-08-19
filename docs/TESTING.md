@@ -13,6 +13,8 @@ npm run dev
 
 `npm test` compila os arquivos TypeScript da suíte em `.test-dist` e executa o test runner nativo do Node.js. Essa abordagem não adiciona dependências: mantém a suíte pequena e compatível com o Node `>=20.9.0` já exigido pelo projeto.
 
+O runner recebe o diretório compilado de testes, sem depender de expansão de glob do shell, e cobre tanto o motor quanto o contrato estático da biblioteca e a classificação de suporte das tentativas.
+
 ## Invariantes do motor
 
 Qualquer teste/refatoração deve preservar:
@@ -40,6 +42,8 @@ Checar automaticamente sempre que possível:
 - pistas presentes quando necessárias;
 - nenhuma opção vazia;
 - nenhum board inválido se houver parser/validador disponível.
+
+Na V0.4, `range-actions` e `range-to-decision` são os pacotes estruturados: cada um deve ter exatamente as sequências de 1 a 12 entre os exercícios de desenvolvimento. `foundations` não exige `packageSequence`.
 
 ## Teste humano atual
 
