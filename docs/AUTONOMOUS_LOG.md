@@ -80,3 +80,23 @@ Tornar `npm test` compatível com Windows e Linux sem dependências: a limpeza d
 ### Escopo e validação
 
 Somente o script de teste foi funcionalmente alterado. Testes, scheduler, conteúdo, UI, navegação, storage e comportamento do produto permaneceram intactos. Foram executados com sucesso `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`. Nenhuma limitação ou decisão humana pendente foi encontrada.
+
+## 2026-08-19 — Integração contínua no GitHub Actions
+
+### Objetivo e hipótese trabalhada
+
+Executar automaticamente a validação já disponível em pushes para `main` e pull requests direcionados à `main`. A hipótese é que instalar as dependências e executar testes, typecheck e build em sequência reduz o risco de integrar regressões sem ampliar o produto.
+
+### Alterações e comportamento antes/depois
+
+- adicionado um workflow de CI com Node 20 e permissão de leitura para o conteúdo do repositório;
+- antes, as validações dependiam de execução local; depois, `npm test`, `npm run typecheck` e `npm run build` também são executados pelo GitHub Actions nos eventos definidos;
+- nenhum comportamento do scheduler, exercícios, app, UI, navegação ou storage foi alterado.
+
+### Validação, riscos e decisões pendentes
+
+Foram executados localmente `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`. O risco residual é a primeira execução ocorrer somente após o workflow chegar ao GitHub. Não há decisão humana pendente; o próximo passo recomendado é observar a primeira execução da CI na pull request.
+
+### Correção da configuração de cache
+
+Como o repositório não possui `package-lock.json`, a configuração explícita de cache do npm foi removida do `actions/setup-node`. O workflow continua usando Node 20 e executando instalação, testes, typecheck e build sem alterar o produto ou adicionar um lockfile.
