@@ -28,3 +28,7 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Compiled automated tests
+.test-dist/
+*.tsbuildinfo
