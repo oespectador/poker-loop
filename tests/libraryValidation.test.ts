@@ -65,6 +65,18 @@ test("detecta sequência ausente, duplicada e omitida nos pacotes estruturados",
   assert.ok(errors.some((error) => error.includes("packageSequence faltando: 2")));
 });
 
+test("detecta item extra com packageSequence fora do intervalo do pacote", () => {
+  const items = Array.from({ length: 13 }, (_, index) => exercise({
+    id: `ra-${index + 1}`,
+    learningPackage: "range-actions",
+    packageSequence: index + 1,
+  }));
+  const errors = validateExerciseLibrary(collections(items));
+
+  assert.ok(errors.some((error) => error.includes("quantidade de itens 13; esperado 12")));
+  assert.ok(errors.some((error) => error.includes("packageSequence fora do intervalo 1–12: 13")));
+});
+
 test("detecta divergência entre allExercises e suas coleções componentes", () => {
   const item = exercise();
   const errors = validateExerciseLibrary({

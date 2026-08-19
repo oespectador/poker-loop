@@ -127,14 +127,14 @@ Caracterizar automaticamente a integridade da biblioteca V0.4 e proteger a class
 
 ### Testes executados
 
-- `npm test`: 19 testes aprovados;
+- `npm test`: 20 testes aprovados;
 - `npm run typecheck`: aprovado;
 - `npm run build`: aprovado;
 - `git diff --check`: aprovado.
 
 ### Violações, riscos e limitações
 
-Nenhuma inconsistência real foi encontrada na biblioteca atual. O validador caracteriza o contrato fechado da V0.4 para os dois pacotes estruturados conhecidos; adicionar outro pacote estruturado exigirá declarar deliberadamente sua sequência esperada. Não houve mudança em exercícios, packageSequence, prompts, respostas, feedback, pistas ou comportamento visível.
+Nenhuma inconsistência real foi encontrada na biblioteca atual. O validador caracteriza o contrato fechado da V0.4 para os dois pacotes estruturados conhecidos, inclusive a quantidade exata de 12 itens e o intervalo permitido de 1 a 12; adicionar outro pacote estruturado exigirá declarar deliberadamente sua sequência esperada. Não houve mudança em exercícios, packageSequence, prompts, respostas, feedback, pistas ou comportamento visível.
 
 ### Decisão humana pendente
 

@@ -68,11 +68,19 @@ export function validateExerciseLibrary({
 
   for (const [packageName, expectedCount] of Object.entries(structuredPackages)) {
     const items = developmentExercises.filter((exercise) => exercise.learningPackage === packageName);
+    if (items.length !== expectedCount) {
+      errors.push(`${packageName}: quantidade de itens ${items.length}; esperado ${expectedCount}`);
+    }
     const seenSequences = new Set<number>();
     for (const exercise of items) {
       if (exercise.packageSequence === undefined) {
         errors.push(`${exercise.id}: pacote estruturado ${packageName} exige packageSequence`);
         continue;
+      }
+      if (exercise.packageSequence < 1 || exercise.packageSequence > expectedCount) {
+        errors.push(
+          `${exercise.id}: packageSequence fora do intervalo 1–${expectedCount}: ${exercise.packageSequence}`,
+        );
       }
       if (seenSequences.has(exercise.packageSequence)) {
         errors.push(`${packageName}: packageSequence duplicada: ${exercise.packageSequence}`);
