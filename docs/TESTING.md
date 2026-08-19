@@ -5,12 +5,13 @@
 A baseline possui scripts:
 
 ```bash
+npm test
 npm run typecheck
 npm run build
 npm run dev
 ```
 
-A suíte formal de testes automatizados ainda é uma prioridade P0. Não assumir que simulações feitas durante prototipagem estão versionadas.
+`npm test` compila os arquivos TypeScript da suíte em `.test-dist` e executa o test runner nativo do Node.js. Essa abordagem não adiciona dependências: mantém a suíte pequena e compatível com o Node `>=20.9.0` já exigido pelo projeto.
 
 ## Invariantes do motor
 
