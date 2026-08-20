@@ -93,3 +93,5 @@ recuperação pelo histórico e reutilização de `getActualSupport`. Também ve
 que seleção diagnóstica não muda `chooseFocus` nem `SkillState`.
 
 Na V0.9, a suíte possui 71 testes. A cobertura adicional protege a ordem do quarto pacote, seus três microblocos, retomada parcial, estabilidade após erro, ausência de vazamento manual, bloqueio de avaliação e diagnóstico durante a introdução, elegibilidade posterior, contrato de 12 itens, seis avaliações reservadas, contagens 60/30, determinismo e limite de 12 decisões.
+
+Na V0.10, a suíte possui 79 testes. A cobertura adicional protege a ordem do quinto pacote (`range-strength-signals`), bloqueio até `integrated-application`, três microblocos, retomada e estabilidade de introdução, ausência de vazamento manual, bloqueio/liberação de avaliação e diagnóstico, contrato 1–12, seis itens reservados, contagens 72/36, limite de sessão e determinismo. Auditorias de conteúdo verificam `sourceKind` heurístico, ausência das regras literais “small bet = weak”/“big bet = strong” e presença dos boundary cases static/dry e 3-bet pot.

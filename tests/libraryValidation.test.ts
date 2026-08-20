@@ -127,3 +127,13 @@ test("validador exige 12 itens e sequência 1–12 em integrated-application", (
   assert.ok(errors.some((error) => error.includes("integrated-application: quantidade de itens 11; esperado 12")));
   assert.ok(errors.some((error) => error.includes("integrated-application: packageSequence faltando: 12")));
 });
+
+test("validador exige 12 itens e sequência 1–12 em range-strength-signals", () => {
+  const signals = developmentExercises.filter(({ learningPackage }) => learningPackage === "range-strength-signals");
+  assert.equal(signals.length, 12);
+  assert.deepEqual(signals.map(({ packageSequence }) => packageSequence), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  const missing = developmentExercises.filter(({ id }) => id !== "dev-range-signals-12");
+  const errors = validateExerciseLibrary(collections(missing, evaluationExercises));
+  assert.ok(errors.some((error) => error.includes("range-strength-signals: quantidade de itens 11; esperado 12")));
+  assert.ok(errors.some((error) => error.includes("range-strength-signals: packageSequence faltando: 12")));
+});

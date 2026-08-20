@@ -19,6 +19,7 @@ const LEARNING_PACKAGE_ORDER: LearningPackage[] = [
   "range-to-decision",
   "calibration",
   "integrated-application",
+  "range-strength-signals",
 ];
 
 const PACKAGE_FOCUS: Partial<Record<LearningPackage, Skill>> = {
@@ -26,6 +27,7 @@ const PACKAGE_FOCUS: Partial<Record<LearningPackage, Skill>> = {
   "range-to-decision": "integrated-decision",
   calibration: "range-reading",
   "integrated-application": "integrated-decision",
+  "range-strength-signals": "range-reading",
 };
 
 const PACKAGE_REDUNDANT_ITEMS: Partial<Record<LearningPackage, Set<string>>> = {

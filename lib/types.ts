@@ -5,7 +5,8 @@ export type LearningPackage =
   | "range-actions"
   | "range-to-decision"
   | "calibration"
-  | "integrated-application";
+  | "integrated-application"
+  | "range-strength-signals";
 
 export type Skill =
   | "board-reading"

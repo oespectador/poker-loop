@@ -96,3 +96,12 @@ Cuidado: fontes live não viram defaults de NL2.
 - adicionar dezenas de features;
 - treinar modelos;
 - transformar heurísticas de vídeos em regras universais.
+
+## Entregue na V0.10
+
+- pacote `range-strength-signals` com 12 development e seis itens reservados;
+- leitura condicional por size, board, configuração e contexto heads-up/multiway;
+- boundary cases static/dry e 3-bet pot;
+- claim map da fonte documentado sem promover heurísticas a regras universais.
+
+Permanecem deliberadamente fora da biblioteca ativa: double previous size, turn/checkback, prescrições de donk e sinais/sizings de river. Qualquer ativação futura depende de auditoria e validação próprias.
