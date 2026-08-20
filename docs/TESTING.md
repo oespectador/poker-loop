@@ -25,7 +25,7 @@ Qualquer teste/refatoração deve preservar:
 4. erro em primeira apresentação não embaralha o bloco;
 5. itens inéditos de pacote não entram por treino manual/adaptive fill;
 6. pacote posterior fica bloqueado enquanto anterior tem inéditos;
-7. itens reservados de retenção/transferência não entram antes da conclusão dos pacotes;
+7. item reservado não entra antes da conclusão do próprio pacote; pacote posterior pendente não bloqueia avaliação antiga;
 8. revisão pode variar ordem sem destruir prioridade pedagógica;
 9. progresso não deve virar `Consistente` por um único acerto/sessão;
 10. histórico deve persistir resposta a resposta.
@@ -95,3 +95,7 @@ que seleção diagnóstica não muda `chooseFocus` nem `SkillState`.
 Na V0.9, a suíte possui 71 testes. A cobertura adicional protege a ordem do quarto pacote, seus três microblocos, retomada parcial, estabilidade após erro, ausência de vazamento manual, bloqueio de avaliação e diagnóstico durante a introdução, elegibilidade posterior, contrato de 12 itens, seis avaliações reservadas, contagens 60/30, determinismo e limite de 12 decisões.
 
 Na V0.10, a suíte possui 79 testes. A cobertura adicional protege a ordem do quinto pacote (`range-strength-signals`), bloqueio até `integrated-application`, três microblocos, retomada e estabilidade de introdução, ausência de vazamento manual, bloqueio/liberação de avaliação e diagnóstico, contrato 1–12, seis itens reservados, contagens 72/36, limite de sessão e determinismo. Auditorias de conteúdo verificam `sourceKind` heurístico, ausência das regras literais “small bet = weak”/“big bet = strong” e presença dos boundary cases static/dry e 3-bet pot.
+
+## V0.10.1
+
+A suíte possui 85 testes. A cobertura local verifica completude pelos IDs reais (inclusive foundations), bloqueio da avaliação do pacote incompleto, liberação com pacote posterior pendente, 24h de retention, evidência em duas sessões, coexistência de retention/transfer/diagnóstico após o microbloco intacto, limite de 12, ausência de duplicação, determinismo, prioridade `reasoningPattern` → `concept` → `primarySkill` e isolamento de support, priority e `SkillState` contra tentativas de avaliação.

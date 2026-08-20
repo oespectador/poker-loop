@@ -1,4 +1,4 @@
-# Project State — baseline V0.10
+# Project State — baseline V0.10.1
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.10 — Pistas de Força do Range**
+**V0.10.1 — Evidência Local por Pacote**
 
 ### Biblioteca
 
@@ -73,14 +73,15 @@ Comportamentos já implementados:
 - repriorização de variação após erro somente fora de introdução;
 - progresso conservador por habilidade.
 
-Depois da apresentação completa dos cinco pacotes estruturados, uma sessão pode
-incluir no máximo um item elegível de retenção e um de transferência, sem passar
-de 12 decisões. Cada item reservado aparece no máximo uma vez neste piloto.
+Assim que o pacote do próprio item foi completamente apresentado, uma sessão pode
+incluir no máximo um item elegível de retenção e um de transferência, mesmo que
+um pacote posterior esteja pendente, sem passar de 12 decisões. O microbloco de
+introdução permanece inteiro e ocupa sempre o início da sessão. Cada item reservado aparece no máximo uma vez neste piloto.
 
 Retenção exige duas respostas corretas independentes relacionadas, em duas
 sessões, e 24 horas desde a mais recente. Transferência exige a mesma evidência
-independente, sem espera temporal. A relação usa `concept` quando há
-desenvolvimento com o mesmo conceito e `primarySkill` como fallback.
+independente, sem espera temporal. A relação prefere `reasoningPattern`, recorre a `concept` quando necessário e usa
+`primarySkill` somente como fallback final.
 
 O limiar de 24 horas é uma hipótese operacional conservadora, não um intervalo
 de aprendizagem validado nem uma regra `1-3-7-30`. O motor **não é** um sistema
@@ -101,7 +102,7 @@ exercícios, desativam o sinal por enquanto — uma heurística provisória de
 recuperação, não prova de domínio. Esses limiares são heurísticas do protótipo,
 não medidas validadas. `candidate` permanece read-only.
 
-Somente depois da apresentação completa dos cinco pacotes, o primeiro sinal
+Somente entre conteúdos de pacotes completamente apresentados, o primeiro sinal
 `recurring` compatível com o foco já escolhido pode reservar um único exercício
 development relacionado. A seleção evita a superfície da tentativa mais recente
 quando existe alternativa, prefere a menos recentemente respondida e usa a ordem
@@ -162,3 +163,7 @@ Evitar `região mais forte`. Para força global usar `range mais forte`; para nu
 ## V0.10 — política de conteúdo
 
 O quinto pacote deriva apenas das heurísticas condicionais registradas no claim map do Hungry Horse. Size é evidência, não revelação do range, e seu valor informativo muda com board e configuração. Static/dry e 3-bet pot são boundary cases explícitos. Claims de turn, river, donk e double previous size permanecem fora da biblioteca ativa; nenhuma tendência foi transplantada para NL2/GGPoker como fato. Motor, storage e schema de tentativas permanecem inalterados.
+
+## V0.10.1 — evidência local por pacote
+
+A trava global de avaliação foi removida. A completude é determinada pelos IDs reais de todos os development do pacote do item, inclusive `foundations`, e não pela posição na ordem. Pacotes futuros não congelam revisão antiga. Tentativas retention/transfer continuam separadas: não influenciam fading, retorno de suporte, prioridade adaptativa nem `SkillState`. Thresholds diagnósticos, conteúdo, UI, storage e schema não mudaram.

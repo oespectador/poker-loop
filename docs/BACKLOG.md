@@ -105,3 +105,12 @@ Cuidado: fontes live não viram defaults de NL2.
 - claim map da fonte documentado sem promover heurísticas a regras universais.
 
 Permanecem deliberadamente fora da biblioteca ativa: double previous size, turn/checkback, prescrições de donk e sinais/sizings de river. Qualquer ativação futura depende de auditoria e validação próprias.
+
+## Entregue na V0.10.1
+
+- elegibilidade de retention/transfer por completude local do próprio pacote;
+- reforço diagnóstico limitado a development de pacotes completamente apresentados;
+- microbloco de introdução preservado no início da sessão;
+- relação evaluation → development por `reasoningPattern`, `concept` e `primarySkill`;
+- evidência retention/transfer isolada do suporte, prioridade e `SkillState`;
+- nenhum threshold, exercício, conteúdo, UI, storage ou schema alterado.
