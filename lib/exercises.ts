@@ -1091,8 +1091,105 @@ export const developmentExercises: Exercise[] = [
     concept: "range-to-decision",
     subconcept: "integrated-target-sizing",
     reasoningPattern: "range-target-response-size"
-  }
+  },
 
+
+  {
+    id: "dev-calibration-01", purpose: "development", primarySkill: "integrated-decision", support: "guided",
+    spot: { label: "Lógica × calibração", pot: "River", stack: "—", hero: "Herói", action: ["O range do Vilão tem principalmente mãos muito fortes e blefes", "Nossa mão vence os blefes", "As mãos muito fortes praticamente não foldam para raise"] },
+    prompt: "Dadas exatamente essas premissas, evitar transformar nossa mão em blefe é uma conclusão coerente?",
+    options: [{ id: "coherent", label: "Sim. A conclusão segue das premissas; outra questão seria saber se as premissas representam bem o Vilão." }, { id: "raise", label: "O raise ainda ganha valor principalmente porque aumenta a pressão sobre a parte forte do range." }],
+    correctOptionId: "coherent", feedback: { short: "A lógica está coerente. Questionar se o range é realmente tão polar seria uma questão de calibração, não uma falha dessa conclusão lógica." },
+    sourceKind: "theory", variantGroup: "logic-vs-calibration", learningPackage: "calibration", packageSequence: 1, concept: "logic-calibration", subconcept: "premise-conclusion", reasoningPattern: "distinguir lógica de calibração", supportNote: "Por enquanto aceite as premissas do exercício e pergunte apenas o que segue delas."
+  },
+  {
+    id: "dev-calibration-02", purpose: "development", primarySkill: "range-reading", support: "supported",
+    spot: { label: "Primeira observação", pot: "River", stack: "—", hero: "Herói", action: ["Vimos este Vilão pagar uma aposta grande com top pair", "Foi a primeira situação comparável observada", "Herói conclui: top pair quase sempre paga grandes apostas contra ele"] },
+    prompt: "Qual é a principal fragilidade?",
+    options: [{ id: "too-strong", label: "A conclusão ficou muito mais forte do que a evidência disponível." }, { id: "no-information", label: "O showdown não deveria alterar nossa leitura porque uma mão individual não contém informação." }, { id: "enough", label: "A leitura é suficiente porque ocorreu contra este jogador específico." }],
+    correctOptionId: "too-strong", feedback: { short: "O showdown é evidência e deve atualizar a crença, mas uma observação isolada normalmente não justifica transformar uma possibilidade em uma regra forte." },
+    sourceKind: "theory", variantGroup: "logic-vs-calibration", learningPackage: "calibration", packageSequence: 2, concept: "logic-calibration", subconcept: "single-observation", reasoningPattern: "distinguir lógica de calibração", supportNote: "Compare a força da conclusão com a quantidade de situações comparáveis observadas."
+  },
+  {
+    id: "dev-calibration-03", purpose: "development", primarySkill: "range-reading", support: "guided",
+    spot: { label: "O blefe funcionou", pot: "River", stack: "—", hero: "Herói", action: ["Sem evidência específica, Herói acredita que Vilão folda demais", "Herói faz grande blefe", "Vilão folda"] },
+    prompt: "O fold demonstra que a leitura ‘este Vilão folda demais’ estava correta?",
+    options: [{ id: "compatible", label: "Não. O resultado é compatível com a hipótese, mas uma única decisão não estabelece a tendência." }, { id: "proves", label: "Sim. O comportamento observado confirma diretamente que ele folda demais." }, { id: "ignore", label: "O fold não deve alterar nossa crença em nenhuma direção." }],
+    correctOptionId: "compatible", feedback: { short: "Evite os dois extremos. O resultado contém informação, mas também pode simplesmente refletir a parte fraca do range naquela mão." },
+    sourceKind: "theory", variantGroup: "logic-vs-calibration", learningPackage: "calibration", packageSequence: 3, concept: "logic-calibration", subconcept: "result-vs-tendency", reasoningPattern: "distinguir lógica de calibração", supportNote: "Um resultado pode ser compatível com uma hipótese sem prová-la."
+  },
+  {
+    id: "dev-calibration-04", purpose: "development", primarySkill: "integrated-decision", support: "supported",
+    spot: { label: "Mesmo blefe, erros diferentes", pot: "River", stack: "—", hero: "Herói", action: ["A: Qx só começa a foldar bastante contra 175%; o objetivo é fazê-la foldar; Herói escolhe 50%", "B: Herói escolhe 175%, coerente com a reação necessária; a crença sobre Qx veio de uma observação"] },
+    prompt: "Qual diagnóstico é mais preciso?",
+    options: [{ id: "split", label: "A tem problema de lógica entre objetivo e size; B tem problema principalmente na calibração da premissa." }, { id: "both-sizing", label: "A e B são principalmente erros de sizing." }, { id: "reversed", label: "A é calibração; B é lógica." }],
+    correctOptionId: "split", feedback: { short: "A mesma decisão ruim pode nascer de causas diferentes. Diagnosticar a causa é necessário para saber o que precisa ser treinado." },
+    sourceKind: "theory", variantGroup: "logic-vs-calibration", learningPackage: "calibration", packageSequence: 4, concept: "logic-calibration", subconcept: "error-diagnosis", reasoningPattern: "distinguir lógica de calibração", supportNote: "Separe a coerência entre objetivo e size da força da evidência usada na premissa."
+  },
+  {
+    id: "dev-calibration-05", purpose: "development", primarySkill: "range-reading", support: "guided",
+    spot: { label: "Primeiro showdown", pot: "River", stack: "—", hero: "Herói", action: ["Primeira situação comparável observada", "Vilão paga grande aposta com top pair"] },
+    prompt: "Qual atualização é mais proporcional à evidência?",
+    options: [{ id: "small-update", label: "Esse call aumenta um pouco a plausibilidade de que ele pague leve, mas ainda sabemos pouco." }, { id: "strong-read", label: "Já é melhor tratá-lo como jogador que paga top pair muito amplamente." }, { id: "no-update", label: "Devemos manter exatamente a crença anterior até acumular uma amostra grande." }],
+    correctOptionId: "small-update", feedback: { short: "Nova evidência deve alterar a crença sem exigir uma mudança extrema." },
+    sourceKind: "theory", variantGroup: "evidence-strength", learningPackage: "calibration", packageSequence: 5, concept: "evidence-quality", subconcept: "proportional-update", reasoningPattern: "pesar evidência", supportNote: "Procure uma atualização que não ignore o showdown nem o transforme em regra."
+  },
+  {
+    id: "dev-calibration-06", purpose: "development", primarySkill: "range-reading", support: "supported",
+    spot: { label: "Padrão repetido", pot: "River", stack: "—", hero: "Herói", action: ["Em várias situações comparáveis, o mesmo jogador mostrou calls leves"] },
+    prompt: "O que mudou em relação ao primeiro showdown?",
+    options: [{ id: "stronger", label: "Temos evidência mais forte para ajustar nossa expectativa nesse tipo de situação." }, { id: "all-contexts", label: "Agora podemos transferir o read para praticamente qualquer contexto pós-flop." }, { id: "isolated", label: "Ainda devemos tratar essas observações como se fossem apenas um caso isolado." }],
+    correctOptionId: "stronger", feedback: { short: "Repetição coerente fortalece a hipótese, mas não elimina limites de contexto." },
+    sourceKind: "theory", variantGroup: "evidence-strength", learningPackage: "calibration", packageSequence: 6, concept: "evidence-quality", subconcept: "repeated-pattern", reasoningPattern: "pesar evidência", supportNote: "Considere tanto a repetição quanto a comparabilidade das situações."
+  },
+  {
+    id: "dev-calibration-07", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Default populacional", pot: "Spot didático", stack: "—", hero: "Herói", action: ["Premissa didática: naquele pool e tipo de spot, jogadores semelhantes tendem a overfoldar", "Ainda não temos informação relevante deste Vilão"] },
+    prompt: "Como essa informação deve entrar na decisão?",
+    options: [{ id: "contextual-default", label: "Como um default contextual inicial, que pode ser atualizado quando surgirem evidências deste jogador." }, { id: "individual-property", label: "Como uma propriedade provável deste jogador que só deve mudar depois de muita evidência contrária." }, { id: "discard", label: "Não deve entrar na decisão porque informações populacionais não descrevem indivíduos." }],
+    correctOptionId: "contextual-default", feedback: { short: "Um default ajuda quando falta informação individual, mas não vira certeza sobre o próximo adversário. A tendência fornecida é uma premissa didática, não uma afirmação sobre um pool real." },
+    sourceKind: "exploit", variantGroup: "evidence-strength", learningPackage: "calibration", packageSequence: 7, concept: "evidence-quality", subconcept: "population-default", reasoningPattern: "pesar evidência"
+  },
+  {
+    id: "dev-calibration-08", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Poucas oportunidades", pot: "30 mãos", stack: "—", hero: "Herói", action: ["Nunca vimos hero call grande no river", "Quase nenhuma mão chegou a uma situação de river comparável"] },
+    prompt: "Quão forte é a evidência de que ele evita hero calls?",
+    options: [{ id: "weak", label: "Fraca. Houve poucas oportunidades relevantes para observar esse comportamento." }, { id: "moderate", label: "Moderada, porque 30 mãos sem observar o comportamento já apontam uma direção." }, { id: "strong", label: "Forte, porque ausência do comportamento é evidência direta de que ele não faz isso." }],
+    correctOptionId: "weak", feedback: { short: "Quantidade de mãos total não é igual a quantidade de oportunidades relevantes." },
+    sourceKind: "theory", variantGroup: "evidence-strength", learningPackage: "calibration", packageSequence: 8, concept: "evidence-quality", subconcept: "opportunity-count", reasoningPattern: "pesar evidência"
+  },
+  {
+    id: "dev-calibration-09", purpose: "development", primarySkill: "range-reading", support: "supported",
+    spot: { label: "Evidência contra o default", pot: "River", stack: "—", hero: "Herói", action: ["Default didático: Qx tende a foldar bastante contra 150%", "Este Vilão acaba de pagar 150% com Qx em situação comparável"] },
+    prompt: "Qual atualização faz mais sentido?",
+    options: [{ id: "reduce", label: "A confiança no default contra este Vilão diminui, sem ser necessário concluir imediatamente o oposto." }, { id: "hold", label: "Manter a mesma expectativa até que o comportamento se repita várias vezes." }, { id: "invert", label: "Passar a assumir que Qx normalmente paga 150% contra este Vilão." }],
+    correctOptionId: "reduce", feedback: { short: "Atualização não significa ignorar nova evidência nem inverter completamente uma crença após uma única observação." },
+    sourceKind: "exploit", variantGroup: "belief-update", learningPackage: "calibration", packageSequence: 9, concept: "belief-update", subconcept: "counterevidence", reasoningPattern: "atualizar crença", supportNote: "A nova observação deve mover a crença, mas não precisa invertê-la."
+  },
+  {
+    id: "dev-calibration-10", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Mesmo jogador, outro contexto", pot: "River", stack: "—", hero: "Herói", action: ["Vilão mostrou vários calls leves contra apostas pequenas/médias", "Agora enfrenta overbet de 175% em pote e contexto diferentes"] },
+    prompt: "Qual inferência é mais defensável?",
+    options: [{ id: "limited-transfer", label: "As observações anteriores são relevantes, mas o novo contexto limita quanto podemos transferi-las." }, { id: "full-transfer", label: "Os calls anteriores são evidência suficiente de que ele continuará pagando leve contra 175%." }, { id: "irrelevant", label: "A mudança de size torna as observações anteriores praticamente irrelevantes." }],
+    correctOptionId: "limited-transfer", feedback: { short: "Evidência pode manter valor sem se transferir integralmente." },
+    sourceKind: "theory", variantGroup: "belief-update", learningPackage: "calibration", packageSequence: 10, concept: "belief-update", subconcept: "context-transfer", reasoningPattern: "atualizar crença"
+  },
+  {
+    id: "dev-calibration-11", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Evidência contrária", pot: "Rivers comparáveis", stack: "—", hero: "Herói", action: ["Hipótese anterior: este jogador parece pagar rivers muito largo", "Depois, várias situações comparáveis mostram folds relativamente fortes"] },
+    prompt: "Qual atitude produz uma leitura melhor?",
+    options: [{ id: "rebuild", label: "Reduzir a confiança na hipótese anterior e reconstruí-la usando o conjunto das observações." }, { id: "keep", label: "Manter a hipótese até surgir um número muito maior de mãos contrárias." }, { id: "reverse", label: "Substituir a hipótese imediatamente por ‘ele folda demais’." }],
+    correctOptionId: "rebuild", feedback: { short: "Calibração exige permitir que evidência nova realmente altere uma crença sem transformar cada atualização numa inversão extrema." },
+    sourceKind: "theory", variantGroup: "belief-update", learningPackage: "calibration", packageSequence: 11, concept: "belief-update", subconcept: "hypothesis-revision", reasoningPattern: "atualizar crença"
+  },
+  {
+    id: "dev-calibration-12", purpose: "development", primarySkill: "integrated-decision", support: "independent",
+    spot: { label: "Integração", pot: "River", stack: "—", hero: "Herói considera blefar", action: ["Sabemos: size pequeno praticamente não faz Qx foldar; precisamos pressionar Qx", "Default contextual didático: jogadores semelhantes tendem a foldar Qx mais contra sizes muito grandes", "Deste Vilão: uma situação comparável; nela, pagou aposta grande com Qx"] },
+    prompt: "Qual raciocínio é mais preciso?",
+    options: [{ id: "calibrated", label: "O size grande é mais coerente com o objetivo de pressionar Qx, mas a reação deste Vilão permanece incerta e a observação disponível reduz nossa confiança no default." }, { id: "default-wins", label: "O default do pool é a melhor informação disponível, então devemos tratar o fold de Qx como a resposta mais provável sem dar muito peso ao único showdown." }, { id: "individual-wins", label: "Como a evidência individual contradiz o default, devemos tratar Qx como call contra size grande." }],
+    correctOptionId: "calibrated", feedback: { short: "A lógica do size e a confiança na premissa são perguntas diferentes. Podemos identificar qual ação cumpre a função desejada sem fingir que sabemos com certeza como este Vilão responderá." },
+    sourceKind: "exploit", variantGroup: "calibration-integrated", learningPackage: "calibration", packageSequence: 12, concept: "calibrated-decision", subconcept: "decision-under-uncertainty", reasoningPattern: "logic-evidence-decision"
+  },
 
 ];
 
@@ -1496,8 +1593,51 @@ export const evaluationExercises: Exercise[] = [
     concept: "range-to-decision",
     subconcept: "transfer-target-identification",
     reasoningPattern: "range-target-response-size"
-  }
+  },
 
+
+  {
+    id: "retention-calibration-01", purpose: "retention", primarySkill: "integrated-decision", support: "independent",
+    spot: { label: "Retenção · River", pot: "Heads-up", stack: "—", hero: "Herói", action: ["Premissa: bluff catchers não foldam para raise", "Herói decide apenas pagar com uma mão que vence blefes"] },
+    prompt: "Qual avaliação é mais precisa?",
+    options: [{ id: "logic-weak-premise", label: "A ação segue da premissa, embora ainda possa faltar evidência para confiar nela." }, { id: "illogical", label: "A ação é incoerente porque toda mão que vence blefes deve aumentar a pressão." }],
+    correctOptionId: "logic-weak-premise", feedback: { short: "A coerência da conclusão e a força da premissa são avaliações separadas." }, sourceKind: "theory", variantGroup: "retention-calibration", learningPackage: "calibration", concept: "logic-calibration", subconcept: "implicit-retrieval", reasoningPattern: "logic-evidence"
+  },
+  {
+    id: "retention-calibration-02", purpose: "retention", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Retenção · Showdown", pot: "River", stack: "—", hero: "Herói", action: ["Pela primeira vez, Vilão mostra um call muito leve em situação comparável"] },
+    prompt: "Como essa informação deve afetar a leitura?",
+    options: [{ id: "update", label: "Ela move a leitura na direção de mais calls leves, sem estabelecer uma tendência." }, { id: "prove", label: "Ela prova que este Vilão costuma pagar rivers muito largo." }, { id: "ignore", label: "Ela deve ser ignorada até aparecer novamente." }],
+    correctOptionId: "update", feedback: { short: "Uma observação informa e atualiza, mas não prova sozinha um padrão." }, sourceKind: "theory", variantGroup: "retention-calibration", learningPackage: "calibration", concept: "evidence-quality", subconcept: "implicit-single-observation", reasoningPattern: "weigh-one-observation"
+  },
+  {
+    id: "retention-calibration-03", purpose: "retention", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Retenção · Oportunidades", pot: "Sessão longa", stack: "—", hero: "Herói", action: ["Vilão jogou muitas mãos", "Somente duas chegaram ao tipo de decisão que queremos observar", "O comportamento não apareceu"] },
+    prompt: "O que essa ausência permite concluir?",
+    options: [{ id: "little", label: "Pouco, porque quase não houve oportunidades relevantes de observar o comportamento." }, { id: "absent", label: "Que o comportamento provavelmente não faz parte do jogo do Vilão, pois a sessão foi longa." }],
+    correctOptionId: "little", feedback: { short: "O número relevante é o de oportunidades comparáveis, não apenas o total de mãos." }, sourceKind: "theory", variantGroup: "retention-calibration", learningPackage: "calibration", concept: "evidence-quality", subconcept: "implicit-opportunities", reasoningPattern: "opportunities-vs-absence"
+  },
+  {
+    id: "transfer-calibration-01", purpose: "transfer", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Transferência · Anotação antiga", pot: "Turn", stack: "Deep", hero: "Herói", action: ["Nota antiga: Vilão pagou leve em um river de pote single-raised", "Agora: Vilão enfrenta raise no turn de um 4-bet pot"] },
+    prompt: "Como usar a anotação antiga?",
+    options: [{ id: "limited", label: "Como evidência com transferência limitada, porque a decisão e o contexto mudaram." }, { id: "direct", label: "Como base suficiente para esperar que ele também pague leve agora." }, { id: "none", label: "Como informação sem qualquer valor por ser antiga." }],
+    correctOptionId: "limited", feedback: { short: "A nota pode informar sem descrever integralmente uma decisão de outra superfície." }, sourceKind: "heuristic", variantGroup: "transfer-calibration", learningPackage: "calibration", concept: "belief-update", subconcept: "old-note-new-context", reasoningPattern: "context-limits-transfer"
+  },
+  {
+    id: "transfer-calibration-02", purpose: "transfer", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Transferência · Torneio", pot: "Bubble", stack: "25bb", hero: "Herói", action: ["Default didático: jogadores semelhantes defendem pouco contra shoves neste spot", "Este Vilão mostrou dois calls mais largos em situações comparáveis"] },
+    prompt: "Qual leitura combina melhor as informações?",
+    options: [{ id: "lower-confidence", label: "O default ainda contextualiza a decisão, mas a evidência individual reduz a confiança em aplicá-lo a este Vilão." }, { id: "population", label: "O default deve dominar porque duas observações individuais não têm valor." }, { id: "reverse", label: "Os dois calls provam que este Vilão sempre defenderá largo." }],
+    correctOptionId: "lower-confidence", feedback: { short: "A evidência individual atualiza o default sem precisar virar uma certeza oposta. O default é apenas uma premissa didática." }, sourceKind: "exploit", variantGroup: "transfer-calibration", learningPackage: "calibration", concept: "belief-update", subconcept: "population-vs-individual", reasoningPattern: "combine-default-evidence"
+  },
+  {
+    id: "transfer-calibration-03", purpose: "transfer", primarySkill: "integrated-decision", support: "independent",
+    spot: { label: "Transferência · Pré-flop", pot: "Torneio", stack: "18bb", hero: "Herói considera shove", action: ["Premissa didática: o raise pequeno não pressiona o grupo de mãos-alvo", "O shove pressiona esse grupo", "A estimativa de folds do Vilão vem de informação pouco comparável"] },
+    prompt: "Qual conclusão separa melhor função da ação e confiança na premissa?",
+    options: [{ id: "separate", label: "O shove cumpre melhor a função proposta, mas o resultado esperado permanece incerto porque a estimativa de folds é fraca." }, { id: "certain-shove", label: "Como o shove tem a função correta, o Vilão provavelmente foldará as mãos-alvo." }, { id: "paralysis", label: "Sem certeza sobre os folds, não podemos identificar qual ação exerce mais pressão." }],
+    correctOptionId: "separate", feedback: { short: "É possível escolher a ação coerente com a função sem fingir certeza sobre a premissa de resposta." }, sourceKind: "theory", variantGroup: "transfer-calibration", learningPackage: "calibration", concept: "calibrated-decision", subconcept: "new-surface-decision", reasoningPattern: "logic-evidence-decision"
+  },
 
 ];
 

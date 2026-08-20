@@ -12,11 +12,12 @@ const exerciseById = new Map(allExercises.map((exercise) => [exercise.id, exerci
 
 const INTRO_BLOCK_SIZE = 4;
 
-const LEARNING_PACKAGE_ORDER: LearningPackage[] = ["range-actions", "range-to-decision"];
+const LEARNING_PACKAGE_ORDER: LearningPackage[] = ["range-actions", "range-to-decision", "calibration"];
 
 const PACKAGE_FOCUS: Partial<Record<LearningPackage, Skill>> = {
   "range-actions": "range-reading",
   "range-to-decision": "integrated-decision",
+  calibration: "range-reading",
 };
 
 const PACKAGE_REDUNDANT_ITEMS: Partial<Record<LearningPackage, Set<string>>> = {

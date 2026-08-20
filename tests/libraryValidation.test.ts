@@ -26,7 +26,7 @@ function collections(development: Exercise[], evaluation: Exercise[] = []): Exer
   return { developmentExercises: development, evaluationExercises: evaluation, allExercises: [...development, ...evaluation] };
 }
 
-test("a biblioteca V0.4 satisfaz o contrato estático atual", () => {
+test("a biblioteca V0.5 satisfaz o contrato estático atual", () => {
   assert.deepEqual(validateExerciseLibrary({ developmentExercises, evaluationExercises, allExercises }), []);
 });
 
@@ -75,6 +75,15 @@ test("detecta item extra com packageSequence fora do intervalo do pacote", () =>
 
   assert.ok(errors.some((error) => error.includes("quantidade de itens 13; esperado 12")));
   assert.ok(errors.some((error) => error.includes("packageSequence fora do intervalo 1–12: 13")));
+});
+
+test("validador reconhece calibration como pacote estruturado de 1 a 12", () => {
+  const errors = validateExerciseLibrary({ developmentExercises, evaluationExercises, allExercises });
+  const calibration = developmentExercises.filter((exercise) => exercise.learningPackage === "calibration");
+
+  assert.equal(calibration.length, 12);
+  assert.deepEqual(calibration.map((exercise) => exercise.packageSequence), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  assert.equal(errors.some((error) => error.startsWith("calibration:")), false);
 });
 
 test("detecta divergência entre allExercises e suas coleções componentes", () => {
