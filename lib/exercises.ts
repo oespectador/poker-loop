@@ -1598,10 +1598,10 @@ export const evaluationExercises: Exercise[] = [
 
   {
     id: "retention-calibration-01", purpose: "retention", primarySkill: "integrated-decision", support: "independent",
-    spot: { label: "Retenção · River", pot: "Heads-up", stack: "—", hero: "Herói", action: ["Premissa: bluff catchers não foldam para raise", "Herói decide apenas pagar com uma mão que vence blefes"] },
+    spot: { label: "Retenção · River", pot: "Heads-up", stack: "—", hero: "Herói", action: ["Nossa mão vence os blefes do Vilão", "Herói acredita que as mãos melhores praticamente não foldam para raise", "Essa leitura veio de apenas uma situação comparável observada", "Herói decide pagar em vez de transformar a mão em blefe"] },
     prompt: "Qual avaliação é mais precisa?",
-    options: [{ id: "logic-weak-premise", label: "A ação segue da premissa, embora ainda possa faltar evidência para confiar nela." }, { id: "illogical", label: "A ação é incoerente porque toda mão que vence blefes deve aumentar a pressão." }],
-    correctOptionId: "logic-weak-premise", feedback: { short: "A coerência da conclusão e a força da premissa são avaliações separadas." }, sourceKind: "theory", variantGroup: "retention-calibration", learningPackage: "calibration", concept: "logic-calibration", subconcept: "implicit-retrieval", reasoningPattern: "logic-evidence"
+    options: [{ id: "logic-weak-premise", label: "A decisão é coerente com a leitura, mas ainda há pouca evidência para confiar tanto nessa leitura." }, { id: "illogical", label: "A decisão é incoerente: se nossa mão vence blefes, aumentar sempre melhora o resultado." }, { id: "reliable", label: "A leitura já é suficientemente confiável porque veio de uma observação deste jogador." }],
+    correctOptionId: "logic-weak-premise", feedback: { short: "Dadas as premissas, o raise não melhora nossa situação contra os blefes que já vencemos nem contra as mãos melhores que esperamos que continuem. O ponto frágil está na pouca evidência para confiar nessa expectativa." }, sourceKind: "theory", variantGroup: "retention-calibration", learningPackage: "calibration", concept: "logic-calibration", subconcept: "implicit-retrieval", reasoningPattern: "logic-evidence"
   },
   {
     id: "retention-calibration-02", purpose: "retention", primarySkill: "range-reading", support: "independent",
