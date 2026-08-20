@@ -83,3 +83,11 @@ posição atual dos exercícios na biblioteca.
 ## Build
 
 Se `npm run build` falhar por ambiente/rede, documentar a limitação. Não declarar build bem-sucedida sem tê-la executado.
+
+Na V0.8, a suíte possui 62 testes. A cobertura adicional protege o matching
+exclusivo de `reasoningPattern`/`concept`, `candidate` read-only, bloqueio durante
+pacotes pendentes, compatibilidade com foco, limite de um reforço, máximo de 12
+itens, coexistência com retention/transfer, ausência de duplicação, escolha da
+superfície mais antiga com exclusão da tentativa mais recente, determinismo,
+recuperação pelo histórico e reutilização de `getActualSupport`. Também verifica
+que seleção diagnóstica não muda `chooseFocus` nem `SkillState`.

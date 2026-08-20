@@ -70,7 +70,7 @@ Cuidado: fontes live não viram defaults de NL2.
 
 ## P2 — mais tarde
 
-- avaliar integração conservadora de sinais diagnósticos ao treino recomendado;
+- avaliar se sinais diagnósticos devem futuramente influenciar escolha de foco ou acionar reensino explícito;
 - validar longitudinalmente o piloto V0.6 de retenção e transferência com pessoas;
 - somente depois, decidir se retenção precisa de intervalos adaptativos;
 - somente depois, decidir se transferência contextual precisa de novas superfícies;

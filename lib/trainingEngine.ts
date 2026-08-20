@@ -1,4 +1,5 @@
 import { allExercises, developmentExercises, evaluationExercises } from "./exercises";
+import { selectDiagnosticReinforcement } from "./diagnostics";
 import type { Attempt, Exercise, LearningPackage, Skill, SkillState, SupportLevel } from "./types";
 
 export const skillLabels: Record<Skill, string> = {
@@ -142,7 +143,7 @@ function getVariantAttempts(attempts: Attempt[], variantGroup?: string): Attempt
   return attempts.filter((attempt) => exerciseById.get(attempt.exerciseId)?.variantGroup === variantGroup);
 }
 
-function getActualSupport(exercise: Exercise, attempts: Attempt[]): SupportLevel {
+export function getActualSupport(exercise: Exercise, attempts: Attempt[]): SupportLevel {
   const variantAttempts = sortAttempts(getVariantAttempts(attempts, exercise.variantGroup));
   if (!variantAttempts.length) return exercise.support;
 
@@ -325,10 +326,22 @@ export function buildRecommendedSession(
         selectEvaluation(eligibleRetentionExercises(attempts, now), resolvedFocus),
         selectEvaluation(eligibleTransferExercises(attempts), resolvedFocus),
       ].filter((exercise): exercise is Exercise => Boolean(exercise));
-  const fillCount = Math.max(0, 12 - introBlock.length - evaluationItems.length);
-  const adaptiveFill = diversifyOrder(scored).slice(0, fillCount);
+  const diagnosticReinforcement = pendingPackage
+    ? undefined
+    : selectDiagnosticReinforcement(attempts, resolvedFocus);
+  const reinforcementItems = diagnosticReinforcement
+    ? [{ ...diagnosticReinforcement, support: getActualSupport(diagnosticReinforcement, attempts) }]
+    : [];
+  const reinforcementIds = new Set(reinforcementItems.map(({ id }) => id));
+  const fillCount = Math.max(
+    0,
+    12 - introBlock.length - evaluationItems.length - reinforcementItems.length,
+  );
+  const adaptiveFill = diversifyOrder(
+    scored.filter((exercise) => !reinforcementIds.has(exercise.id)),
+  ).slice(0, fillCount);
 
-  return [...introBlock, ...evaluationItems, ...adaptiveFill];
+  return [...introBlock, ...evaluationItems, ...reinforcementItems, ...adaptiveFill];
 }
 
 export function reprioritizeAfterError(

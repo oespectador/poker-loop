@@ -279,3 +279,39 @@ Progresso, storage, schema de `Attempt`, exercícios, conteúdo e UI não mudara
 O próximo passo possível é avaliar, separadamente, uma integração conservadora
 dos sinais ao treino recomendado; ela não foi implementada nesta versão. Não há
 decisão humana pendente.
+
+## 2026-08-20 — V0.8 Reforço Diagnóstico Controlado
+
+### Objetivo e hipótese trabalhada
+
+Integrar pela primeira vez, de forma mínima, os sinais diagnósticos ao treino. A
+hipótese operacional é que um padrão `recurring` pode justificar a reserva de uma
+única superfície development relacionada, sem confirmar causa nem entregar ao
+diagnóstico o controle do scheduler.
+
+### Alterações e comportamento
+
+- `candidate` continua read-only e nunca modifica a sessão;
+- nenhum reforço entra enquanto qualquer pacote estruturado estiver pendente;
+- depois dos três pacotes, o primeiro `recurring` compatível com o foco já
+  resolvido pode reservar no máximo um development;
+- `reasoningPattern` e fallback por `concept` mantêm os grupos exclusivos da V0.7;
+- a seleção evita o exercício da tentativa mais recente quando existe outra
+  superfície, prefere o item há mais tempo sem resposta e desempata pela ordem
+  estável da biblioteca;
+- retention e transfer conservam seus slots e prioridade; o reforço é removido
+  do adaptive fill e a sessão permanece limitada a 12 itens;
+- o suporte continua vindo de `getActualSupport`; erro, feedback, repriorização e
+  evidência development seguem o fluxo normal;
+- recuperação continua inferida pelas três tentativas independentes recentes,
+  sem `markFixed`, descarte manual ou escalada especial.
+
+### Validação, riscos e escopo
+
+A suíte passou com 62 testes, além de typecheck, build e `git diff --check`. Os
+limiares de recorrência e recuperação permanecem heurísticos e não validados.
+Não houve mudança em UI, Home, Progresso, storage, schema de `Attempt`, exercícios,
+Skills, suporte ou pacotes. `chooseFocus`, `PACKAGE_FOCUS`, ordem dos pacotes e
+`SkillState` permaneceram inalterados. O próximo passo, não implementado, é
+avaliar se sinais diagnósticos devem futuramente influenciar escolha de foco ou
+acionar reensino explícito.

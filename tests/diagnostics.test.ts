@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  matchesDifficultyPattern,
   summarizeDifficultyPatterns,
   type DiagnosticExercise,
 } from "../lib/diagnostics";
@@ -52,6 +53,26 @@ function summarize(items: Attempt[], fixture = exercises) {
 
 test("um único erro não gera sinal", () => {
   assert.deepEqual(summarize([attempt("rp-a", "s1")]), []);
+});
+
+test("matching mantém reasoningPattern separado do fallback por concept", () => {
+  const reasoning = exercises.find(({ id }) => id === "rp-a");
+  const concept = exercises.find(({ id }) => id === "concept-a");
+  assert.ok(reasoning && concept);
+
+  assert.equal(
+    matchesDifficultyPattern(reasoning, { source: "reasoningPattern", key: "pattern-a" }),
+    true,
+  );
+  assert.equal(matchesDifficultyPattern(reasoning, { source: "concept", key: "shared" }), false);
+  assert.equal(matchesDifficultyPattern(concept, { source: "concept", key: "concept-only" }), true);
+  assert.equal(
+    matchesDifficultyPattern(exercises.find(({ id }) => id === "retention")!, {
+      source: "reasoningPattern",
+      key: "pattern-a",
+    }),
+    false,
+  );
 });
 
 test("dois erros no mesmo exercício não geram sinal", () => {

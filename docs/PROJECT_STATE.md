@@ -1,4 +1,4 @@
-# Project State — baseline V0.7
+# Project State — baseline V0.8
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.7 — Sinais Diagnósticos Conservadores**
+**V0.8 — Reforço Diagnóstico Controlado**
 
 ### Biblioteca
 
@@ -82,10 +82,10 @@ O limiar de 24 horas é uma hipótese operacional conservadora, não um interval
 de aprendizagem validado nem uma regra `1-3-7-30`. O motor **não é** um sistema
 completo de knowledge tracing, repetição espaçada ou diagnóstico causal.
 
-### Diagnóstico read-only
+### Diagnóstico e reforço controlado
 
-`lib/diagnostics.ts` resume candidatos a padrões recorrentes sem interferir no
-treino. A análise considera somente tentativas de desenvolvimento registradas
+`lib/diagnostics.ts` resume candidatos a padrões recorrentes e seleciona o
+reforço controlado. A análise considera somente tentativas de desenvolvimento registradas
 como independentes. A chave usa `reasoningPattern` e recorre a `concept` apenas
 quando o primeiro não existe; `primarySkill`, `variantGroup` e misconceptions
 não são tratados como causas.
@@ -95,7 +95,15 @@ sessões diferentes. `recurring` exige ao menos três erros, em três exercício
 duas sessões. Três acertos independentes mais recentes, cobrindo ao menos dois
 exercícios, desativam o sinal por enquanto — uma heurística provisória de
 recuperação, não prova de domínio. Esses limiares são heurísticas do protótipo,
-não medidas validadas, e nenhum sinal altera scheduler, foco, storage ou UI.
+não medidas validadas. `candidate` permanece read-only.
+
+Somente depois da apresentação completa dos três pacotes, o primeiro sinal
+`recurring` compatível com o foco já escolhido pode reservar um único exercício
+development relacionado. A seleção evita a superfície da tentativa mais recente
+quando existe alternativa, prefere a menos recentemente respondida e usa a ordem
+da biblioteca como desempate. O diagnóstico não escolhe Skill, não desloca
+retenção/transferência, reutiliza o suporte existente e não altera storage ou UI.
+A recuperação continua inferida do histórico, sem marcação manual.
 
 ## Persistência
 
