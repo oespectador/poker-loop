@@ -139,3 +139,47 @@ Nenhuma inconsistência real foi encontrada na biblioteca atual. O validador car
 ### Decisão humana pendente
 
 Nenhuma.
+
+## 2026-08-20 — V0.5 Lógica × Calibração
+
+### Objetivo e hipótese trabalhada
+
+Implementar a especificação fechada do terceiro pacote pedagógico. A hipótese é
+que 12 decisões em três microblocos ajudam o aluno a separar coerência lógica de
+força da evidência e, ao final, agir sob incerteza sem transformar calibração em
+uma nova Skill.
+
+### Alterações e comportamento antes/depois
+
+- adicionados 12 exercícios de desenvolvimento `dev-calibration-01` a
+  `dev-calibration-12`, usando `range-reading` e `integrated-decision`;
+- adicionados três itens reservados de retenção e três de transferência, que
+  permanecem fora do treino normal;
+- incluído `calibration` depois de `range-to-decision` na ordem já existente,
+  com foco automático em `range-reading` e sem alterar storage ou algoritmos de
+  prioridade;
+- ampliado o validador para exigir exatamente as sequências 1–12 do pacote;
+- adicionados testes de bloqueio, microblocos, retomada, estabilidade da ordem,
+  treino manual, itens reservados e integridade estática.
+
+Antes, a biblioteca encerrava em V0.4 com 36 itens de desenvolvimento. Depois,
+ela possui 48 itens de desenvolvimento e 24 reservados; os 12 novos itens só
+começam depois de todos os itens de `range-to-decision` terem sido apresentados.
+
+### Escopo, riscos e validação humana
+
+Não foram criados Skill, UI, porcentagens de confiança, notas de jogadores,
+backend ou mudanças de storage. Defaults populacionais dos exercícios são
+marcados como premissas didáticas, não como tendências reais de um pool. A
+existência dos seis itens reservados não valida empiricamente retenção ou
+transferência; clareza, plausibilidade dos distractors e decisão sob incerteza
+ainda requerem teste humano. Nenhuma ambiguidade de arquitetura ou decisão humana
+pendente foi encontrada; a integração exigiu somente estender os contratos
+fechados de pacote, ordem, foco e validação.
+
+### Validação executada
+
+- `npm test`: 27 testes aprovados;
+- `npm run typecheck`: aprovado;
+- `npm run build`: aprovado;
+- `git diff --check`: aprovado.

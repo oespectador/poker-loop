@@ -9,6 +9,7 @@ export interface ExerciseCollections {
 const structuredPackages: Readonly<Record<Exclude<LearningPackage, "foundations">, number>> = {
   "range-actions": 12,
   "range-to-decision": 12,
+  calibration: 12,
 };
 
 export function validateExerciseLibrary({

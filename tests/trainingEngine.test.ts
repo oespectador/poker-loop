@@ -158,6 +158,75 @@ test("adaptive fill não antecipa itens inéditos além do microbloco atual", ()
   assert.ok(newStructuredItems.every((exercise) => exercise.sessionRole === "introduction"));
 });
 
+test("calibration fica bloqueado enquanto range-to-decision possui itens inéditos", () => {
+  const priorPackages = developmentExercises.filter(
+    (exercise) => exercise.learningPackage !== "calibration" && exercise.id !== "dev-range-decision-12",
+  );
+  const session = buildRecommendedSession(attemptsFor(priorPackages), undefined, "calibration-blocked");
+
+  assert.equal(session.some((exercise) => exercise.learningPackage === "calibration"), false);
+});
+
+test("calibration é introduzido em 01–04, 05–08 e 09–12 após os pacotes anteriores", () => {
+  const previous = developmentExercises.filter((exercise) => exercise.learningPackage !== "calibration");
+  const attempts = attemptsFor(previous, { sessionId: "previous-packages" });
+
+  for (const [start, end] of [[1, 4], [5, 8], [9, 12]] as const) {
+    const introductions = buildRecommendedSession(attempts, undefined, `calibration-${start}`).filter(
+      (exercise) => exercise.sessionRole === "introduction",
+    );
+    assert.deepEqual(
+      introductions.map((exercise) => exercise.id),
+      packageIds("calibration", start, end),
+    );
+    attempts.push(...attemptsFor(introductions, { sessionId: `calibration-${start}` }));
+  }
+});
+
+test("calibration retoma somente os itens restantes do microbloco interrompido", () => {
+  const previous = developmentExercises.filter((exercise) => exercise.learningPackage !== "calibration");
+  const attempts = attemptsFor(previous);
+  const firstBlock = buildRecommendedSession(attempts, undefined, "calibration-partial").filter(
+    (exercise) => exercise.sessionRole === "introduction",
+  );
+  attempts.push(...attemptsFor(firstBlock.slice(0, 2), { sessionId: "calibration-partial" }));
+
+  const resumed = buildRecommendedSession(attempts, undefined, "calibration-resumed").filter(
+    (exercise) => exercise.sessionRole === "introduction",
+  );
+  assert.deepEqual(resumed.map((exercise) => exercise.id), packageIds("calibration", 1, 4).slice(2));
+});
+
+test("erro na introdução de calibration não embaralha a ordem", () => {
+  const previous = developmentExercises.filter((exercise) => exercise.learningPackage !== "calibration");
+  const queue = buildRecommendedSession(attemptsFor(previous), undefined, "calibration-error");
+
+  assert.equal(queue[0].id, "dev-calibration-01");
+  assert.deepEqual(
+    reprioritizeAfterError(queue, 0, queue[0]).map((exercise) => exercise.id),
+    queue.map((exercise) => exercise.id),
+  );
+});
+
+test("treino manual não vaza itens inéditos de calibration", () => {
+  const previous = developmentExercises.filter((exercise) => exercise.learningPackage !== "calibration");
+  const session = buildRecommendedSession(attemptsFor(previous), "integrated-decision", "manual-calibration");
+
+  assert.equal(session.some((exercise) => exercise.learningPackage === "calibration"), false);
+});
+
+test("itens reservados de calibration não entram no treino normal", () => {
+  const reserved = new Set(
+    evaluationExercises
+      .filter((exercise) => exercise.learningPackage === "calibration")
+      .map((exercise) => exercise.id),
+  );
+  assert.equal(reserved.size, 6);
+
+  const session = buildRecommendedSession(attemptsFor(developmentExercises), undefined, "no-calibration-eval");
+  assert.equal(session.some((exercise) => reserved.has(exercise.id)), false);
+});
+
 test("itens reservados de retenção e transferência não entram no treino normal", () => {
   const attempts = attemptsFor(developmentExercises, { sessionId: "all-development-seen" });
   const reservedIds = new Set(evaluationExercises.map((exercise) => exercise.id));

@@ -43,11 +43,11 @@ Checar automaticamente sempre que possível:
 - nenhuma opção vazia;
 - nenhum board inválido se houver parser/validador disponível.
 
-Na V0.4, `range-actions` e `range-to-decision` são os pacotes estruturados: cada um deve ter exatamente as sequências de 1 a 12 entre os exercícios de desenvolvimento. `foundations` não exige `packageSequence`.
+Na V0.5, `range-actions`, `range-to-decision` e `calibration` são os pacotes estruturados: cada um deve ter exatamente as sequências de 1 a 12 entre os exercícios de desenvolvimento. `foundations` não exige `packageSequence`.
 
 ## Teste humano atual
 
-A V0.4 precisa ser validada principalmente nestas perguntas:
+A V0.5 precisa ser validada principalmente nestas perguntas:
 
 - os microblocos aparecem corretamente?
 - as perguntas são claras?
@@ -55,6 +55,15 @@ A V0.4 precisa ser validada principalmente nestas perguntas:
 - a pista ajuda sem entregar?
 - o feedback explica a concepção errada?
 - depois dos exercícios, o jogador começa a perguntar espontaneamente “qual parte do range quero atingir?” e “essas mãos mudam de decisão com o size?”
+- o jogador separa “a ação segue das premissas?” de “há evidência para confiar nas premissas?”;
+- evidência limitada produz atualização proporcional, em vez de certeza, descarte ou inversão extrema;
+- a incerteza leva a uma decisão calibrada, e não à paralisia?
+
+A suíte automatizada possui 27 testes. Para V0.5, ela protege também o bloqueio
+de `calibration` até a apresentação completa de `range-to-decision`, seus três
+microblocos, retomada parcial, estabilidade após erro de introdução, ausência de
+vazamento pelo treino manual, exclusão dos seis itens reservados e o contrato
+estático das sequências 1–12.
 
 ## Build
 

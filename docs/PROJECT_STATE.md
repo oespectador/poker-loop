@@ -1,4 +1,4 @@
-# Project State — baseline V0.4
+# Project State — baseline V0.5
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,16 +15,17 @@ Stack:
 
 ## Versão atual
 
-**V0.4 — Da Leitura à Decisão**
+**V0.5 — Lógica × Calibração**
 
 ### Biblioteca
 
 - 12 exercícios fundadores;
 - 12 exercícios V0.3 — Leitura de Range pelas Ações;
 - 12 exercícios V0.4 — Da Leitura à Decisão;
-- 18 itens reservados de retenção/transferência fora do treino normal.
+- 12 exercícios V0.5 — Lógica × Calibração;
+- 24 itens reservados de retenção/transferência fora do treino normal.
 
-Total ativo após todos os pacotes serem apresentados: **36 exercícios de desenvolvimento**.
+Total ativo após todos os pacotes serem apresentados: **48 exercícios de desenvolvimento**.
 
 ## Pacotes estruturados
 
@@ -32,6 +33,7 @@ Ordem:
 
 1. `range-actions`
 2. `range-to-decision`
+3. `calibration`
 
 Cada pacote tem 12 itens divididos em três microblocos de quatro.
 
@@ -41,6 +43,11 @@ Regras atuais:
 - sessão interrompida no meio retoma apenas os itens restantes do mesmo bloco;
 - erro em item de introdução não embaralha a sequência;
 - itens apresentados passam depois a competir no scheduler adaptativo.
+
+`calibration` separa a coerência entre premissas e ação da força da evidência
+que sustenta essas premissas. O pacote termina em decisões sob incerteza, sem
+criar uma Skill nova: usa principalmente `range-reading` e
+`integrated-decision`, com foco automático amplo em `range-reading`.
 
 ## Motor atual
 
@@ -92,6 +99,8 @@ Evitar `região mais forte`. Para força global usar `range mais forte`; para nu
 - se os estados qualitativos refletem aprendizagem de forma útil;
 - se o scheduler atual reage bem quando a biblioteca ficar muito maior;
 - se o usuário passa espontaneamente a pensar em mãos-alvo/resposta ao size após a V0.4.
+- se o usuário separa lógica e calibração e ainda consegue decidir sob incerteza após a V0.5;
+- se os itens reservados de calibração produzirão retenção ou transferência real quando forem futuramente agendados e testados.
 
 ## Não implementar automaticamente ainda
 
