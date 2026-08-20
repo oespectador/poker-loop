@@ -1,4 +1,4 @@
-# Project State — baseline V0.6.1
+# Project State — baseline V0.7
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.6.1 — Alinhamento entre progressão, Home e Progresso**
+**V0.7 — Sinais Diagnósticos Conservadores**
 
 ### Biblioteca
 
@@ -81,6 +81,21 @@ desenvolvimento com o mesmo conceito e `primarySkill` como fallback.
 O limiar de 24 horas é uma hipótese operacional conservadora, não um intervalo
 de aprendizagem validado nem uma regra `1-3-7-30`. O motor **não é** um sistema
 completo de knowledge tracing, repetição espaçada ou diagnóstico causal.
+
+### Diagnóstico read-only
+
+`lib/diagnostics.ts` resume candidatos a padrões recorrentes sem interferir no
+treino. A análise considera somente tentativas de desenvolvimento registradas
+como independentes. A chave usa `reasoningPattern` e recorre a `concept` apenas
+quando o primeiro não existe; `primarySkill`, `variantGroup` e misconceptions
+não são tratados como causas.
+
+Um sinal `candidate` exige ao menos dois erros, em dois exercícios e duas
+sessões diferentes. `recurring` exige ao menos três erros, em três exercícios e
+duas sessões. Três acertos independentes mais recentes, cobrindo ao menos dois
+exercícios, desativam o sinal por enquanto — uma heurística provisória de
+recuperação, não prova de domínio. Esses limiares são heurísticas do protótipo,
+não medidas validadas, e nenhum sinal altera scheduler, foco, storage ou UI.
 
 ## Persistência
 

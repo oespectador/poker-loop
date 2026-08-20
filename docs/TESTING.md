@@ -73,6 +73,13 @@ inclusive a prioridade de `calibration` sobre o ranking normal, o retorno ao
 ranking depois dos três pacotes, a introdução recomendada de `calibration 01–04`
 e o resumo separado das evidências de retenção e transferência.
 
+Na V0.7, a suíte possui 55 testes. Os 16 testes diagnósticos cobrem os limiares
+de `candidate` e `recurring`, filtros de purpose e support, prioridade de
+`reasoningPattern`, fallback para `concept`, ausência de fallback por
+`primarySkill`, separação de chaves, recuperação recente, determinismo e
+histórico vazio. A camada é exercitada com fixtures mínimas, sem acoplamento à
+posição atual dos exercícios na biblioteca.
+
 ## Build
 
 Se `npm run build` falhar por ambiente/rede, documentar a limitação. Não declarar build bem-sucedida sem tê-la executado.
