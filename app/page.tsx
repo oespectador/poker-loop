@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "./components/AppShell";
-import { chooseFocus, deriveSkillState, hasUnseenRangeActionPackage, hasUnseenRangeToDecisionPackage, skillLabels } from "@/lib/trainingEngine";
+import { chooseFocus, deriveSkillState, getPendingLearningPackage, skillLabels } from "@/lib/trainingEngine";
 import { readAttempts } from "@/lib/storage";
 import type { Attempt, Skill } from "@/lib/types";
 
@@ -18,8 +18,7 @@ export default function TodayPage() {
   const secondary: Skill = focus === "range-reading" ? "board-reading" : "range-reading";
   const focusState = deriveSkillState(attempts, focus);
   const secondaryState = deriveSkillState(attempts, secondary);
-  const rangePackagePending = attempts.length > 0 && hasUnseenRangeActionPackage(attempts);
-  const decisionPackagePending = attempts.length > 0 && !rangePackagePending && hasUnseenRangeToDecisionPackage(attempts);
+  const pendingPackage = attempts.length > 0 ? getPendingLearningPackage(attempts) : undefined;
 
   return (
     <AppShell>
@@ -44,10 +43,12 @@ export default function TodayPage() {
           <p>
             {attempts.length === 0
               ? "Ainda não temos evidência suficiente. Este primeiro treino começa a calibrar o que o app precisa observar."
-              : rangePackagePending
+              : pendingPackage === "range-actions"
                 ? "Há um bloco de leitura de range ainda sem evidência suficiente. Ele entra em microblocos curtos, misturado a revisões do que você já treinou."
-                : decisionPackagePending
+                : pendingPackage === "range-to-decision"
                   ? "O próximo bloco conecta leitura de range a objetivo, mãos-alvo e sizing. Ele entra em microblocos curtos sem antecipar conceitos futuros."
+                  : pendingPackage === "calibration"
+                    ? "O próximo bloco separa duas perguntas: se a decisão segue das premissas e quanto podemos confiar nessas premissas. Ele entra em microblocos curtos antes de o treino voltar à revisão adaptativa."
                   : focusState === "Precisa de reforço"
                   ? "Este foi o ponto mais instável nas tentativas recentes, então ele recebe prioridade na sessão."
                   : "O motor prioriza habilidades com menos evidência ou menor consistência e volta a elas em contextos diferentes."}

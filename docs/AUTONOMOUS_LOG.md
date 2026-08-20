@@ -217,3 +217,33 @@ A suíte passou com 34 testes, além de typecheck, build e `git diff --check`. O
 principal risco é pedagógico: o limiar e a utilidade das avaliações ainda não
 foram validados longitudinalmente. O próximo passo depende de teste humano ao
 longo do tempo; não há decisão técnica pendente para este piloto.
+
+## 2026-08-20 — V0.6.1 Alinhamento entre progressão, Home e Progresso
+
+### Objetivo e hipótese trabalhada
+
+Corrigir a coerência entre a progressão já implementada na V0.6 e as superfícies
+que explicam essa progressão. A hipótese é que uma única consulta pura ao pacote
+pendente evita divergências entre scheduler e Home, enquanto contagens
+descritivas tornam visíveis as avaliações sem confundi-las com `SkillState`.
+
+### Alterações e comportamento
+
+- a consulta ao primeiro pacote pendente foi exposta e `chooseFocus` passou a
+  obter genericamente o foco declarado desse pacote, inclusive `calibration`;
+- depois da apresentação dos três pacotes, o ranking normal de Skills volta a
+  decidir o foco; treino manual, microblocos e bloqueio de inéditos não mudaram;
+- “POR QUE HOJE?” agora usa a mesma consulta e explica o bloco de `calibration`;
+- Progresso substituiu a mensagem obsoleta por contagens separadas de
+  verificações respondidas e corretas de retenção e transferência;
+- o resumo de avaliações usa o exercício relacionado ao `exerciseId`, ignora
+  development e não altera schema, storage nem cálculo do estado-base.
+
+### Validação, riscos e escopo
+
+A suíte passou com 39 testes, incluindo ordem dos pacotes, prioridade sobre o
+ranking, retorno ao ranking, introdução de `calibration 01–04`, separação das
+avaliações e a cobertura preservada de `SkillState`. Typecheck, build e
+`git diff --check` também passaram. Não houve mudança de CSS, conteúdo
+estratégico, exercícios, regras de avaliação, tamanho de sessão ou decisões
+pedagógicas. Não há decisão humana pendente.

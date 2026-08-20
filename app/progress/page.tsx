@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "../components/AppShell";
 import { clearPrototypeProgress, readAttempts } from "@/lib/storage";
-import { deriveSkillState, skillLabels, summarizeSkill } from "@/lib/trainingEngine";
+import { deriveSkillState, skillLabels, summarizeEvaluationEvidence, summarizeSkill } from "@/lib/trainingEngine";
 import type { Attempt, Skill } from "@/lib/types";
 
 const skills = Object.keys(skillLabels) as Skill[];
@@ -19,6 +19,8 @@ export default function ProgressPage() {
     clearPrototypeProgress();
     setAttempts([]);
   }
+
+  const evaluation = summarizeEvaluationEvidence(attempts);
 
   return (
     <AppShell>
@@ -45,9 +47,19 @@ export default function ProgressPage() {
       </section>
 
       <article className="panel note-panel">
-        <div className="eyebrow">AINDA NÃO MEDIDO</div>
-        <h2>Transferência e retenção</h2>
-        <p>Os itens reservados continuam fora do treino normal. O motor adaptativo usa apenas exercícios de desenvolvimento; transferência e retenção serão avaliadas separadamente para não contaminar a medida.</p>
+        <div className="eyebrow">EVIDÊNCIAS DE AVALIAÇÃO</div>
+        <h2>Retenção e transferência</h2>
+        <p>Retenção e transferência são observadas separadamente do estado-base das habilidades.</p>
+        <div className="status-list">
+          <div>
+            <strong>RETENÇÃO</strong>
+            <span>{evaluation.retention.answered === 0 ? "Ainda sem verificações após intervalo." : `${evaluation.retention.answered} verificações realizadas · ${evaluation.retention.correct} corretas.`}</span>
+          </div>
+          <div>
+            <strong>TRANSFERÊNCIA</strong>
+            <span>{evaluation.transfer.answered === 0 ? "Ainda sem verificações em nova superfície." : `${evaluation.transfer.answered} verificações realizadas · ${evaluation.transfer.correct} corretas.`}</span>
+          </div>
+        </div>
       </article>
 
       {attempts.length > 0 && (

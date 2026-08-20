@@ -1,4 +1,4 @@
-# Project State — baseline V0.6
+# Project State — baseline V0.6.1
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.6 — Piloto de Retenção e Transferência**
+**V0.6.1 — Alinhamento entre progressão, Home e Progresso**
 
 ### Biblioteca
 
@@ -43,6 +43,9 @@ Regras atuais:
 - sessão interrompida no meio retoma apenas os itens restantes do mesmo bloco;
 - erro em item de introdução não embaralha a sequência;
 - itens apresentados passam depois a competir no scheduler adaptativo.
+- enquanto houver um pacote pendente, a recomendação usa genericamente o foco
+  declarado para o primeiro pacote da ordem; depois, volta ao ranking normal de
+  Skills.
 
 `calibration` separa a coerência entre premissas e ação da força da evidência
 que sustenta essas premissas. O pacote termina em decisões sob incerteza, sem
@@ -98,8 +101,9 @@ Visual provisório aprovado para continuar testes:
 
 Não investir agora em refinamento visual final.
 
-Retenção e transferência ainda não possuem UI própria; usam o fluxo de exercício
-existente. Suas tentativas permanecem separadas da evidência-base que calcula o
+Retenção e transferência usam o fluxo de exercício existente. O Progresso mostra
+contagens descritivas de verificações e acertos para cada tipo, separadas dos
+cards de Skills. Suas tentativas permanecem fora da evidência-base que calcula o
 `SkillState`.
 
 ## Ajuste editorial já incorporado

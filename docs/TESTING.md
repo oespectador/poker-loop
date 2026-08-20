@@ -59,7 +59,7 @@ A V0.5 precisa ser validada principalmente nestas perguntas:
 - evidência limitada produz atualização proporcional, em vez de certeza, descarte ou inversão extrema;
 - a incerteza leva a uma decisão calibrada, e não à paralisia?
 
-A suíte automatizada possui 34 testes. Para V0.6, ela protege também o bloqueio
+A suíte automatizada possui 39 testes. Para V0.6, ela protege também o bloqueio
 de `calibration` até a apresentação completa de `range-to-decision`, seus três
 microblocos, retomada parcial, estabilidade após erro de introdução, ausência de
 vazamento pelo treino manual e o contrato estático das sequências 1–12. O piloto
@@ -67,6 +67,11 @@ de avaliação cobre o limite de 12 itens, no máximo uma retenção e uma
 transferência, elegibilidade independente em duas sessões, espera de 24 horas
 somente para retenção, apresentação única, suporte independente, determinismo,
 repriorização apenas para development e separação do `SkillState`.
+
+Na V0.6.1, a suíte também protege a seleção genérica do primeiro pacote pendente,
+inclusive a prioridade de `calibration` sobre o ranking normal, o retorno ao
+ranking depois dos três pacotes, a introdução recomendada de `calibration 01–04`
+e o resumo separado das evidências de retenção e transferência.
 
 ## Build
 
