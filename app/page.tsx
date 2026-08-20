@@ -49,6 +49,8 @@ export default function TodayPage() {
                   ? "O próximo bloco conecta leitura de range a objetivo, mãos-alvo e sizing. Ele entra em microblocos curtos sem antecipar conceitos futuros."
                   : pendingPackage === "calibration"
                     ? "O próximo bloco separa duas perguntas: se a decisão segue das premissas e quanto podemos confiar nessas premissas. Ele entra em microblocos curtos antes de o treino voltar à revisão adaptativa."
+                  : pendingPackage === "integrated-application"
+                    ? "O próximo bloco coloca os conceitos anteriores em novas situações: a linha atualiza o range, o objetivo define as mãos-alvo e a evidência define quanto podemos confiar na leitura."
                   : focusState === "Precisa de reforço"
                   ? "Este foi o ponto mais instável nas tentativas recentes, então ele recebe prioridade na sessão."
                   : "O motor prioriza habilidades com menos evidência ou menor consistência e volta a elas em contextos diferentes."}

@@ -10,6 +10,7 @@ const structuredPackages: Readonly<Record<Exclude<LearningPackage, "foundations"
   "range-actions": 12,
   "range-to-decision": 12,
   calibration: 12,
+  "integrated-application": 12,
 };
 
 export function validateExerciseLibrary({

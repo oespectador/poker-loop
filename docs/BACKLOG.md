@@ -68,6 +68,13 @@ Eixos:
 
 Cuidado: fontes live não viram defaults de NL2.
 
+## Entregue na V0.9
+
+- pacote `integrated-application` com 12 development em três microblocos;
+- seis itens reservados de retenção/transferência;
+- novas superfícies diagnósticas pelos padrões existentes, sem novos thresholds;
+- nenhuma afirmação populacional ou teoria estratégica nova.
+
 ## P2 — mais tarde
 
 - avaliar se sinais diagnósticos devem futuramente influenciar escolha de foco ou acionar reensino explícito;

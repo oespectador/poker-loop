@@ -105,7 +105,7 @@ acertos independentes recentes em pelo menos dois exercícios desativam o sinal
 por enquanto. Tanto os limiares quanto essa recuperação são heurísticas
 provisórias do protótipo, não medidas psicométricas ou prova de domínio. Na V0.8,
 `candidate` continua read-only. Somente um sinal `recurring`, depois de
-todos os pacotes estruturados e compatível com o foco já resolvido, pode reservar
+todos os quatro pacotes estruturados e compatível com o foco já resolvido, pode reservar
 um development por sessão. O diagnóstico não escolhe Skill; retention e transfer
 mantêm prioridade, o suporte normal é reutilizado e a recuperação continua sendo
 inferida pelas tentativas recentes, nunca marcada manualmente.
@@ -148,3 +148,7 @@ cálculo do estado-base da Skill. Um acerto isolado de transferência não cria
 ## Fluência
 
 Velocidade vem depois de compreensão e independência. Cronômetro pode futuramente ser usado para treino de fluência, não como pressão obrigatória no aprendizado inicial.
+
+## Aplicação integrada (V0.9)
+
+O quarto pacote estruturado reaplica conceitos existentes em novas superfícies: ações atualizam o range, objetivos definem mãos-alvo e a qualidade da evidência calibra a confiança. Seus 12 development entram em três microblocos de quatro. Enquanto a primeira apresentação estiver pendente, retenção, transferência e reforço diagnóstico permanecem bloqueados; depois, os reasoningPatterns existentes tornam os itens superfícies adaptativas e diagnósticas sem novos thresholds ou estados.

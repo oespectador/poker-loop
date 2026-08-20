@@ -315,3 +315,23 @@ Skills, suporte ou pacotes. `chooseFocus`, `PACKAGE_FOCUS`, ordem dos pacotes e
 `SkillState` permaneceram inalterados. O próximo passo, não implementado, é
 avaliar se sinais diagnósticos devem futuramente influenciar escolha de foco ou
 acionar reensino explícito.
+
+## 2026-08-20 — V0.9 Aplicação Integrada em Novas Superfícies
+
+### Objetivo e hipótese trabalhada
+
+Expandir a biblioteca com superfícies de aplicação, discriminação e integração dos conceitos já estabelecidos, sem ampliar o motor nem introduzir nova teoria estratégica. A hipótese é que encadear ação, range, objetivo, mãos-alvo e qualidade da evidência oferece prática integrada reutilizando a semântica diagnóstica existente.
+
+### Alterações e comportamento
+
+- `integrated-application` é o quarto pacote estruturado, depois de `calibration`;
+- 12 development entram em `01–04`, `05–08` e `09–12`, com foco automático `integrated-decision`;
+- seis itens independentes ficam reservados: três retention e três transfer;
+- a biblioteca passa a 60 development e 30 itens reservados;
+- retention, transfer e reforço diagnóstico ficam bloqueados durante a primeira apresentação e voltam a ser elegíveis depois;
+- os novos development reutilizam `reasoningPattern`, concepts e regras diagnósticas existentes, sem alteração de thresholds;
+- a Home ganhou somente a copy contextual de “POR QUE HOJE?”.
+
+### Validação, riscos e escopo
+
+A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram executados na validação final. As respostas dependem apenas de premissas explícitas e princípios existentes; nenhuma afirmação populacional, frequência de solver ou tendência de NL2 foi adicionada. Não houve mudança de UI além da copy, nem mudança em CSS, storage, schema, `Attempt`, `SkillState`, Skills ou algoritmo de spacing. Não há decisão humana pendente.

@@ -1,4 +1,4 @@
-# Project State — baseline V0.8
+# Project State — baseline V0.9
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.8 — Reforço Diagnóstico Controlado**
+**V0.9 — Aplicação Integrada em Novas Superfícies**
 
 ### Biblioteca
 
@@ -23,9 +23,10 @@ Stack:
 - 12 exercícios V0.3 — Leitura de Range pelas Ações;
 - 12 exercícios V0.4 — Da Leitura à Decisão;
 - 12 exercícios V0.5 — Lógica × Calibração;
-- 24 itens reservados de retenção/transferência fora do treino normal.
+- 12 exercícios V0.9 — Aplicação Integrada em Novas Superfícies;
+- 30 itens reservados de retenção/transferência fora do treino normal.
 
-Total ativo após todos os pacotes serem apresentados: **48 exercícios de desenvolvimento**.
+Total ativo após todos os pacotes serem apresentados: **60 exercícios de desenvolvimento**.
 
 ## Pacotes estruturados
 
@@ -34,6 +35,7 @@ Ordem:
 1. `range-actions`
 2. `range-to-decision`
 3. `calibration`
+4. `integrated-application`
 
 Cada pacote tem 12 itens divididos em três microblocos de quatro.
 
@@ -69,7 +71,7 @@ Comportamentos já implementados:
 - repriorização de variação após erro somente fora de introdução;
 - progresso conservador por habilidade.
 
-Depois da apresentação completa dos três pacotes estruturados, uma sessão pode
+Depois da apresentação completa dos quatro pacotes estruturados, uma sessão pode
 incluir no máximo um item elegível de retenção e um de transferência, sem passar
 de 12 decisões. Cada item reservado aparece no máximo uma vez neste piloto.
 
@@ -97,7 +99,7 @@ exercícios, desativam o sinal por enquanto — uma heurística provisória de
 recuperação, não prova de domínio. Esses limiares são heurísticas do protótipo,
 não medidas validadas. `candidate` permanece read-only.
 
-Somente depois da apresentação completa dos três pacotes, o primeiro sinal
+Somente depois da apresentação completa dos quatro pacotes, o primeiro sinal
 `recurring` compatível com o foco já escolhido pode reservar um único exercício
 development relacionado. A seleção evita a superfície da tentativa mais recente
 quando existe alternativa, prefere a menos recentemente respondida e usa a ordem

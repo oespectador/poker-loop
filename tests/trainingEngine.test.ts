@@ -64,7 +64,7 @@ test("a primeira sessão contém os 12 exercícios fundadores em ordem", () => {
   );
 });
 
-test("pacote pendente respeita range-actions → range-to-decision → calibration", () => {
+test("pacote pendente respeita a ordem global dos quatro pacotes", () => {
   const attempts = attemptsFor(founders);
   assert.equal(getPendingLearningPackage(attempts), "range-actions");
 
@@ -75,6 +75,9 @@ test("pacote pendente respeita range-actions → range-to-decision → calibrati
   assert.equal(getPendingLearningPackage(attempts), "calibration");
 
   attempts.push(...attemptsFor(packageExercises("calibration"), { sessionId: "calibration" }));
+  assert.equal(getPendingLearningPackage(attempts), "integrated-application");
+
+  attempts.push(...attemptsFor(packageExercises("integrated-application"), { sessionId: "integrated-application" }));
   assert.equal(getPendingLearningPackage(attempts), undefined);
 });
 
@@ -571,4 +574,103 @@ test("a biblioteca possui IDs únicos e cada resposta correta existe nas opçõe
       `${exercise.id}: correctOptionId ausente das opções`,
     );
   }
+});
+
+test("integrated-application fica por último e bloqueado até calibration completo", () => {
+  const beforeCalibrationEnds = developmentExercises.filter(
+    (exercise) => exercise.learningPackage !== "integrated-application" && exercise.id !== "dev-calibration-12",
+  );
+  assert.equal(getPendingLearningPackage(attemptsFor(beforeCalibrationEnds)), "calibration");
+  const throughCalibration = developmentExercises.filter(
+    (exercise) => exercise.learningPackage !== "integrated-application",
+  );
+  assert.equal(getPendingLearningPackage(attemptsFor(throughCalibration)), "integrated-application");
+});
+
+test("integrated-application é introduzido nos três microblocos em ordem", () => {
+  const previous = developmentExercises.filter(
+    (exercise) => exercise.learningPackage !== "integrated-application",
+  );
+  const attempts = attemptsFor(previous, { sessionId: "before-application" });
+  for (const [start, end] of [[1, 4], [5, 8], [9, 12]] as const) {
+    const introductions = buildRecommendedSession(attempts, undefined, `application-${start}`).filter(
+      (exercise) => exercise.sessionRole === "introduction",
+    );
+    assert.deepEqual(introductions.map(({ id }) => id), packageIds("integrated-application", start, end));
+    attempts.push(...attemptsFor(introductions, { sessionId: `application-${start}` }));
+  }
+});
+
+test("integrated-application retoma microbloco parcial e erro não o embaralha", () => {
+  const previous = developmentExercises.filter(
+    (exercise) => exercise.learningPackage !== "integrated-application",
+  );
+  const attempts = attemptsFor(previous);
+  const block = buildRecommendedSession(attempts, undefined, "application-partial").filter(
+    (exercise) => exercise.sessionRole === "introduction",
+  );
+  assert.deepEqual(reprioritizeAfterError(block, 0, block[0]).map(({ id }) => id), block.map(({ id }) => id));
+  attempts.push(...attemptsFor(block.slice(0, 2), { sessionId: "application-partial" }));
+  const resumed = buildRecommendedSession(attempts, undefined, "application-resumed").filter(
+    (exercise) => exercise.sessionRole === "introduction",
+  );
+  assert.deepEqual(resumed.map(({ id }) => id), packageIds("integrated-application", 1, 4).slice(2));
+});
+
+test("treino manual não vaza integrated-application inédito", () => {
+  const previous = developmentExercises.filter(
+    (exercise) => exercise.learningPackage !== "integrated-application",
+  );
+  const session = buildRecommendedSession(attemptsFor(previous), "sizing", "manual-application");
+  assert.equal(session.some((exercise) => exercise.learningPackage === "integrated-application"), false);
+});
+
+test("avaliação e reforço ficam bloqueados durante a introdução de integrated-application", () => {
+  const incomplete = developmentExercises.filter(({ id }) => id !== "dev-application-12");
+  const family = packageExercises("integrated-application").filter(
+    ({ reasoningPattern, primarySkill }) => reasoningPattern === "action-updates-range" && primarySkill === "range-reading",
+  );
+  const attempts = [...attemptsFor(incomplete), ...diagnosticErrors(family)];
+  const session = buildRecommendedSession(attempts, undefined, "application-pending", NOW);
+  assert.ok(session.some(({ sessionRole }) => sessionRole === "introduction"));
+  assert.ok(session.every(({ purpose }) => purpose === "development"));
+  assert.equal(session[0]?.id, "dev-application-12");
+});
+
+test("após integrated-application, avaliações e novas superfícies diagnósticas são elegíveis", () => {
+  const reserved = evaluationExercises.find(({ id }) => id === "transfer-application-01");
+  assert.ok(reserved);
+  const family = packageExercises("integrated-application").filter(
+    ({ reasoningPattern, primarySkill }) => reasoningPattern === "action-updates-range" && primarySkill === "range-reading",
+  );
+  const attempts = [
+    ...completedDevelopmentAttempts(),
+    ...evidenceFor(reserved),
+    ...diagnosticErrors(family, 3, 10),
+  ];
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === reserved.id), true);
+  const selected = selectDiagnosticReinforcement(attempts, "range-reading");
+  assert.ok(selected && selected.learningPackage === "integrated-application");
+});
+
+test("V0.9 possui 60 development, 30 reservados e exatamente seis avaliações de aplicação", () => {
+  const applicationEvaluations = evaluationExercises.filter(
+    ({ learningPackage }) => learningPackage === "integrated-application",
+  );
+  assert.equal(developmentExercises.length, 60);
+  assert.equal(evaluationExercises.length, 30);
+  assert.equal(applicationEvaluations.length, 6);
+  assert.deepEqual(
+    applicationEvaluations.map(({ purpose }) => purpose).sort(),
+    ["retention", "retention", "retention", "transfer", "transfer", "transfer"],
+  );
+  assert.ok(applicationEvaluations.every(({ support, packageSequence }) => support === "independent" && packageSequence === undefined));
+});
+
+test("V0.9 mantém determinismo e limite de 12 itens", () => {
+  const attempts = completedDevelopmentAttempts();
+  const first = buildRecommendedSession(attempts, "integrated-decision", "v09-stable", NOW);
+  const second = buildRecommendedSession(attempts, "integrated-decision", "v09-stable", NOW);
+  assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
+  assert.ok(first.length <= 12);
 });

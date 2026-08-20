@@ -114,3 +114,16 @@ test("independent é sempre registrado como independent", () => {
   assert.equal(attemptSupport(exercise({ support: "independent" }), false), "independent");
   assert.equal(attemptSupport(exercise({ support: "independent" }), true), "independent");
 });
+
+test("validador exige 12 itens e sequência 1–12 em integrated-application", () => {
+  const application = developmentExercises.filter(
+    (exercise) => exercise.learningPackage === "integrated-application",
+  );
+  assert.equal(application.length, 12);
+  assert.deepEqual(application.map(({ packageSequence }) => packageSequence), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+
+  const missing = developmentExercises.filter(({ id }) => id !== "dev-application-12");
+  const errors = validateExerciseLibrary(collections(missing, evaluationExercises));
+  assert.ok(errors.some((error) => error.includes("integrated-application: quantidade de itens 11; esperado 12")));
+  assert.ok(errors.some((error) => error.includes("integrated-application: packageSequence faltando: 12")));
+});
