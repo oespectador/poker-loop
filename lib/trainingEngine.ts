@@ -45,7 +45,7 @@ export function hasUnseenRangeToDecisionPackage(attempts: Attempt[]): boolean {
   return hasUnseenPackage(attempts, "range-to-decision");
 }
 
-function pendingLearningPackage(attempts: Attempt[]): LearningPackage | undefined {
+export function getPendingLearningPackage(attempts: Attempt[]): LearningPackage | undefined {
   return LEARNING_PACKAGE_ORDER.find((packageName) => hasUnseenPackage(attempts, packageName));
 }
 
@@ -86,7 +86,7 @@ function unansweredEvaluationExercises(attempts: Attempt[], purpose: "retention"
 }
 
 export function eligibleRetentionExercises(attempts: Attempt[], now = Date.now()): Exercise[] {
-  if (pendingLearningPackage(attempts)) return [];
+  if (getPendingLearningPackage(attempts)) return [];
 
   return unansweredEvaluationExercises(attempts, "retention").filter((exercise) => {
     const evidence = hasIndependentBaseEvidence(exercise, attempts);
@@ -95,7 +95,7 @@ export function eligibleRetentionExercises(attempts: Attempt[], now = Date.now()
 }
 
 export function eligibleTransferExercises(attempts: Attempt[]): Exercise[] {
-  if (pendingLearningPackage(attempts)) return [];
+  if (getPendingLearningPackage(attempts)) return [];
   return unansweredEvaluationExercises(attempts, "transfer").filter(
     (exercise) => hasIndependentBaseEvidence(exercise, attempts).sufficient,
   );
@@ -269,7 +269,7 @@ export function buildRecommendedSession(
   }
 
   const resolvedFocus = focus ?? chooseFocus(attempts);
-  const pendingPackage = pendingLearningPackage(attempts);
+  const pendingPackage = getPendingLearningPackage(attempts);
   const pendingFocus = pendingPackage ? PACKAGE_FOCUS[pendingPackage] : undefined;
   const unseenPackage = pendingPackage ? unseenPackageExercises(attempts, pendingPackage) : [];
   const pendingIntroBlock = pendingPackage ? currentIntroBlock(attempts, pendingPackage) : [];
@@ -400,6 +400,22 @@ export function summarizeSkill(attempts: Attempt[], skill: Skill) {
   };
 }
 
+export function summarizeEvaluationEvidence(attempts: Attempt[]) {
+  const summary = {
+    retention: { answered: 0, correct: 0 },
+    transfer: { answered: 0, correct: 0 },
+  };
+
+  for (const attempt of attempts) {
+    const purpose = exerciseById.get(attempt.exerciseId)?.purpose;
+    if (purpose !== "retention" && purpose !== "transfer") continue;
+    summary[purpose].answered += 1;
+    if (attempt.correct) summary[purpose].correct += 1;
+  }
+
+  return summary;
+}
+
 export function deriveSkillState(attempts: Attempt[], skill: Skill): SkillState {
   const stats = summarizeSkill(attempts, skill);
   if (stats.encounters === 0) return "Ainda observando";
@@ -431,8 +447,8 @@ export function chooseFocus(attempts: Attempt[]): Skill {
   // Pacotes estruturados recebem prioridade na recomendação até a primeira
   // apresentação estar completa. O usuário ainda pode escolher outra habilidade
   // manualmente em Treinar sem fazer conceitos futuros vazarem fora de ordem.
-  if (hasUnseenRangeActionPackage(attempts)) return "range-reading";
-  if (hasUnseenRangeToDecisionPackage(attempts)) return "integrated-decision";
+  const pendingPackage = getPendingLearningPackage(attempts);
+  if (pendingPackage) return PACKAGE_FOCUS[pendingPackage] ?? "range-reading";
 
   const ranked = skills.map((skill) => {
     const stats = summarizeSkill(attempts, skill);

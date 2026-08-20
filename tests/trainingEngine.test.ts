@@ -4,11 +4,14 @@ import test from "node:test";
 import { allExercises, developmentExercises, evaluationExercises } from "../lib/exercises";
 import {
   buildRecommendedSession,
+  chooseFocus,
   deriveSkillState,
   eligibleRetentionExercises,
   eligibleTransferExercises,
+  getPendingLearningPackage,
   relatedDevelopmentExercises,
   reprioritizeAfterError,
+  summarizeEvaluationEvidence,
 } from "../lib/trainingEngine";
 import type { Attempt, Exercise, Skill } from "../lib/types";
 
@@ -44,6 +47,10 @@ function packageIds(packageName: Exercise["learningPackage"], start: number, end
 
 const founders = developmentExercises.slice(0, 12);
 
+function packageExercises(packageName: Exercise["learningPackage"]): Exercise[] {
+  return developmentExercises.filter((exercise) => exercise.learningPackage === packageName);
+}
+
 test("a primeira sessão contém os 12 exercícios fundadores em ordem", () => {
   const session = buildRecommendedSession([], undefined, "first-session");
 
@@ -52,6 +59,51 @@ test("a primeira sessão contém os 12 exercícios fundadores em ordem", () => {
     session.map((exercise) => exercise.id),
     founders.map((exercise) => exercise.id),
   );
+});
+
+test("pacote pendente respeita range-actions → range-to-decision → calibration", () => {
+  const attempts = attemptsFor(founders);
+  assert.equal(getPendingLearningPackage(attempts), "range-actions");
+
+  attempts.push(...attemptsFor(packageExercises("range-actions"), { sessionId: "range-actions" }));
+  assert.equal(getPendingLearningPackage(attempts), "range-to-decision");
+
+  attempts.push(...attemptsFor(packageExercises("range-to-decision"), { sessionId: "range-to-decision" }));
+  assert.equal(getPendingLearningPackage(attempts), "calibration");
+
+  attempts.push(...attemptsFor(packageExercises("calibration"), { sessionId: "calibration" }));
+  assert.equal(getPendingLearningPackage(attempts), undefined);
+});
+
+test("chooseFocus prioriza o foco de calibration sobre o ranking normal", () => {
+  const previousPackages = developmentExercises.filter(
+    (exercise) => exercise.learningPackage !== "calibration",
+  );
+  const attempts = attemptsFor(previousPackages);
+  const weakBoard = founders.find((exercise) => exercise.primarySkill === "board-reading");
+  assert.ok(weakBoard);
+  attempts.push(...attemptsFor([weakBoard, weakBoard], { correct: false, sessionId: "weak-board" }));
+
+  assert.equal(getPendingLearningPackage(attempts), "calibration");
+  assert.equal(chooseFocus(attempts), "range-reading");
+});
+
+test("chooseFocus volta ao ranking normal depois de todos os pacotes", () => {
+  assert.equal(getPendingLearningPackage(attemptsFor(developmentExercises)), undefined);
+  assert.equal(chooseFocus(attemptsFor(developmentExercises)), "board-reading");
+});
+
+test("sessão recomendada pelo foco automático introduz calibration 01–04", () => {
+  const attempts = attemptsFor(
+    developmentExercises.filter((exercise) => exercise.learningPackage !== "calibration"),
+  );
+  const focus = chooseFocus(attempts);
+  const introductions = buildRecommendedSession(attempts, focus, "recommended-calibration").filter(
+    (exercise) => exercise.sessionRole === "introduction",
+  );
+
+  assert.equal(focus, "range-reading");
+  assert.deepEqual(introductions.map(({ id }) => id), packageIds("calibration", 1, 4));
 });
 
 test("range-actions é introduzido em microblocos sequenciais 01–04, 05–08 e 09–12", () => {
@@ -332,6 +384,23 @@ test("tentativas de transfer não alteram o estado-base da Skill", () => {
   const failedTransfer = attemptsFor([item], { correct: false, sessionId: "failed-transfer" });
   assert.equal(deriveSkillState([...base, ...failedTransfer], item.primarySkill), "Consistente");
   assert.equal(deriveSkillState(attemptsFor([item], { sessionId: "only-transfer" }), item.primarySkill), "Ainda observando");
+});
+
+test("resumo de avaliação separa retention de transfer", () => {
+  const retention = evaluationExercises.find((exercise) => exercise.purpose === "retention");
+  const transfer = evaluationExercises.find((exercise) => exercise.purpose === "transfer");
+  assert.ok(retention && transfer);
+  const attempts = [
+    ...attemptsFor([retention], { sessionId: "retention-correct" }),
+    ...attemptsFor([retention], { correct: false, sessionId: "retention-wrong" }),
+    ...attemptsFor([transfer], { sessionId: "transfer-correct" }),
+    ...attemptsFor([founders[0]], { sessionId: "development-ignored" }),
+  ];
+
+  assert.deepEqual(summarizeEvaluationEvidence(attempts), {
+    retention: { answered: 2, correct: 1 },
+    transfer: { answered: 1, correct: 1 },
+  });
 });
 
 test("erro de evaluation só pode repriorizar um exercício development", () => {
