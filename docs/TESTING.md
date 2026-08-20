@@ -25,7 +25,7 @@ Qualquer teste/refatoração deve preservar:
 4. erro em primeira apresentação não embaralha o bloco;
 5. itens inéditos de pacote não entram por treino manual/adaptive fill;
 6. pacote posterior fica bloqueado enquanto anterior tem inéditos;
-7. itens reservados de retenção/transferência não entram no treino normal;
+7. itens reservados de retenção/transferência não entram antes da conclusão dos pacotes;
 8. revisão pode variar ordem sem destruir prioridade pedagógica;
 9. progresso não deve virar `Consistente` por um único acerto/sessão;
 10. histórico deve persistir resposta a resposta.
@@ -59,11 +59,14 @@ A V0.5 precisa ser validada principalmente nestas perguntas:
 - evidência limitada produz atualização proporcional, em vez de certeza, descarte ou inversão extrema;
 - a incerteza leva a uma decisão calibrada, e não à paralisia?
 
-A suíte automatizada possui 27 testes. Para V0.5, ela protege também o bloqueio
+A suíte automatizada possui 34 testes. Para V0.6, ela protege também o bloqueio
 de `calibration` até a apresentação completa de `range-to-decision`, seus três
 microblocos, retomada parcial, estabilidade após erro de introdução, ausência de
-vazamento pelo treino manual, exclusão dos seis itens reservados e o contrato
-estático das sequências 1–12.
+vazamento pelo treino manual e o contrato estático das sequências 1–12. O piloto
+de avaliação cobre o limite de 12 itens, no máximo uma retenção e uma
+transferência, elegibilidade independente em duas sessões, espera de 24 horas
+somente para retenção, apresentação única, suporte independente, determinismo,
+repriorização apenas para development e separação do `SkillState`.
 
 ## Build
 

@@ -1,4 +1,4 @@
-import { allExercises, developmentExercises } from "./exercises";
+import { allExercises, developmentExercises, evaluationExercises } from "./exercises";
 import type { Attempt, Exercise, LearningPackage, Skill, SkillState, SupportLevel } from "./types";
 
 export const skillLabels: Record<Skill, string> = {
@@ -11,6 +11,7 @@ export const skillLabels: Record<Skill, string> = {
 const exerciseById = new Map(allExercises.map((exercise) => [exercise.id, exercise]));
 
 const INTRO_BLOCK_SIZE = 4;
+const RETENTION_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 const LEARNING_PACKAGE_ORDER: LearningPackage[] = ["range-actions", "range-to-decision", "calibration"];
 
@@ -46,6 +47,62 @@ export function hasUnseenRangeToDecisionPackage(attempts: Attempt[]): boolean {
 
 function pendingLearningPackage(attempts: Attempt[]): LearningPackage | undefined {
   return LEARNING_PACKAGE_ORDER.find((packageName) => hasUnseenPackage(attempts, packageName));
+}
+
+function developmentAttempts(attempts: Attempt[]): Attempt[] {
+  return attempts.filter((attempt) => exerciseById.get(attempt.exerciseId)?.purpose === "development");
+}
+
+export function relatedDevelopmentExercises(evaluation: Exercise): Exercise[] {
+  const sameConcept = evaluation.concept
+    ? developmentExercises.filter((exercise) => exercise.concept === evaluation.concept)
+    : [];
+
+  return sameConcept.length
+    ? sameConcept
+    : developmentExercises.filter((exercise) => exercise.primarySkill === evaluation.primarySkill);
+}
+
+function hasIndependentBaseEvidence(evaluation: Exercise, attempts: Attempt[]) {
+  const relatedIds = new Set(relatedDevelopmentExercises(evaluation).map((exercise) => exercise.id));
+  const evidence = attempts.filter(
+    (attempt) =>
+      relatedIds.has(attempt.exerciseId) && attempt.correct && attempt.support === "independent",
+  );
+
+  return {
+    sufficient: evidence.length >= 2 && new Set(evidence.map((attempt) => attempt.sessionId)).size >= 2,
+    latestAt: evidence.length
+      ? Math.max(...evidence.map((attempt) => timestampValue(attempt.timestamp)))
+      : 0,
+  };
+}
+
+function unansweredEvaluationExercises(attempts: Attempt[], purpose: "retention" | "transfer") {
+  const answeredIds = new Set(attempts.map((attempt) => attempt.exerciseId));
+  return evaluationExercises.filter(
+    (exercise) => exercise.purpose === purpose && !answeredIds.has(exercise.id),
+  );
+}
+
+export function eligibleRetentionExercises(attempts: Attempt[], now = Date.now()): Exercise[] {
+  if (pendingLearningPackage(attempts)) return [];
+
+  return unansweredEvaluationExercises(attempts, "retention").filter((exercise) => {
+    const evidence = hasIndependentBaseEvidence(exercise, attempts);
+    return evidence.sufficient && evidence.latestAt > 0 && now - evidence.latestAt >= RETENTION_INTERVAL_MS;
+  });
+}
+
+export function eligibleTransferExercises(attempts: Attempt[]): Exercise[] {
+  if (pendingLearningPackage(attempts)) return [];
+  return unansweredEvaluationExercises(attempts, "transfer").filter(
+    (exercise) => hasIndependentBaseEvidence(exercise, attempts).sufficient,
+  );
+}
+
+function selectEvaluation(items: Exercise[], focus?: Skill): Exercise | undefined {
+  return items.find((exercise) => exercise.primarySkill === focus) ?? items[0];
 }
 
 function unseenPackageExercises(attempts: Attempt[], packageName: LearningPackage): Exercise[] {
@@ -204,6 +261,7 @@ export function buildRecommendedSession(
   attempts: Attempt[] = [],
   focus?: Skill,
   sessionSeed = "default-session",
+  now = Date.now(),
 ): Exercise[] {
   // Primeiro contato: mantém o pacote fundador em sequência e limita a sessão a 12 decisões.
   if (!attempts.length) {
@@ -261,10 +319,16 @@ export function buildRecommendedSession(
       support: getActualSupport(exercise, attempts),
     }));
 
-  const fillCount = Math.max(0, 12 - introBlock.length);
+  const evaluationItems = pendingPackage
+    ? []
+    : [
+        selectEvaluation(eligibleRetentionExercises(attempts, now), resolvedFocus),
+        selectEvaluation(eligibleTransferExercises(attempts), resolvedFocus),
+      ].filter((exercise): exercise is Exercise => Boolean(exercise));
+  const fillCount = Math.max(0, 12 - introBlock.length - evaluationItems.length);
   const adaptiveFill = diversifyOrder(scored).slice(0, fillCount);
 
-  return [...introBlock, ...adaptiveFill];
+  return [...introBlock, ...evaluationItems, ...adaptiveFill];
 }
 
 export function reprioritizeAfterError(
@@ -284,6 +348,7 @@ export function reprioritizeAfterError(
   let futureIndex = next.findIndex(
     (exercise, index) =>
       index >= searchStart &&
+      exercise.purpose === "development" &&
       exercise.id !== failedExercise.id &&
       Boolean(failedExercise.variantGroup) &&
       exercise.variantGroup === failedExercise.variantGroup,
@@ -294,6 +359,7 @@ export function reprioritizeAfterError(
     futureIndex = next.findIndex(
       (exercise, index) =>
         index >= searchStart &&
+        exercise.purpose === "development" &&
         exercise.id !== failedExercise.id &&
         exercise.primarySkill === failedExercise.primarySkill,
     );
@@ -308,7 +374,9 @@ export function reprioritizeAfterError(
 }
 
 export function summarizeSkill(attempts: Attempt[], skill: Skill) {
-  const items = sortAttempts(attempts.filter((attempt) => attempt.primarySkill === skill));
+  const items = sortAttempts(
+    developmentAttempts(attempts).filter((attempt) => attempt.primarySkill === skill),
+  );
   const independent = items.filter((attempt) => attempt.support === "independent");
   const correct = items.filter((attempt) => attempt.correct).length;
   const independentCorrectItems = independent.filter((attempt) => attempt.correct);
@@ -356,6 +424,7 @@ export function deriveSkillState(attempts: Attempt[], skill: Skill): SkillState 
 }
 
 export function chooseFocus(attempts: Attempt[]): Skill {
+  attempts = developmentAttempts(attempts);
   const skills = Object.keys(skillLabels) as Skill[];
   if (attempts.length === 0) return "range-reading";
 

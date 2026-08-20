@@ -2,7 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { allExercises, developmentExercises, evaluationExercises } from "../lib/exercises";
-import { buildRecommendedSession, reprioritizeAfterError } from "../lib/trainingEngine";
+import {
+  buildRecommendedSession,
+  deriveSkillState,
+  eligibleRetentionExercises,
+  eligibleTransferExercises,
+  relatedDevelopmentExercises,
+  reprioritizeAfterError,
+} from "../lib/trainingEngine";
 import type { Attempt, Exercise, Skill } from "../lib/types";
 
 function attemptsFor(
@@ -227,13 +234,128 @@ test("itens reservados de calibration não entram no treino normal", () => {
   assert.equal(session.some((exercise) => reserved.has(exercise.id)), false);
 });
 
-test("itens reservados de retenção e transferência não entram no treino normal", () => {
-  const attempts = attemptsFor(developmentExercises, { sessionId: "all-development-seen" });
+test("itens reservados de retenção e transferência não entram antes de calibration terminar", () => {
+  const incomplete = developmentExercises.filter((exercise) => exercise.id !== "dev-calibration-12");
+  const attempts = attemptsFor(incomplete, { sessionId: "development-incomplete" });
   const reservedIds = new Set(evaluationExercises.map((exercise) => exercise.id));
   const session = buildRecommendedSession(attempts, undefined, "normal-training");
 
   assert.equal(session.some((exercise) => reservedIds.has(exercise.id)), false);
   assert.ok(session.every((exercise) => exercise.purpose === "development"));
+});
+
+const NOW = Date.UTC(2026, 5, 10, 12);
+
+function completedDevelopmentAttempts(): Attempt[] {
+  return attemptsFor(developmentExercises, { sessionId: "all-development-seen" });
+}
+
+function evidenceFor(evaluation: Exercise, latestAt = NOW): Attempt[] {
+  const related = relatedDevelopmentExercises(evaluation);
+  assert.ok(related.length > 0);
+  return [0, 1].map((offset) => ({
+    id: `evidence-${evaluation.id}-${offset}`,
+    exerciseId: related[offset % related.length].id,
+    sessionId: `evidence-session-${offset}`,
+    primarySkill: related[offset % related.length].primarySkill,
+    answerId: related[offset % related.length].correctOptionId,
+    correct: true,
+    support: "independent" as const,
+    timestamp: new Date(latestAt - offset * 60_000).toISOString(),
+  }));
+}
+
+test("sessão piloto respeita 12 itens e no máximo um item de cada avaliação", () => {
+  const retention = evaluationExercises.find((item) => item.purpose === "retention");
+  const transfer = evaluationExercises.find((item) => item.purpose === "transfer");
+  assert.ok(retention && transfer);
+  const attempts = [
+    ...completedDevelopmentAttempts(),
+    ...evidenceFor(retention, NOW - 24 * 60 * 60 * 1000),
+    ...evidenceFor(transfer),
+  ];
+  const session = buildRecommendedSession(attempts, undefined, "pilot", NOW);
+
+  assert.equal(session.length, 12);
+  assert.ok(session.filter((item) => item.purpose === "retention").length <= 1);
+  assert.ok(session.filter((item) => item.purpose === "transfer").length <= 1);
+});
+
+test("retention exige 24h e dois acertos independentes em sessões diferentes", () => {
+  const item = evaluationExercises.find((exercise) => exercise.purpose === "retention");
+  assert.ok(item);
+  const base = completedDevelopmentAttempts();
+  const tooRecent = [...base, ...evidenceFor(item, NOW - 24 * 60 * 60 * 1000 + 1)];
+  const eligible = [...base, ...evidenceFor(item, NOW - 24 * 60 * 60 * 1000)];
+
+  assert.equal(eligibleRetentionExercises(tooRecent, NOW).some(({ id }) => id === item.id), false);
+  assert.equal(eligibleRetentionExercises(eligible, NOW).some(({ id }) => id === item.id), true);
+});
+
+test("transfer pode ser elegível imediatamente com evidência independente suficiente", () => {
+  const item = evaluationExercises.find((exercise) => exercise.purpose === "transfer");
+  assert.ok(item);
+  const attempts = [...completedDevelopmentAttempts(), ...evidenceFor(item, NOW)];
+
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === item.id), true);
+});
+
+test("evaluation respondido não reaparece e mantém support independent", () => {
+  const item = evaluationExercises.find((exercise) => exercise.purpose === "transfer");
+  assert.ok(item);
+  const attempts = [...completedDevelopmentAttempts(), ...evidenceFor(item, NOW)];
+  const first = buildRecommendedSession(attempts, item.primarySkill, "evaluation-once", NOW);
+  const selected = first.find((exercise) => exercise.id === item.id);
+  assert.ok(selected);
+  assert.equal(selected.support, "independent");
+
+  const answered = attemptsFor([item], { correct: false, sessionId: "evaluation-answer" });
+  assert.equal(eligibleTransferExercises([...attempts, ...answered]).some(({ id }) => id === item.id), false);
+});
+
+test("tentativas de transfer não alteram o estado-base da Skill", () => {
+  const item = evaluationExercises.find((exercise) => exercise.purpose === "transfer");
+  assert.ok(item);
+  const related = relatedDevelopmentExercises(item).slice(0, 2);
+  assert.equal(related.length, 2);
+  const base = Array.from({ length: 4 }, (_, index) => {
+    const exercise = related[index % 2];
+    return {
+      ...attemptsFor([exercise], { sessionId: `consistent-${index % 2}` })[0],
+      id: `consistent-${index}`,
+      support: "independent" as const,
+      timestamp: new Date(NOW - (4 - index) * 60_000).toISOString(),
+    };
+  });
+  assert.equal(deriveSkillState(base, item.primarySkill), "Consistente");
+
+  const failedTransfer = attemptsFor([item], { correct: false, sessionId: "failed-transfer" });
+  assert.equal(deriveSkillState([...base, ...failedTransfer], item.primarySkill), "Consistente");
+  assert.equal(deriveSkillState(attemptsFor([item], { sessionId: "only-transfer" }), item.primarySkill), "Ainda observando");
+});
+
+test("erro de evaluation só pode repriorizar um exercício development", () => {
+  const evaluations = evaluationExercises.slice(0, 2);
+  const development = developmentExercises.find(
+    (exercise) => exercise.primarySkill === evaluations[0].primarySkill,
+  );
+  assert.ok(development);
+  const queue = [evaluations[0], evaluations[1], development];
+  const reprioritized = reprioritizeAfterError(queue, 0, evaluations[0]);
+
+  assert.equal(reprioritized[2].purpose, "development");
+});
+
+test("seleção piloto é determinística para os mesmos inputs e now", () => {
+  const item = evaluationExercises.find((exercise) => exercise.purpose === "retention");
+  assert.ok(item);
+  const attempts = [
+    ...completedDevelopmentAttempts(),
+    ...evidenceFor(item, NOW - 24 * 60 * 60 * 1000),
+  ];
+  const first = buildRecommendedSession(attempts, undefined, "stable-seed", NOW);
+  const second = buildRecommendedSession(attempts, undefined, "stable-seed", NOW);
+  assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
 });
 
 test("a biblioteca possui IDs únicos e cada resposta correta existe nas opções", () => {
