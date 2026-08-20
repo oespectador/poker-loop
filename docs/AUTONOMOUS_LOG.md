@@ -359,3 +359,11 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Riscos conhecidos:** completude depende deliberadamente da biblioteca atual e de qualquer tentativa registrada para cada ID, não da posição ordinal do pacote.
 - **Decisões humanas pendentes:** nenhuma.
 - **Escopo preservado:** thresholds, recuperação diagnóstica, conteúdo, UI, storage, schema, ordem dos pacotes, microblocos, limite e determinismo não mudaram.
+
+## 2026-08-20 — V0.10.2 Persistência da Sessão Ativa
+
+- **Objetivo/hipótese:** corrigir a integridade da unidade sessão para que mount, navegação e reload não fabriquem sessões pedagógicas distintas.
+- **Estado:** `version`, `sessionId`, `startedAt`, `focus`, itens mínimos (`exerciseId`, `support`, `sessionRole`) e `nextIndex` em `poker-loop-v1:active-session`.
+- **Retomada:** fila integral reconstruída da biblioteca; Attempts do mesmo `sessionId` recompõem o resumo; estado inválido é descartado sem restauração parcial.
+- **Fluxos:** sair mantém a sessão; responder avança `nextIndex` durante o feedback; a 12ª resposta restaura a conclusão; `Concluir` limpa e `Treinar mais` cria identidade/fila novas usando o histórico. Focus diferente substitui a sessão ativa.
+- **Escopo preservado:** schema/chave de `Attempt`, scheduler, `chooseFocus`, diagnóstico, fading, repriorização, retention e transfer não mudaram. Não é evidência pedagógica nova.

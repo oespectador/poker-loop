@@ -160,3 +160,7 @@ O quinto pacote estruturado ensina leitura de range por heurísticas condicionai
 ## Evidência local por pacote (V0.10.1)
 
 Retention, transfer e reforço diagnóstico são liberados pela apresentação completa do pacote ao qual o conteúdo pertence. A presença de pacote posterior pendente não bloqueia conteúdo anterior. O `introBlock` permanece primeiro, sem avaliação em seu interior. A relação de evaluation para development prefere `reasoningPattern`, depois `concept` e, somente ao final, `primarySkill`. Tentativas de evaluation são resumidas separadamente e não entram em suporte, prioridade adaptativa ou estado-base da Skill. Os thresholds, a regra de recuperação e o conteúdo não mudaram.
+
+## Integridade da sessão (V0.10.2)
+
+Uma sessão de 12 decisões mantém a mesma identidade durante navegação e reload. Fila, suporte efetivo, papel de introdução e próxima decisão são retomados; uma resposta já registrada não reaparece após saída durante o feedback. É uma correção de integridade de `sessionId`, não nova evidência pedagógica. `Attempt`, scheduler, diagnóstico, retention e transfer não mudaram.

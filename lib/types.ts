@@ -74,6 +74,22 @@ export interface Attempt {
   timestamp: string;
 }
 
+export interface ActiveTrainingSessionItem {
+  exerciseId: string;
+  support: SupportLevel;
+  sessionRole?: "introduction";
+}
+
+export interface ActiveTrainingSession {
+  version: 1;
+  sessionId: string;
+  startedAt: string;
+  focus: Skill | null;
+  items: ActiveTrainingSessionItem[];
+  /** Index of the next decision that has not yet produced an Attempt. */
+  nextIndex: number;
+}
+
 export interface SessionResult {
   id: string;
   startedAt: string;

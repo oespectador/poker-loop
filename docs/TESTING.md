@@ -99,3 +99,7 @@ Na V0.10, a suíte possui 79 testes. A cobertura adicional protege a ordem do qu
 ## V0.10.1
 
 A suíte possui 101 testes. A cobertura local verifica completude pelos IDs reais (inclusive foundations), bloqueio da avaliação do pacote incompleto, liberação com pacote posterior pendente, 24h de retention, evidência em duas sessões, coexistência isolada e conjunta de retention/transfer/diagnóstico após o microbloco intacto, limite de 12, ausência de duplicação, determinismo, prioridade `reasoningPattern` → `concept` → `primarySkill` sem usar `variantGroup` e isolamento explícito de support, priority e `SkillState` contra tentativas de avaliação.
+
+## V0.10.2
+
+A suíte possui 116 testes. A cobertura adicional verifica criação, serialização e retomada integral; identidade, ordem, suporte, `sessionRole`, `nextIndex`, resumo por `sessionId`, conclusão, focus, nova sessão com histórico, limite de 12, ausência de duplicação, repriorização persistida, validação defensiva e limpeza conjunta de attempts e active session.
