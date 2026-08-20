@@ -183,3 +183,37 @@ fechados de pacote, ordem, foco e validação.
 - `npm run typecheck`: aprovado;
 - `npm run build`: aprovado;
 - `git diff --check`: aprovado.
+
+## 2026-08-20 — V0.6 Piloto de Retenção e Transferência
+
+### Objetivo e hipótese trabalhada
+
+Usar conservadoramente os 24 itens reservados como evidências distintas do
+desenvolvimento. A hipótese operacional é que duas respostas independentes em
+duas sessões fornecem base mínima para uma avaliação, com espera adicional de
+24 horas para retenção. As 24 horas não são um intervalo de aprendizagem
+validado nem uma regra `1-3-7-30`.
+
+### Alterações e comportamento
+
+- nenhum item de avaliação entra enquanto qualquer pacote estruturado estiver
+  incompleto;
+- depois disso, a sessão de 12 inclui no máximo uma retenção e uma transferência
+  elegíveis, selecionadas por foco e ordem estável da biblioteca;
+- a relação usa `concept` compartilhado com development e recorre a
+  `primarySkill` somente quando não existe esse conceito na biblioteca ativa;
+- retenção requer duas respostas corretas independentes em duas sessões e 24
+  horas desde a mais recente; transferência exige a mesma base, sem espera;
+- cada avaliação já respondida é excluída permanentemente neste piloto;
+- avaliações continuam independentes e não entram no cálculo do `SkillState`;
+- erro de avaliação pode aproximar somente um item development relacionado.
+
+Não houve conteúdo, UI, storage, schema, backend ou nova Skill. Retenção e
+transferência ainda não têm interface própria nem reagendamento adaptativo.
+
+### Validação, riscos e próximo passo
+
+A suíte passou com 34 testes, além de typecheck, build e `git diff --check`. O
+principal risco é pedagógico: o limiar e a utilidade das avaliações ainda não
+foram validados longitudinalmente. O próximo passo depende de teste humano ao
+longo do tempo; não há decisão técnica pendente para este piloto.

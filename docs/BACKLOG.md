@@ -70,8 +70,9 @@ Cuidado: fontes live não viram defaults de NL2.
 
 ## P2 — mais tarde
 
-- retenção real com intervalos adaptativos;
-- transferência contextual explícita;
+- validar longitudinalmente o piloto V0.6 de retenção e transferência com pessoas;
+- somente depois, decidir se retenção precisa de intervalos adaptativos;
+- somente depois, decidir se transferência contextual precisa de novas superfícies;
 - diagnóstico mínimo entre leitura/lógica/calibração;
 - hands importadas alimentando exercícios após validação estratégica;
 - ranges sugeridos e personalizáveis;

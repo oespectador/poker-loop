@@ -119,6 +119,16 @@ Não intercalar indiscriminadamente no primeiro contato. Primeiro construir uma 
 
 Não usar cronogramas universais rígidos como `1-3-7-30`. Intervalos futuros devem expandir com recuperação bem-sucedida e reduzir com falhas.
 
+Na V0.6, o piloto usa 24 horas apenas como limiar operacional conservador para
+liberar uma primeira recuperação após evidência independente em duas sessões.
+Isso não é um intervalo validado. Cada item de retenção ou transferência é
+apresentado no máximo uma vez, sem reagendamento adaptativo. Transferência não
+espera 24 horas porque observa aplicação em uma nova superfície.
+
+Tentativas de retenção e transferência são evidências distintas: não entram no
+cálculo do estado-base da Skill. Um acerto isolado de transferência não cria
+`Consistente`, e um erro isolado não derruba diretamente esse estado.
+
 ## Fluência
 
 Velocidade vem depois de compreensão e independência. Cronômetro pode futuramente ser usado para treino de fluência, não como pressão obrigatória no aprendizado inicial.

@@ -1,4 +1,4 @@
-# Project State — baseline V0.5
+# Project State — baseline V0.6
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.5 — Lógica × Calibração**
+**V0.6 — Piloto de Retenção e Transferência**
 
 ### Biblioteca
 
@@ -66,7 +66,18 @@ Comportamentos já implementados:
 - repriorização de variação após erro somente fora de introdução;
 - progresso conservador por habilidade.
 
-O motor **não é** ainda um sistema completo de knowledge tracing, retenção real ou diagnóstico causal.
+Depois da apresentação completa dos três pacotes estruturados, uma sessão pode
+incluir no máximo um item elegível de retenção e um de transferência, sem passar
+de 12 decisões. Cada item reservado aparece no máximo uma vez neste piloto.
+
+Retenção exige duas respostas corretas independentes relacionadas, em duas
+sessões, e 24 horas desde a mais recente. Transferência exige a mesma evidência
+independente, sem espera temporal. A relação usa `concept` quando há
+desenvolvimento com o mesmo conceito e `primarySkill` como fallback.
+
+O limiar de 24 horas é uma hipótese operacional conservadora, não um intervalo
+de aprendizagem validado nem uma regra `1-3-7-30`. O motor **não é** um sistema
+completo de knowledge tracing, repetição espaçada ou diagnóstico causal.
 
 ## Persistência
 
@@ -86,6 +97,10 @@ Visual provisório aprovado para continuar testes:
 - `Ver explicação completa` depois da resposta.
 
 Não investir agora em refinamento visual final.
+
+Retenção e transferência ainda não possuem UI própria; usam o fluxo de exercício
+existente. Suas tentativas permanecem separadas da evidência-base que calcula o
+`SkillState`.
 
 ## Ajuste editorial já incorporado
 
