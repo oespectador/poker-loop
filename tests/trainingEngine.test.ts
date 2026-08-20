@@ -870,3 +870,224 @@ test("retention e transfer não contaminam suporte, prioridade ou SkillState dev
   assert.equal(exercisePriority(development, evaluationAttempts, development.primarySkill), exercisePriority(development, [], development.primarySkill));
   assert.equal(deriveSkillState(evaluationAttempts, development.primarySkill), deriveSkillState([], development.primarySkill));
 });
+
+test("retention local continua bloqueada antes de 24 horas", () => {
+  const item = evaluationExercises.find(
+    ({ purpose, learningPackage }) => purpose === "retention" && learningPackage === "range-actions",
+  );
+  assert.ok(item);
+  const attempts = [
+    ...attemptsFor([...packageExercises(undefined), ...packageExercises("range-actions")]),
+    ...evidenceFor(item, NOW - 24 * 60 * 60 * 1000 + 1),
+  ];
+
+  assert.equal(eligibleRetentionExercises(attempts, NOW).some(({ id }) => id === item.id), false);
+});
+
+test("retention local é liberada ao completar 24 horas", () => {
+  const item = evaluationExercises.find(
+    ({ purpose, learningPackage }) => purpose === "retention" && learningPackage === "range-actions",
+  );
+  assert.ok(item);
+  const attempts = [
+    ...attemptsFor([...packageExercises(undefined), ...packageExercises("range-actions")]),
+    ...evidenceFor(item, NOW - 24 * 60 * 60 * 1000),
+  ];
+
+  assert.equal(eligibleRetentionExercises(attempts, NOW).some(({ id }) => id === item.id), true);
+});
+
+test("transfer local exige evidência independente em duas sessões", () => {
+  const item = evaluationExercises.find(
+    ({ purpose, learningPackage }) => purpose === "transfer" && learningPackage === "range-actions",
+  );
+  assert.ok(item);
+  const completed = attemptsFor([...packageExercises(undefined), ...packageExercises("range-actions")]);
+  const evidence = evidenceFor(item);
+  const presentationOnly = completed.map((attempt) => ({ ...attempt, support: "guided" as const }));
+
+  assert.equal(
+    eligibleTransferExercises([...presentationOnly, ...evidence.map((attempt) => ({ ...attempt, sessionId: "same" }))])
+      .some(({ id }) => id === item.id),
+    false,
+  );
+  assert.equal(eligibleTransferExercises([...presentationOnly, ...evidence]).some(({ id }) => id === item.id), true);
+});
+
+test("retention antiga pode coexistir sozinha com introdução posterior", () => {
+  const item = evaluationExercises.find(
+    ({ purpose, learningPackage }) => purpose === "retention" && learningPackage === "range-actions",
+  );
+  assert.ok(item);
+  const attempts = [
+    ...attemptsFor([...packageExercises(undefined), ...packageExercises("range-actions")]),
+    ...evidenceFor(item, NOW - 24 * 60 * 60 * 1000),
+  ];
+  const session = buildRecommendedSession(attempts, undefined, "retention-with-intro", NOW);
+
+  assert.deepEqual(session.slice(0, 4).map(({ id }) => id), packageIds("range-to-decision", 1, 4));
+  assert.equal(session.some(({ purpose }) => purpose === "retention"), true);
+});
+
+test("transfer antiga pode coexistir sozinha com introdução posterior", () => {
+  const item = evaluationExercises.find(
+    ({ purpose, learningPackage }) => purpose === "transfer" && learningPackage === "range-actions",
+  );
+  assert.ok(item);
+  const attempts = [
+    ...attemptsFor([...packageExercises(undefined), ...packageExercises("range-actions")]),
+    ...evidenceFor(item),
+  ];
+  const session = buildRecommendedSession(attempts, undefined, "transfer-with-intro", NOW);
+
+  assert.deepEqual(session.slice(0, 4).map(({ id }) => id), packageIds("range-to-decision", 1, 4));
+  assert.equal(session.some(({ purpose }) => purpose === "transfer"), true);
+});
+
+test("sessão local com avaliações mantém o teto de 12", () => {
+  const completed = [...packageExercises(undefined), ...packageExercises("range-actions")];
+  const attempts = [
+    ...attemptsFor(completed),
+    ...evaluationExercises
+      .filter(({ learningPackage }) => learningPackage === "range-actions")
+      .flatMap((item) => evidenceFor(item, NOW - 24 * 60 * 60 * 1000)),
+  ];
+
+  assert.ok(buildRecommendedSession(attempts, undefined, "local-limit", NOW).length <= 12);
+});
+
+test("sessão local com avaliações não duplica exerciseId", () => {
+  const completed = [...packageExercises(undefined), ...packageExercises("range-actions")];
+  const attempts = [
+    ...attemptsFor(completed),
+    ...evaluationExercises
+      .filter(({ learningPackage }) => learningPackage === "range-actions")
+      .flatMap((item) => evidenceFor(item, NOW - 24 * 60 * 60 * 1000)),
+  ];
+  const ids = buildRecommendedSession(attempts, undefined, "local-unique", NOW).map(({ id }) => id);
+
+  assert.equal(new Set(ids).size, ids.length);
+});
+
+test("diagnóstico não usa development do próprio pacote incompleto", () => {
+  const incompletePackage = packageExercises("range-strength-signals");
+  const attempts = [
+    ...attemptsFor(developmentExercises.filter(({ learningPackage }) => learningPackage !== "range-strength-signals")),
+    ...diagnosticErrors(incompletePackage.filter(({ reasoningPattern }) => reasoningPattern).slice(0, 3)),
+  ];
+  const completedDevelopment = developmentExercises.filter(
+    ({ learningPackage }) => learningPackage !== "range-strength-signals",
+  );
+  const reinforcement = selectDiagnosticReinforcement(
+    attempts,
+    incompletePackage[0].primarySkill,
+    completedDevelopment,
+  );
+
+  assert.equal(
+    reinforcement?.learningPackage === "range-strength-signals",
+    false,
+  );
+});
+
+test("matching de evaluation por reasoningPattern ignora variantGroup conflitante", () => {
+  const related = developmentExercises.find(({ reasoningPattern }) => reasoningPattern);
+  assert.ok(related);
+  const matches = relatedDevelopmentExercises({
+    ...evaluationExercises[0],
+    reasoningPattern: related.reasoningPattern,
+    concept: "concept-inexistente",
+    variantGroup: "variant-inexistente",
+  });
+
+  assert.ok(matches.length > 0);
+  assert.ok(matches.every(({ reasoningPattern }) => reasoningPattern === related.reasoningPattern));
+});
+
+test("fallback por concept só ocorre sem match de reasoningPattern", () => {
+  const related = developmentExercises.find(({ concept }) => concept);
+  assert.ok(related);
+  const matches = relatedDevelopmentExercises({
+    ...evaluationExercises[0],
+    reasoningPattern: "pattern-inexistente",
+    concept: related.concept,
+  });
+
+  assert.ok(matches.length > 0);
+  assert.ok(matches.every(({ concept }) => concept === related.concept));
+});
+
+test("fallback final por primarySkill só ocorre sem match específico", () => {
+  const evaluation = evaluationExercises[0];
+  const matches = relatedDevelopmentExercises({
+    ...evaluation,
+    reasoningPattern: "pattern-inexistente",
+    concept: "concept-inexistente",
+  });
+
+  assert.ok(matches.length > 0);
+  assert.ok(matches.every(({ primarySkill }) => primarySkill === evaluation.primarySkill));
+});
+
+test("retention correta não reduz suporte de development relacionado", () => {
+  const evaluation = evaluationExercises.find(({ purpose, variantGroup }) =>
+    purpose === "retention" && developmentExercises.some((exercise) => exercise.variantGroup === variantGroup),
+  );
+  assert.ok(evaluation);
+  const development = developmentExercises.find(({ variantGroup }) => variantGroup === evaluation.variantGroup);
+  assert.ok(development);
+  const attempts = attemptsFor([evaluation, evaluation], { sessionId: "retention-correct" }).map(
+    (attempt, index) => ({ ...attempt, sessionId: `retention-${index}`, support: "independent" as const }),
+  );
+
+  assert.equal(getActualSupport(development, attempts), development.support);
+});
+
+test("retention errada não restaura suporte de development relacionado", () => {
+  const development = developmentExercises.find(({ support, variantGroup }) =>
+    support === "guided" && developmentExercises.filter((item) => item.variantGroup === variantGroup).length >= 2,
+  );
+  assert.ok(development);
+  const related = developmentExercises.filter(({ variantGroup }) => variantGroup === development.variantGroup);
+  const developmentEvidence = attemptsFor(related.slice(0, 2), { sessionId: "development-correct" });
+  const evaluation = evaluationExercises.find(({ purpose }) => purpose === "retention");
+  assert.ok(evaluation);
+  const wrongRetention = attemptsFor([evaluation], { correct: false, sessionId: "retention-wrong" });
+
+  assert.equal(getActualSupport(development, developmentEvidence), "supported");
+  assert.equal(getActualSupport(development, [...developmentEvidence, ...wrongRetention]), "supported");
+});
+
+test("transfer não altera a prioridade de development nem indiretamente pela Skill", () => {
+  const transfer = evaluationExercises.find(({ purpose }) => purpose === "transfer");
+  assert.ok(transfer);
+  const development = developmentExercises.find(
+    ({ primarySkill }) => primarySkill === transfer.primarySkill,
+  );
+  assert.ok(development);
+  const attempt = attemptsFor([transfer], { correct: false, sessionId: "transfer-error" });
+
+  assert.equal(
+    exercisePriority(development, attempt, development.primarySkill),
+    exercisePriority(development, [], development.primarySkill),
+  );
+});
+
+test("histórico exclusivamente evaluation mantém SkillState idêntico", () => {
+  const attempts = attemptsFor(evaluationExercises, { correct: false, sessionId: "evaluations-only" });
+
+  for (const skill of Object.keys(skillLabels) as Skill[]) {
+    assert.equal(deriveSkillState(attempts, skill), deriveSkillState([], skill));
+  }
+});
+
+test("sessão com evidência local permanece determinística", () => {
+  const completed = [...packageExercises(undefined), ...packageExercises("range-actions")];
+  const item = evaluationExercises.find(({ learningPackage }) => learningPackage === "range-actions");
+  assert.ok(item);
+  const attempts = [...attemptsFor(completed), ...evidenceFor(item, NOW - 24 * 60 * 60 * 1000)];
+
+  const first = buildRecommendedSession(attempts, undefined, "local-determinism", NOW);
+  const second = buildRecommendedSession(attempts, undefined, "local-determinism", NOW);
+  assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
+});
