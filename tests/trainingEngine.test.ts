@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { allExercises, developmentExercises, evaluationExercises } from "../lib/exercises";
+import { selectDiagnosticReinforcement } from "../lib/diagnostics";
 import {
   buildRecommendedSession,
   chooseFocus,
@@ -9,8 +10,10 @@ import {
   eligibleRetentionExercises,
   eligibleTransferExercises,
   getPendingLearningPackage,
+  getActualSupport,
   relatedDevelopmentExercises,
   reprioritizeAfterError,
+  skillLabels,
   summarizeEvaluationEvidence,
 } from "../lib/trainingEngine";
 import type { Attempt, Exercise, Skill } from "../lib/types";
@@ -316,6 +319,137 @@ function evidenceFor(evaluation: Exercise, latestAt = NOW): Attempt[] {
     timestamp: new Date(latestAt - offset * 60_000).toISOString(),
   }));
 }
+
+function diagnosticFamily(focus?: Skill): Exercise[] {
+  const groups = new Map<string, Exercise[]>();
+  for (const exercise of developmentExercises) {
+    if (!exercise.reasoningPattern || (focus && exercise.primarySkill !== focus)) continue;
+    const key = `${exercise.reasoningPattern}:${exercise.primarySkill}`;
+    groups.set(key, [...(groups.get(key) ?? []), exercise]);
+  }
+  const family = [...groups.values()].find((items) => items.length >= 3);
+  assert.ok(family, `família diagnóstica ausente para ${focus ?? "qualquer foco"}`);
+  return family;
+}
+
+function diagnosticErrors(
+  family: Exercise[],
+  count = 3,
+  minuteOffset = 0,
+): Attempt[] {
+  return family.slice(0, count).map((exercise, index) => ({
+    id: `diagnostic-${exercise.id}-${minuteOffset + index}`,
+    exerciseId: exercise.id,
+    sessionId: `diagnostic-session-${index % 2}`,
+    primarySkill: exercise.primarySkill,
+    answerId: "incorrect-answer",
+    correct: false,
+    support: "independent" as const,
+    timestamp: new Date(NOW + (minuteOffset + index) * 60_000).toISOString(),
+  }));
+}
+
+test("candidate é read-only e recurring fica bloqueado enquanto há pacote pendente", () => {
+  const family = diagnosticFamily("range-reading");
+  const candidateAttempts = [...completedDevelopmentAttempts(), ...diagnosticErrors(family, 2)];
+  assert.equal(selectDiagnosticReinforcement(candidateAttempts, family[0].primarySkill), undefined);
+
+  const incomplete = attemptsFor(
+    developmentExercises.filter(({ id }) => id !== "dev-calibration-12"),
+  );
+  const attempts = [...incomplete, ...diagnosticErrors(family)];
+  const selected = selectDiagnosticReinforcement(attempts, family[0].primarySkill);
+  assert.ok(selected, "o sinal recurring existe fora da trava estrutural");
+  const session = buildRecommendedSession(attempts, undefined, "pending-diagnostic", NOW);
+  assert.equal(session[0]?.sessionRole, "introduction");
+  assert.equal(session.filter(({ id }) => id === selected.id).length <= 1, true);
+});
+
+test("recurring compatível reserva exatamente um item e não duplica no fill", () => {
+  const family = diagnosticFamily();
+  const attempts = [...completedDevelopmentAttempts(), ...diagnosticErrors(family)];
+  const selected = selectDiagnosticReinforcement(attempts, family[0].primarySkill);
+  assert.ok(selected);
+  const session = buildRecommendedSession(attempts, family[0].primarySkill, "diagnostic", NOW);
+
+  assert.equal(session.length, 12);
+  assert.equal(session.filter(({ id }) => id === selected.id).length, 1);
+  assert.equal(session[0].id, selected.id);
+  assert.equal(new Set(session.map(({ id }) => id)).size, session.length);
+  assert.equal(session.find(({ id }) => id === selected.id)?.support, getActualSupport(selected, attempts));
+});
+
+test("recurring de outra Skill não interfere no foco manual nem no SkillState", () => {
+  const family = diagnosticFamily();
+  const otherFocus = (Object.keys(skillLabels) as Skill[]).find(
+    (skill) => skill !== family[0].primarySkill,
+  );
+  assert.ok(otherFocus);
+  const base = completedDevelopmentAttempts();
+  const attempts = [...base, ...diagnosticErrors(family)];
+  const focusBeforeSelection = chooseFocus(attempts);
+  const stateBeforeSelection = deriveSkillState(attempts, otherFocus);
+
+  assert.equal(selectDiagnosticReinforcement(attempts, otherFocus), undefined);
+  assert.equal(chooseFocus(attempts), focusBeforeSelection);
+  assert.equal(deriveSkillState(attempts, otherFocus), stateBeforeSelection);
+  assert.equal(buildRecommendedSession(attempts, otherFocus, "other-focus", NOW).length, 12);
+});
+
+test("seleção evita a tentativa mais recente, prefere a superfície mais antiga e é determinística", () => {
+  const family = diagnosticFamily();
+  const attempts = [...completedDevelopmentAttempts(), ...diagnosticErrors(family)];
+  const first = selectDiagnosticReinforcement(attempts, family[0].primarySkill);
+  const second = selectDiagnosticReinforcement(attempts, family[0].primarySkill);
+
+  assert.ok(first);
+  assert.equal(first.id, second?.id);
+  assert.notEqual(first.id, family[2].id);
+});
+
+test("retention e transfer coexistem com um único reforço sem serem deslocados", () => {
+  const family = diagnosticFamily();
+  const retention = evaluationExercises.find(
+    (item) => item.purpose === "retention" && item.primarySkill === family[0].primarySkill,
+  );
+  const transfer = evaluationExercises.find(
+    (item) => item.purpose === "transfer" && item.primarySkill === family[0].primarySkill,
+  );
+  assert.ok(retention && transfer);
+  const attempts = [
+    ...completedDevelopmentAttempts(),
+    ...evidenceFor(retention, NOW - 24 * 60 * 60 * 1000 - 60_000),
+    ...evidenceFor(transfer, NOW - 24 * 60 * 60 * 1000 - 60_000),
+    ...diagnosticErrors(family, 3, 10),
+  ];
+  const selected = selectDiagnosticReinforcement(attempts, family[0].primarySkill);
+  assert.ok(selected);
+  const session = buildRecommendedSession(attempts, family[0].primarySkill, "all-slots", NOW);
+
+  assert.equal(session.length, 12);
+  assert.equal(session.filter(({ purpose }) => purpose === "retention").length, 1);
+  assert.equal(session.filter(({ purpose }) => purpose === "transfer").length, 1);
+  assert.equal(session.filter(({ id }) => id === selected.id).length, 1);
+  assert.equal(session[2].id, selected.id);
+});
+
+test("recurring recuperado não reserva reforço e sessão sem recurring mantém o resultado", () => {
+  const family = diagnosticFamily();
+  const errors = diagnosticErrors(family);
+  const recovery = [family[0], family[1], family[0]].map((exercise, index) => ({
+    ...diagnosticErrors([exercise], 1, 20 + index)[0],
+    id: `recovery-${index}`,
+    sessionId: `recovery-session-${index}`,
+    correct: true,
+    answerId: exercise.correctOptionId,
+  }));
+  const attempts = [...completedDevelopmentAttempts(), ...errors, ...recovery];
+  assert.equal(selectDiagnosticReinforcement(attempts, family[0].primarySkill), undefined);
+
+  const first = buildRecommendedSession(attempts, family[0].primarySkill, "no-recurring", NOW);
+  const second = buildRecommendedSession(attempts, family[0].primarySkill, "no-recurring", NOW);
+  assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
+});
 
 test("sessão piloto respeita 12 itens e no máximo um item de cada avaliação", () => {
   const retention = evaluationExercises.find((item) => item.purpose === "retention");

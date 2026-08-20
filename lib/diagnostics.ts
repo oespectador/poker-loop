@@ -1,5 +1,5 @@
-import { allExercises } from "./exercises";
-import type { Attempt, Exercise } from "./types";
+import { allExercises, developmentExercises } from "./exercises";
+import type { Attempt, Exercise, Skill } from "./types";
 
 export type DifficultyPatternSource = "reasoningPattern" | "concept";
 export type DifficultyPatternStatus = "candidate" | "recurring";
@@ -25,6 +25,78 @@ interface KeyedAttempt {
   attempt: Attempt;
   key: string;
   source: DifficultyPatternSource;
+}
+
+/** Mantém exatamente a chave exclusiva usada pela análise da V0.7. */
+export function matchesDifficultyPattern(
+  exercise: DiagnosticExercise,
+  pattern: Pick<DifficultyPattern, "key" | "source">,
+): boolean {
+  if (exercise.purpose !== "development") return false;
+  if (pattern.source === "reasoningPattern") {
+    return exercise.reasoningPattern === pattern.key;
+  }
+  return !exercise.reasoningPattern && exercise.concept === pattern.key;
+}
+
+function timestampValue(value: string): number {
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+/**
+ * Reserva, no máximo, uma superfície development para o primeiro sinal
+ * recurring compatível com o foco já resolvido pelo motor.
+ */
+export function selectDiagnosticReinforcement(
+  attempts: Attempt[],
+  focus: Skill,
+  exercises: readonly Exercise[] = developmentExercises,
+): Exercise | undefined {
+  const patterns = summarizeDifficultyPatterns(attempts, exercises);
+
+  for (const pattern of patterns) {
+    if (pattern.status !== "recurring") continue;
+
+    const patternExercises = exercises.filter((exercise) =>
+      matchesDifficultyPattern(exercise, pattern),
+    );
+    const related = patternExercises.filter((exercise) => exercise.primarySkill === focus);
+    if (!related.length) continue;
+
+    const patternIds = new Set(patternExercises.map(({ id }) => id));
+    const relatedIds = new Set(related.map(({ id }) => id));
+    const patternAttempts = attempts
+      .filter(
+        (attempt) =>
+          attempt.support === "independent" && patternIds.has(attempt.exerciseId),
+      )
+      .sort(chronological);
+    const mostRecentId = patternAttempts.at(-1)?.exerciseId;
+    const candidates =
+      mostRecentId && related.length > 1
+        ? related.filter(({ id }) => id !== mostRecentId)
+        : related;
+
+    const latestByExercise = new Map<string, number>();
+    for (const attempt of attempts) {
+      if (!relatedIds.has(attempt.exerciseId)) continue;
+      latestByExercise.set(
+        attempt.exerciseId,
+        Math.max(latestByExercise.get(attempt.exerciseId) ?? 0, timestampValue(attempt.timestamp)),
+      );
+    }
+
+    return candidates
+      .map((exercise, libraryIndex) => ({
+        exercise,
+        libraryIndex,
+        latestAt: latestByExercise.get(exercise.id) ?? Number.NEGATIVE_INFINITY,
+      }))
+      .sort((a, b) => a.latestAt - b.latestAt || a.libraryIndex - b.libraryIndex)[0]?.exercise;
+  }
+
+  return undefined;
 }
 
 function chronological(a: Attempt, b: Attempt): number {

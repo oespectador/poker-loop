@@ -103,8 +103,12 @@ O nível `candidate` requer erros em pelo menos dois exercícios e duas sessões
 `recurring` requer erros em pelo menos três exercícios e duas sessões. Três
 acertos independentes recentes em pelo menos dois exercícios desativam o sinal
 por enquanto. Tanto os limiares quanto essa recuperação são heurísticas
-provisórias do protótipo, não medidas psicométricas ou prova de domínio. A camada
-é read-only e ainda não muda o treino recomendado.
+provisórias do protótipo, não medidas psicométricas ou prova de domínio. Na V0.8,
+`candidate` continua read-only. Somente um sinal `recurring`, depois de
+todos os pacotes estruturados e compatível com o foco já resolvido, pode reservar
+um development por sessão. O diagnóstico não escolhe Skill; retention e transfer
+mantêm prioridade, o suporte normal é reutilizado e a recuperação continua sendo
+inferida pelas tentativas recentes, nunca marcada manualmente.
 
 ## Lógica × calibração
 
