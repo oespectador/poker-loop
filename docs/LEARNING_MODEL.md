@@ -104,9 +104,9 @@ O nível `candidate` requer erros em pelo menos dois exercícios e duas sessões
 acertos independentes recentes em pelo menos dois exercícios desativam o sinal
 por enquanto. Tanto os limiares quanto essa recuperação são heurísticas
 provisórias do protótipo, não medidas psicométricas ou prova de domínio. Na V0.8,
-`candidate` continua read-only. Somente um sinal `recurring`, depois de
-todos os quatro pacotes estruturados e compatível com o foco já resolvido, pode reservar
-um development por sessão. O diagnóstico não escolhe Skill; retention e transfer
+`candidate` continua read-only. Somente um sinal `recurring`, restrito a conteúdo de pacotes completamente
+apresentados e compatível com o foco já resolvido, pode reservar um development
+por sessão. O diagnóstico não escolhe Skill; retention e transfer
 mantêm prioridade, o suporte normal é reutilizado e a recuperação continua sendo
 inferida pelas tentativas recentes, nunca marcada manualmente.
 
@@ -151,8 +151,12 @@ Velocidade vem depois de compreensão e independência. Cronômetro pode futuram
 
 ## Aplicação integrada (V0.9)
 
-O quarto pacote estruturado reaplica conceitos existentes em novas superfícies: ações atualizam o range, objetivos definem mãos-alvo e a qualidade da evidência calibra a confiança. Seus 12 development entram em três microblocos de quatro. Enquanto a primeira apresentação estiver pendente, retenção, transferência e reforço diagnóstico permanecem bloqueados; depois, os reasoningPatterns existentes tornam os itens superfícies adaptativas e diagnósticas sem novos thresholds ou estados.
+O quarto pacote estruturado reaplica conceitos existentes em novas superfícies: ações atualizam o range, objetivos definem mãos-alvo e a qualidade da evidência calibra a confiança. Seus 12 development entram em três microblocos de quatro. Enquanto a primeira apresentação estiver pendente, avaliações e reforço desse próprio pacote permanecem bloqueados; avaliações e reforço de pacotes anteriores completos podem coexistir depois do microbloco intacto. Depois, os reasoningPatterns existentes tornam os itens superfícies adaptativas e diagnósticas sem novos thresholds ou estados.
 
 ## Pistas de força do range (V0.10)
 
-O quinto pacote estruturado ensina leitura de range por heurísticas condicionais: size é evidência, não revelação. Os 12 development avançam de pistas isoladas para empilhamento, exceções e sinais conflitantes em três microblocos. O contexto modifica o valor informativo do size; boards muito static/dry e 3-bet pots são boundary cases explícitos. Enquanto a apresentação estiver pendente, avaliação e reforço diagnóstico continuam bloqueados pela infraestrutura genérica. Depois, os três novos `reasoningPattern` podem alimentar o diagnóstico existente sem alterar seus thresholds.
+O quinto pacote estruturado ensina leitura de range por heurísticas condicionais: size é evidência, não revelação. Os 12 development avançam de pistas isoladas para empilhamento, exceções e sinais conflitantes em três microblocos. O contexto modifica o valor informativo do size; boards muito static/dry e 3-bet pots são boundary cases explícitos. Enquanto a apresentação estiver pendente, avaliação e reforço desse próprio pacote continuam bloqueados; conteúdo anterior completo não é congelado. Depois, os três novos `reasoningPattern` podem alimentar o diagnóstico existente sem alterar seus thresholds.
+
+## Evidência local por pacote (V0.10.1)
+
+Retention, transfer e reforço diagnóstico são liberados pela apresentação completa do pacote ao qual o conteúdo pertence. A presença de pacote posterior pendente não bloqueia conteúdo anterior. O `introBlock` permanece primeiro, sem avaliação em seu interior. A relação de evaluation para development prefere `reasoningPattern`, depois `concept` e, somente ao final, `primarySkill`. Tentativas de evaluation são resumidas separadamente e não entram em suporte, prioridade adaptativa ou estado-base da Skill. Os thresholds, a regra de recuperação e o conteúdo não mudaram.

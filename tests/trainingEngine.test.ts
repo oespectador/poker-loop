@@ -9,8 +9,10 @@ import {
   deriveSkillState,
   eligibleRetentionExercises,
   eligibleTransferExercises,
+  exercisePriority,
   getPendingLearningPackage,
   getActualSupport,
+  isLearningPackageComplete,
   relatedDevelopmentExercises,
   reprioritizeAfterError,
   skillLabels,
@@ -295,14 +297,13 @@ test("itens reservados de calibration não entram no treino normal", () => {
   assert.equal(session.some((exercise) => reserved.has(exercise.id)), false);
 });
 
-test("itens reservados de retenção e transferência não entram antes de calibration terminar", () => {
+test("itens reservados do próprio pacote não entram antes de calibration terminar", () => {
   const incomplete = developmentExercises.filter((exercise) => exercise.id !== "dev-calibration-12");
   const attempts = attemptsFor(incomplete, { sessionId: "development-incomplete" });
-  const reservedIds = new Set(evaluationExercises.map((exercise) => exercise.id));
-  const session = buildRecommendedSession(attempts, undefined, "normal-training");
+  const calibrationIds = new Set(evaluationExercises.filter(({ learningPackage }) => learningPackage === "calibration").map(({ id }) => id));
+  const session = buildRecommendedSession(attempts, undefined, "normal-training", NOW);
 
-  assert.equal(session.some((exercise) => reservedIds.has(exercise.id)), false);
-  assert.ok(session.every((exercise) => exercise.purpose === "development"));
+  assert.equal(session.some((exercise) => calibrationIds.has(exercise.id)), false);
 });
 
 const NOW = Date.UTC(2026, 5, 10, 12);
@@ -355,7 +356,7 @@ function diagnosticErrors(
   }));
 }
 
-test("candidate é read-only e recurring fica bloqueado enquanto há pacote pendente", () => {
+test("candidate é read-only e recurring antigo pode coexistir com pacote posterior pendente", () => {
   const family = diagnosticFamily("range-reading");
   const candidateAttempts = [...completedDevelopmentAttempts(), ...diagnosticErrors(family, 2)];
   assert.equal(selectDiagnosticReinforcement(candidateAttempts, family[0].primarySkill), undefined);
@@ -368,7 +369,7 @@ test("candidate é read-only e recurring fica bloqueado enquanto há pacote pend
   assert.ok(selected, "o sinal recurring existe fora da trava estrutural");
   const session = buildRecommendedSession(attempts, undefined, "pending-diagnostic", NOW);
   assert.equal(session[0]?.sessionRole, "introduction");
-  assert.equal(session.filter(({ id }) => id === selected.id).length <= 1, true);
+  assert.equal(session.filter(({ id }) => id === selected.id).length, 1);
 });
 
 test("recurring compatível reserva exatamente um item e não duplica no fill", () => {
@@ -746,4 +747,126 @@ test("V0.10 preserva determinismo e sessões de no máximo 12 decisões", () => 
   const second = buildRecommendedSession(attempts, "range-reading", "v010-stable", NOW);
   assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
   assert.ok(first.length <= 12);
+});
+
+test("completude local usa todos os IDs reais do pacote, inclusive foundations", () => {
+  const foundations = packageExercises(undefined);
+  const complete = attemptsFor(foundations);
+  assert.equal(isLearningPackageComplete(complete, "foundations"), true);
+  assert.equal(isLearningPackageComplete(complete.slice(1), "foundations"), false);
+
+  const rangeActions = packageExercises("range-actions");
+  assert.equal(isLearningPackageComplete(attemptsFor(rangeActions), "range-actions"), true);
+  assert.equal(isLearningPackageComplete(attemptsFor(rangeActions.filter(({ id }) => id !== rangeActions[5].id)), "range-actions"), false);
+});
+
+test("avaliação é liberada pelo próprio pacote mesmo com pacote posterior pendente", () => {
+  const item = evaluationExercises.find(
+    ({ purpose, learningPackage }) => purpose === "transfer" && learningPackage === "range-actions",
+  );
+  assert.ok(item);
+  const completed = [...packageExercises(undefined), ...packageExercises("range-actions")];
+  const attempts = [...attemptsFor(completed), ...evidenceFor(item)];
+
+  assert.equal(getPendingLearningPackage(attempts), "range-to-decision");
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === item.id), true);
+
+  const incomplete = attempts.filter(({ exerciseId }) => exerciseId !== packageExercises("range-actions")[4].id);
+  assert.equal(eligibleTransferExercises(incomplete).some(({ id }) => id === item.id), false);
+});
+
+test("introBlock intacto coexiste com retention e transfer antigos sem duplicação", () => {
+  const retention = evaluationExercises.find(
+    ({ purpose, learningPackage }) => purpose === "retention" && learningPackage === "range-actions",
+  );
+  const transfer = evaluationExercises.find(
+    ({ purpose, learningPackage }) => purpose === "transfer" && learningPackage === "range-actions",
+  );
+  assert.ok(retention && transfer);
+  const completed = [...packageExercises(undefined), ...packageExercises("range-actions")];
+  const attempts = [
+    ...attemptsFor(completed),
+    ...evaluationExercises
+      .filter(({ purpose, learningPackage }) => purpose === "retention" && learningPackage === "range-actions")
+      .flatMap((item) => evidenceFor(item, NOW - 24 * 60 * 60 * 1000)),
+    ...evidenceFor(transfer),
+  ];
+  const session = buildRecommendedSession(attempts, undefined, "local-evaluation", NOW);
+
+  assert.deepEqual(session.slice(0, 4).map(({ id }) => id), packageIds("range-to-decision", 1, 4));
+  assert.equal(session.slice(4, 6).filter(({ purpose }) => purpose === "retention").length, 1);
+  assert.equal(session.slice(4, 6).filter(({ purpose }) => purpose === "transfer").length, 1);
+  assert.ok(session.length <= 12);
+  assert.equal(new Set(session.map(({ id }) => id)).size, session.length);
+});
+
+test("diagnóstico durante introdução usa somente pacote completamente apresentado", () => {
+  const completedExercises = developmentExercises.filter(({ learningPackage }) =>
+    !learningPackage || learningPackage !== "range-strength-signals",
+  );
+  const familyGroups = new Map<string, Exercise[]>();
+  for (const exercise of completedExercises) {
+    if (!exercise.reasoningPattern) continue;
+    const key = `${exercise.reasoningPattern}:${exercise.primarySkill}`;
+    familyGroups.set(key, [...(familyGroups.get(key) ?? []), exercise]);
+  }
+  const oldFamily = [...familyGroups.values()].find(
+    (family) => family.length >= 3 && family[0].primarySkill === "range-reading",
+  ) ?? [];
+  assert.ok(oldFamily.length >= 3);
+  const attempts = [...attemptsFor(completedExercises), ...diagnosticErrors(oldFamily)];
+  const session = buildRecommendedSession(attempts, undefined, "local-diagnostic", NOW);
+  const introIds = packageIds("range-strength-signals", 1, 4);
+
+  assert.deepEqual(session.slice(0, 4).map(({ id }) => id), introIds);
+  const reinforcement = selectDiagnosticReinforcement(attempts, "range-reading", oldFamily);
+  assert.ok(reinforcement);
+  assert.equal(session.filter(({ id }) => id === reinforcement.id).length, 1);
+  assert.equal(session.slice(4).some(({ learningPackage }) => learningPackage === "range-strength-signals"), false);
+});
+
+test("relação evaluation → development prefere reasoningPattern, concept e Skill nessa ordem", () => {
+  const reasoning = developmentExercises.find(({ reasoningPattern }) => reasoningPattern);
+  const conceptExercise = developmentExercises.find(({ concept }) => concept);
+  assert.ok(reasoning && conceptExercise);
+
+  const byReasoning = relatedDevelopmentExercises({
+    ...evaluationExercises[0],
+    reasoningPattern: reasoning.reasoningPattern,
+    concept: conceptExercise.concept,
+  });
+  assert.ok(byReasoning.length > 0);
+  assert.ok(byReasoning.every(({ reasoningPattern }) => reasoningPattern === reasoning.reasoningPattern));
+
+  const byConcept = relatedDevelopmentExercises({
+    ...evaluationExercises[0],
+    reasoningPattern: "pattern-inexistente",
+    concept: conceptExercise.concept,
+  });
+  assert.ok(byConcept.length > 0);
+  assert.ok(byConcept.every(({ concept }) => concept === conceptExercise.concept));
+
+  const bySkill = relatedDevelopmentExercises({
+    ...evaluationExercises[0],
+    reasoningPattern: "pattern-inexistente",
+    concept: "concept-inexistente",
+  });
+  assert.ok(bySkill.length > 0);
+  assert.ok(bySkill.every(({ primarySkill }) => primarySkill === evaluationExercises[0].primarySkill));
+});
+
+test("retention e transfer não contaminam suporte, prioridade ou SkillState development", () => {
+  const development = developmentExercises.find(({ support }) => support === "guided");
+  const retention = evaluationExercises.find(({ purpose }) => purpose === "retention");
+  const transfer = evaluationExercises.find(({ purpose }) => purpose === "transfer");
+  assert.ok(development && retention && transfer);
+  const evaluationAttempts = [
+    ...attemptsFor([retention], { correct: true, sessionId: "retention-correct" }),
+    ...attemptsFor([retention], { correct: false, sessionId: "retention-wrong" }),
+    ...attemptsFor([transfer], { correct: false, sessionId: "transfer-wrong" }),
+  ];
+
+  assert.equal(getActualSupport(development, evaluationAttempts), getActualSupport(development, []));
+  assert.equal(exercisePriority(development, evaluationAttempts, development.primarySkill), exercisePriority(development, [], development.primarySkill));
+  assert.equal(deriveSkillState(evaluationAttempts, development.primarySkill), deriveSkillState([], development.primarySkill));
 });

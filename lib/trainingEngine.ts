@@ -37,8 +37,21 @@ const PACKAGE_REDUNDANT_ITEMS: Partial<Record<LearningPackage, Set<string>>> = {
 
 function packageExercises(packageName: LearningPackage) {
   return developmentExercises
-    .filter((exercise) => exercise.learningPackage === packageName)
+    .filter((exercise) =>
+      packageName === "foundations"
+        ? !exercise.learningPackage || exercise.learningPackage === "foundations"
+        : exercise.learningPackage === packageName,
+    )
     .sort((a, b) => (a.packageSequence ?? 999) - (b.packageSequence ?? 999));
+}
+
+export function isLearningPackageComplete(
+  attempts: Attempt[],
+  packageName: LearningPackage,
+): boolean {
+  const presentedIds = new Set(attempts.map((attempt) => attempt.exerciseId));
+  const exercises = packageExercises(packageName);
+  return exercises.length > 0 && exercises.every((exercise) => presentedIds.has(exercise.id));
 }
 
 function hasUnseenPackage(attempts: Attempt[], packageName: LearningPackage): boolean {
@@ -63,11 +76,18 @@ function developmentAttempts(attempts: Attempt[]): Attempt[] {
 }
 
 export function relatedDevelopmentExercises(evaluation: Exercise): Exercise[] {
+  const sameReasoningPattern = evaluation.reasoningPattern
+    ? developmentExercises.filter(
+        (exercise) => exercise.reasoningPattern === evaluation.reasoningPattern,
+      )
+    : [];
   const sameConcept = evaluation.concept
     ? developmentExercises.filter((exercise) => exercise.concept === evaluation.concept)
     : [];
 
-  return sameConcept.length
+  return sameReasoningPattern.length
+    ? sameReasoningPattern
+    : sameConcept.length
     ? sameConcept
     : developmentExercises.filter((exercise) => exercise.primarySkill === evaluation.primarySkill);
 }
@@ -95,18 +115,18 @@ function unansweredEvaluationExercises(attempts: Attempt[], purpose: "retention"
 }
 
 export function eligibleRetentionExercises(attempts: Attempt[], now = Date.now()): Exercise[] {
-  if (getPendingLearningPackage(attempts)) return [];
-
   return unansweredEvaluationExercises(attempts, "retention").filter((exercise) => {
+    if (!isLearningPackageComplete(attempts, exercise.learningPackage ?? "foundations")) return false;
     const evidence = hasIndependentBaseEvidence(exercise, attempts);
     return evidence.sufficient && evidence.latestAt > 0 && now - evidence.latestAt >= RETENTION_INTERVAL_MS;
   });
 }
 
 export function eligibleTransferExercises(attempts: Attempt[]): Exercise[] {
-  if (getPendingLearningPackage(attempts)) return [];
   return unansweredEvaluationExercises(attempts, "transfer").filter(
-    (exercise) => hasIndependentBaseEvidence(exercise, attempts).sufficient,
+    (exercise) =>
+      isLearningPackageComplete(attempts, exercise.learningPackage ?? "foundations") &&
+      hasIndependentBaseEvidence(exercise, attempts).sufficient,
   );
 }
 
@@ -148,7 +168,9 @@ function sortAttempts(items: Attempt[]): Attempt[] {
 
 function getVariantAttempts(attempts: Attempt[], variantGroup?: string): Attempt[] {
   if (!variantGroup) return [];
-  return attempts.filter((attempt) => exerciseById.get(attempt.exerciseId)?.variantGroup === variantGroup);
+  return developmentAttempts(attempts).filter(
+    (attempt) => exerciseById.get(attempt.exerciseId)?.variantGroup === variantGroup,
+  );
 }
 
 export function getActualSupport(exercise: Exercise, attempts: Attempt[]): SupportLevel {
@@ -202,10 +224,15 @@ function sessionVariation(exerciseId: string, sessionSeed: string): number {
   return (hashString(`${sessionSeed}:${exerciseId}`) % 700) / 100;
 }
 
-function exercisePriority(exercise: Exercise, attempts: Attempt[], focus?: Skill): number {
-  const exerciseAttempts = sortAttempts(attempts.filter((attempt) => attempt.exerciseId === exercise.id));
+export function exercisePriority(exercise: Exercise, attempts: Attempt[], focus?: Skill): number {
+  const baseAttempts = developmentAttempts(attempts);
+  const exerciseAttempts = sortAttempts(
+    baseAttempts.filter((attempt) => attempt.exerciseId === exercise.id),
+  );
   const variantAttempts = sortAttempts(getVariantAttempts(attempts, exercise.variantGroup));
-  const skillAttempts = sortAttempts(attempts.filter((attempt) => attempt.primarySkill === exercise.primarySkill));
+  const skillAttempts = sortAttempts(
+    baseAttempts.filter((attempt) => attempt.primarySkill === exercise.primarySkill),
+  );
   const latestVariant = variantAttempts.at(-1);
   const latestSkill = skillAttempts.at(-1);
   const staleDays = daysSinceLastAttempt(exerciseAttempts);
@@ -328,15 +355,18 @@ export function buildRecommendedSession(
       support: getActualSupport(exercise, attempts),
     }));
 
-  const evaluationItems = pendingPackage
-    ? []
-    : [
-        selectEvaluation(eligibleRetentionExercises(attempts, now), resolvedFocus),
-        selectEvaluation(eligibleTransferExercises(attempts), resolvedFocus),
-      ].filter((exercise): exercise is Exercise => Boolean(exercise));
-  const diagnosticReinforcement = pendingPackage
-    ? undefined
-    : selectDiagnosticReinforcement(attempts, resolvedFocus);
+  const evaluationItems = [
+    selectEvaluation(eligibleRetentionExercises(attempts, now), resolvedFocus),
+    selectEvaluation(eligibleTransferExercises(attempts), resolvedFocus),
+  ].filter((exercise): exercise is Exercise => Boolean(exercise));
+  const completedDevelopment = developmentExercises.filter((exercise) =>
+    isLearningPackageComplete(attempts, exercise.learningPackage ?? "foundations"),
+  );
+  const diagnosticReinforcement = selectDiagnosticReinforcement(
+    attempts,
+    resolvedFocus,
+    completedDevelopment,
+  );
   const reinforcementItems = diagnosticReinforcement
     ? [{ ...diagnosticReinforcement, support: getActualSupport(diagnosticReinforcement, attempts) }]
     : [];
