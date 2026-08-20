@@ -1191,6 +1191,78 @@ export const developmentExercises: Exercise[] = [
     sourceKind: "exploit", variantGroup: "calibration-integrated", learningPackage: "calibration", packageSequence: 12, concept: "calibrated-decision", subconcept: "decision-under-uncertainty", reasoningPattern: "logic-evidence-decision"
   },
 
+  {
+    id: "dev-application-01", purpose: "development", primarySkill: "range-reading", support: "guided",
+    spot: { label: "SRP · Turn", pot: "Single-raised pot", stack: "100bb", hero: "Herói", action: ["No flop, Herói aposta grande e Vilão paga", "Premissa: pares baixos sem draw foldam com frequência; top pairs e draws fortes continuam muito mais", "O turn não altera significativamente a estrutura"] },
+    prompt: "Qual grupo deve estar menos presente no range do Vilão no turn?", options: [{ id: "low", label: "Pares baixos sem draw" }, { id: "strong", label: "Top pairs e draws fortes" }], correctOptionId: "low",
+    feedback: { short: "A aposta do flop já filtrou parte dos pares baixos sem draw. O range do turn não é o mesmo range que chegou ao flop." }, sourceKind: "theory", variantGroup: "application-range-thread", learningPackage: "integrated-application", packageSequence: 1, concept: "decision-logic", subconcept: "range-filtering", reasoningPattern: "action-updates-range", supportNote: "Observe quais grupos continuaram muito menos contra o tamanho do flop."
+  },
+  {
+    id: "dev-application-02", purpose: "development", primarySkill: "range-reading", support: "supported",
+    spot: { label: "Turn → River", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["Vilão aposta no turn e Herói paga", "Premissa: parte dos blefes fracos tende a desistir no river quando não melhora", "O river não altera significativamente as forças relativas; Vilão aposta novamente"] },
+    prompt: "Qual leitura é mais coerente antes de decidir no river?", options: [{ id: "filter", label: "A nova aposta filtra novamente o range; parte dos blefes que desistiriam fica menos representada." }, { id: "restart", label: "Como começou uma nova street, devemos reconstruir o range a partir do que ele tinha antes da aposta do turn." }], correctOptionId: "filter",
+    feedback: { short: "A linha inteira importa. Uma nova street não apaga as informações das ações anteriores." }, sourceKind: "theory", variantGroup: "application-range-thread", learningPackage: "integrated-application", packageSequence: 2, concept: "decision-logic", subconcept: "street-continuity", reasoningPattern: "action-updates-range", supportNote: "Carregue para o river o que as ações anteriores já fizeram com o range."
+  },
+  {
+    id: "dev-application-03", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Duas linhas didáticas", pot: "Flop", stack: "100bb", hero: "Herói", action: ["A: sets e two pair quase sempre aumentariam; Vilão apenas paga", "B: sets e two pair misturam bastante entre call e raise; Vilão apenas paga"] },
+    prompt: "Em qual situação é mais defensável dizer que o topo do range ficou limitado depois do call?", options: [{ id: "a", label: "Situação A" }, { id: "b", label: "Situação B" }, { id: "both", label: "Nas duas, porque call significa capped" }], correctOptionId: "a",
+    feedback: { short: "Capped depende de quais mãos fortes realmente deixam aquela linha. O call sozinho não determina isso." }, sourceKind: "theory", variantGroup: "application-range-thread", learningPackage: "integrated-application", packageSequence: 3, concept: "range-composition", subconcept: "capped-from-line", reasoningPattern: "action-updates-range"
+  },
+  {
+    id: "dev-application-04", purpose: "development", primarySkill: "integrated-decision", support: "independent",
+    spot: { label: "Turn → River", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["No turn, Herói aposta grande principalmente para expulsar pares médios", "Vilão paga; o river é blank"] },
+    prompt: "Antes de escolher o sizing do river, qual é o melhor primeiro passo?", options: [{ id: "update", label: "Atualizar o range do Vilão considerando que muitos pares médios que queríamos expulsar já foram filtrados." }, { id: "repeat", label: "Escolher novamente um size grande porque esse já era nosso objetivo no turn." }, { id: "reset", label: "Voltar ao range anterior à aposta do turn para não tirar conclusões do call." }], correctOptionId: "update",
+    feedback: { short: "O sizing do river depende do range que realmente chegou ao river, e nossa própria ação do turn ajudou a construí-lo." }, sourceKind: "theory", variantGroup: "application-range-thread", learningPackage: "integrated-application", packageSequence: 4, concept: "decision-logic", subconcept: "range-before-objective", reasoningPattern: "range-objective-action"
+  },
+  {
+    id: "dev-application-05", purpose: "development", primarySkill: "sizing", support: "guided",
+    spot: { label: "River · Value", pot: "Heads-up", stack: "100bb", hero: "Herói vence Qx e perde para flushes", action: ["Premissa didática: 50% — Qx paga bastante; flushes continuam", "Premissa didática: 150% — Qx folda bastante; flushes continuam"] },
+    prompt: "Se nosso value depende principalmente dos calls de Qx, qual size tem justificativa mais clara dadas essas premissas?", options: [{ id: "50", label: "50% pot" }, { id: "150", label: "150% pot" }], correctOptionId: "50",
+    feedback: { short: "O size maior perde justamente muitos dos calls piores que justificam nossa aposta por value." }, sourceKind: "theory", variantGroup: "application-target-size", learningPackage: "integrated-application", packageSequence: 5, concept: "sizing-response", subconcept: "value-target", reasoningPattern: "target-response-size", supportNote: "Pergunte quais calls piores justificam o value e em qual size eles continuam."
+  },
+  {
+    id: "dev-application-06", purpose: "development", primarySkill: "sizing", support: "supported",
+    spot: { label: "River · Blefe", pot: "Heads-up", stack: "100bb", hero: "Herói perde para Qx e mãos mais fortes", action: ["Premissa didática: 50% — Qx paga bastante", "Premissa didática: 150% — Qx folda bastante; mãos muito fortes continuam contra ambos", "Objetivo declarado: fazer Qx foldar"] },
+    prompt: "Qual size cumpre melhor a função declarada?", options: [{ id: "50", label: "50% pot" }, { id: "150", label: "150% pot" }], correctOptionId: "150",
+    feedback: { short: "150% produz a reação necessária da mão-alvo nas premissas fornecidas. Isso ainda não prova que o blefe seja lucrativo." }, sourceKind: "theory", variantGroup: "application-target-size", learningPackage: "integrated-application", packageSequence: 6, concept: "decision-logic", subconcept: "objective-size-fit", reasoningPattern: "objective-action-fit", supportNote: "Pergunte qual reação precisamos produzir em Qx para o blefe funcionar."
+  },
+  {
+    id: "dev-application-07", purpose: "development", primarySkill: "sizing", support: "independent",
+    spot: { label: "River · Comparação de size", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["Premissas didáticas: 75% faz 45% das mãos-alvo foldarem", "150% faz 48% das mãos-alvo foldarem", "Nenhuma outra informação de EV é fornecida"] },
+    prompt: "Podemos concluir apenas desses números que 150% é o melhor blefe?", options: [{ id: "yes", label: "Sim. Qualquer aumento na frequência de folds torna o size maior melhor." }, { id: "no", label: "Não. Precisamos comparar o ganho dos folds adicionais com o custo adicional do size." }], correctOptionId: "no",
+    feedback: { short: "Fold equity adicional tem valor, mas não é gratuita. Mais folds, isoladamente, não determinam o melhor EV." }, sourceKind: "theory", variantGroup: "application-target-size", learningPackage: "integrated-application", packageSequence: 7, concept: "sizing-response", subconcept: "incremental-folds", reasoningPattern: "target-response-size"
+  },
+  {
+    id: "dev-application-08", purpose: "development", primarySkill: "integrated-decision", support: "independent",
+    spot: { label: "Resposta a tamanhos", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["Premissa didática — Grupo A: continua contra 33%, 75% e 150%", "Grupo B: call contra 33%, mistura contra 75% e folda bastante contra 150%", "O objetivo depende de alterar a decisão de uma mão melhor"] },
+    prompt: "Qual grupo merece mais atenção ao escolher o size?", options: [{ id: "a", label: "Grupo A" }, { id: "b", label: "Grupo B" }], correctOptionId: "b",
+    feedback: { short: "O Grupo B cruza a fronteira de continuar para foldar quando a pressão aumenta. É justamente essa mudança que pode dar função ao size." }, sourceKind: "theory", variantGroup: "application-target-size", learningPackage: "integrated-application", packageSequence: 8, concept: "sizing-response", subconcept: "size-sensitive-target", reasoningPattern: "compare-response-across-sizes"
+  },
+  {
+    id: "dev-application-09", purpose: "development", primarySkill: "integrated-decision", support: "supported",
+    spot: { label: "River · Blefe", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["Herói acredita que pares médios foldam bastante contra 125%", "Sob essa crença, 125% é o único size que produz o fold necessário", "A expectativa veio de apenas uma situação comparável"] },
+    prompt: "Qual avaliação é mais precisa?", options: [{ id: "split", label: "A lógica entre objetivo e size é coerente, mas a confiança na premissa ainda está pouco sustentada." }, { id: "wrong", label: "O size está logicamente errado porque uma leitura baseada em pouca evidência nunca pode ser usada." }, { id: "proven", label: "A leitura já está suficientemente comprovada porque veio deste Vilão." }], correctOptionId: "split",
+    feedback: { short: "É possível ter uma ação coerente com uma premissa e, ao mesmo tempo, ter pouca evidência para confiar nessa premissa." }, sourceKind: "theory", variantGroup: "application-calibration", learningPackage: "integrated-application", packageSequence: 9, concept: "logic-calibration", subconcept: "premise-vs-action", reasoningPattern: "distinguir lógica de calibração", supportNote: "Separe se a ação cumpre o objetivo de quanta evidência sustenta a reação esperada."
+  },
+  {
+    id: "dev-application-10", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Turn · Leitura individual", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["Hipótese: Vilão parece fazer check-raise leve no turn", "Observamos um check-raise mostrado como blefe", "Em quatro outras situações comparáveis ele não deu check-raise"] },
+    prompt: "Qual atualização é mais proporcional ao conjunto da evidência?", options: [{ id: "mixed", label: "O blefe aumenta a plausibilidade de check-raises leves, mas o conjunto ainda não sustenta uma leitura forte." }, { id: "proof", label: "O showdown prova que ele possui tendência de check-raise leve." }, { id: "cancel", label: "As quatro não-ocorrências anulam completamente a informação do showdown." }], correctOptionId: "mixed",
+    feedback: { short: "A leitura deve incorporar todo o conjunto relevante, sem transformar uma observação em regra nem descartá-la." }, sourceKind: "theory", variantGroup: "application-calibration", learningPackage: "integrated-application", packageSequence: 10, concept: "evidence-quality", subconcept: "mixed-evidence", reasoningPattern: "pesar evidência"
+  },
+  {
+    id: "dev-application-11", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "150 mãos observadas", pot: "River", stack: "—", hero: "Herói", action: ["Nunca vimos Vilão fazer donk bluff no river", "Apenas uma mão chegou a uma situação realmente comparável em que isso poderia ocorrer"] },
+    prompt: "Quão forte é essa ausência como evidência de que ele não faz esse blefe?", options: [{ id: "weak", label: "Fraca" }, { id: "strong", label: "Forte" }], correctOptionId: "weak",
+    feedback: { short: "150 mãos parecem uma amostra grande, mas quase nenhuma delas ofereceu a oportunidade relevante para observar esse comportamento." }, sourceKind: "theory", variantGroup: "application-calibration", learningPackage: "integrated-application", packageSequence: 11, concept: "evidence-quality", subconcept: "opportunity-count", reasoningPattern: "pesar evidência"
+  },
+  {
+    id: "dev-application-12", purpose: "development", primarySkill: "integrated-decision", support: "independent",
+    spot: { label: "River · Herói considera blefar", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["Objetivo: fazer pares médios foldarem", "Size pequeno praticamente não altera a decisão; size grande produz o fold necessário segundo a hipótese atual", "Uma situação comparável terminou em fold; outra, em call"] },
+    prompt: "Qual raciocínio é mais preciso?", options: [{ id: "calibrated", label: "Se decidirmos blefar, o size grande é mais coerente com a função, mas a frequência real de folds continua incerta." }, { id: "paralyzed", label: "Como a evidência é mista, não é possível tomar nenhuma decisão." }, { id: "certain", label: "Como já vimos um fold, devemos tratar o fold contra size grande como uma leitura confiável." }], correctOptionId: "calibrated",
+    feedback: { short: "Calibração não exige certeza para agir. Ela exige distinguir o que a ação precisa fazer de quanta confiança temos na reação esperada." }, sourceKind: "theory", variantGroup: "application-calibration", learningPackage: "integrated-application", packageSequence: 12, concept: "logic-calibration", subconcept: "decision-under-uncertainty", reasoningPattern: "distinguir lógica de calibração"
+  },
 ];
 
 export const evaluationExercises: Exercise[] = [
@@ -1639,6 +1711,30 @@ export const evaluationExercises: Exercise[] = [
     correctOptionId: "separate", feedback: { short: "É possível escolher a ação coerente com a função sem fingir certeza sobre a premissa de resposta." }, sourceKind: "theory", variantGroup: "transfer-calibration", learningPackage: "calibration", concept: "calibrated-decision", subconcept: "new-surface-decision", reasoningPattern: "logic-evidence-decision"
   },
 
+  {
+    id: "retention-application-01", purpose: "retention", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Turn → River", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["No turn, Vilão paga uma aposta que, pela premissa, faz draws fracos desistirem e mantém pares fortes", "O river é blank"] }, prompt: "Qual parte deve estar menos presente no range que chega ao river?", options: [{ id: "weak-draws", label: "Draws fracos que desistiam contra a aposta" }, { id: "strong-pairs", label: "Pares fortes que continuavam" }], correctOptionId: "weak-draws", feedback: { short: "A ação do turn filtrou parte dos draws fracos antes da decisão do river." }, sourceKind: "theory", variantGroup: "application-range-thread", learningPackage: "integrated-application", concept: "decision-logic", subconcept: "range-filtering", reasoningPattern: "action-updates-range"
+  },
+  {
+    id: "retention-application-02", purpose: "retention", primarySkill: "sizing", support: "independent",
+    spot: { label: "River · Value", pot: "Heads-up", stack: "100bb", hero: "Herói vence Jx e perde para straights", action: ["Premissa didática: Jx paga 40% e folda bastante contra 120%", "Straights continuam contra ambos"] }, prompt: "Se o value depende dos calls de Jx, qual size mantém melhor a mão-alvo?", options: [{ id: "40", label: "40% pot" }, { id: "120", label: "120% pot" }], correctOptionId: "40", feedback: { short: "O size menor mantém os calls piores necessários para justificar esse value nas premissas." }, sourceKind: "theory", variantGroup: "application-target-size", learningPackage: "integrated-application", concept: "sizing-response", subconcept: "value-target", reasoningPattern: "target-response-size"
+  },
+  {
+    id: "retention-application-03", purpose: "retention", primarySkill: "integrated-decision", support: "independent",
+    spot: { label: "River · Leitura individual", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["Sob a leitura de que Tx folda contra 130%, apenas esse size cumpre o objetivo", "A leitura veio de uma única situação comparável"] }, prompt: "Qual avaliação separa corretamente lógica e calibração?", options: [{ id: "split", label: "A ação cumpre a função sob a leitura, mas a confiança nessa leitura ainda é baixa." }, { id: "proven", label: "A ação coerente prova que a leitura é confiável." }], correctOptionId: "split", feedback: { short: "Coerência da ação e força da evidência são perguntas diferentes." }, sourceKind: "theory", variantGroup: "application-calibration", learningPackage: "integrated-application", concept: "logic-calibration", subconcept: "premise-vs-action", reasoningPattern: "distinguir lógica de calibração"
+  },
+  {
+    id: "transfer-application-01", purpose: "transfer", primarySkill: "range-reading", support: "independent",
+    spot: { label: "4-bet pot · Turn", pot: "4-bet pot", stack: "100bb", hero: "Herói", action: ["Premissa explícita: no flop, uma aposta retirou grande parte das mãos fracas sem draw", "Vilão pagou; o turn não muda significativamente a estrutura", "Não é necessário conhecer estratégia específica de 4-bet pot"] }, prompt: "Como a ação anterior altera a leitura do range no turn?", options: [{ id: "filtered", label: "As mãos fracas sem draw ficam menos presentes no range seguinte." }, { id: "reset", label: "O range volta a conter essas mãos na mesma proporção por ser uma nova street." }], correctOptionId: "filtered", feedback: { short: "Pelas premissas, a ação anterior já retirou parte relevante das mãos fracas do range seguinte." }, sourceKind: "theory", variantGroup: "application-range-thread", learningPackage: "integrated-application", concept: "decision-logic", subconcept: "range-filtering", reasoningPattern: "action-updates-range"
+  },
+  {
+    id: "transfer-application-02", purpose: "transfer", primarySkill: "sizing", support: "independent",
+    spot: { label: "Torneio · Stack curto", pot: "Torneio", stack: "Curto", hero: "Herói", action: ["Premissa didática: size pequeno não faz a mão-alvo melhor foldar", "Shove faz essa mão foldar com frequência", "Não é necessário conhecer estratégia de torneio"] }, prompt: "Qual ação cumpre melhor o objetivo declarado de fazer a mão-alvo foldar?", options: [{ id: "small", label: "Size pequeno" }, { id: "shove", label: "Shove — sem concluir apenas disso que tem maior EV" }], correctOptionId: "shove", feedback: { short: "O shove cumpre a função nas premissas fornecidas. Isso não prova que seja a ação de maior EV." }, sourceKind: "theory", variantGroup: "application-target-size", learningPackage: "integrated-application", concept: "decision-logic", subconcept: "objective-size-fit", reasoningPattern: "objective-action-fit"
+  },
+  {
+    id: "transfer-application-03", purpose: "transfer", primarySkill: "integrated-decision", support: "independent",
+    spot: { label: "SRP · OOP", pot: "Single-raised pot", stack: "100bb", hero: "Herói OOP", action: ["Uma leitura individual veio de uma única situação", "Se a leitura for verdadeira, a ação escolhida cumpre logicamente o objetivo"] }, prompt: "Qual conclusão distingue lógica de calibração?", options: [{ id: "split", label: "A ação pode ser coerente sob a leitura, enquanto a confiança na leitura permanece baixa." }, { id: "same", label: "Se a leitura é frágil, a ação é necessariamente incoerente." }], correctOptionId: "split", feedback: { short: "A função da ação pode estar correta sob a premissa sem que a evidência torne essa premissa confiável." }, sourceKind: "theory", variantGroup: "application-calibration", learningPackage: "integrated-application", concept: "logic-calibration", subconcept: "premise-vs-action", reasoningPattern: "distinguir lógica de calibração"
+  },
 ];
 
 export const allExercises = [...developmentExercises, ...evaluationExercises];

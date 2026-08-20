@@ -43,7 +43,7 @@ Checar automaticamente sempre que possível:
 - nenhuma opção vazia;
 - nenhum board inválido se houver parser/validador disponível.
 
-Na V0.5, `range-actions`, `range-to-decision` e `calibration` são os pacotes estruturados: cada um deve ter exatamente as sequências de 1 a 12 entre os exercícios de desenvolvimento. `foundations` não exige `packageSequence`.
+Na V0.9, `range-actions`, `range-to-decision`, `calibration` e `integrated-application` são os pacotes estruturados: cada um deve ter exatamente as sequências de 1 a 12 entre os exercícios de desenvolvimento. `foundations` não exige `packageSequence`.
 
 ## Teste humano atual
 
@@ -91,3 +91,5 @@ itens, coexistência com retention/transfer, ausência de duplicação, escolha 
 superfície mais antiga com exclusão da tentativa mais recente, determinismo,
 recuperação pelo histórico e reutilização de `getActualSupport`. Também verifica
 que seleção diagnóstica não muda `chooseFocus` nem `SkillState`.
+
+Na V0.9, a suíte possui 71 testes. A cobertura adicional protege a ordem do quarto pacote, seus três microblocos, retomada parcial, estabilidade após erro, ausência de vazamento manual, bloqueio de avaliação e diagnóstico durante a introdução, elegibilidade posterior, contrato de 12 itens, seis avaliações reservadas, contagens 60/30, determinismo e limite de 12 decisões.

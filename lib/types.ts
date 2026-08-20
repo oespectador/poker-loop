@@ -1,6 +1,11 @@
 export type ExercisePurpose = "development" | "transfer" | "retention";
 export type SupportLevel = "guided" | "supported" | "independent";
-export type LearningPackage = "foundations" | "range-actions" | "range-to-decision" | "calibration";
+export type LearningPackage =
+  | "foundations"
+  | "range-actions"
+  | "range-to-decision"
+  | "calibration"
+  | "integrated-application";
 
 export type Skill =
   | "board-reading"
