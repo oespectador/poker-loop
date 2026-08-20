@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { PokerBoard } from "../components/PokerBoard";
-import { appendAttempts, readAttempts } from "@/lib/storage";
+import { createTrainingSession, resumeTrainingSession, updateActiveSession } from "@/lib/activeTrainingSession";
+import { appendAttempts, clearActiveTrainingSession, readActiveTrainingSession, readAttempts, writeActiveTrainingSession } from "@/lib/storage";
 import { attemptSupport } from "@/lib/support";
-import { buildRecommendedSession, reprioritizeAfterError, skillLabels } from "@/lib/trainingEngine";
-import type { Attempt, Exercise, Skill } from "@/lib/types";
+import { reprioritizeAfterError, skillLabels } from "@/lib/trainingEngine";
+import type { ActiveTrainingSession, Attempt, Exercise, Skill } from "@/lib/types";
 
 function parseBoardLabel(label: string): string[] | null {
   const cards = label.trim().split(/\s+/);
@@ -30,12 +31,35 @@ export default function TrainingSession() {
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [expanded, setExpanded] = useState(false);
   const [hintRevealed, setHintRevealed] = useState(false);
-  const [finished, setFinished] = useState(false);
-  const sessionId = useRef(`session-${Date.now()}`);
+  const activeSession = useRef<ActiveTrainingSession | null>(null);
+
+  function newSessionId() {
+    return `session-${Date.now()}-${crypto.randomUUID()}`;
+  }
+
+  function startNewSession(history: Attempt[]) {
+    const created = createTrainingSession(history, focus, newSessionId());
+    activeSession.current = created.active;
+    writeActiveTrainingSession(created.active);
+    setQueue(created.queue);
+    setAttempts(created.attempts);
+    setIndex(0);
+    setSelected(null);
+    setExpanded(false);
+    setHintRevealed(false);
+  }
 
   useEffect(() => {
     const history = readAttempts();
-    setQueue(buildRecommendedSession(history, focus, sessionId.current));
+    const resumed = resumeTrainingSession(readActiveTrainingSession(), history, focus);
+    if (resumed) {
+      activeSession.current = resumed.active;
+      setQueue(resumed.queue);
+      setAttempts(resumed.attempts);
+      setIndex(resumed.active.nextIndex);
+    } else {
+      startNewSession(history);
+    }
     setReady(true);
   }, [focus]);
 
@@ -50,7 +74,7 @@ export default function TrainingSession() {
     const attempt: Attempt = {
       id: `attempt-${Date.now()}-${exercise.id}`,
       exerciseId: exercise.id,
-      sessionId: sessionId.current,
+      sessionId: activeSession.current!.sessionId,
       primarySkill: exercise.primarySkill,
       answerId: optionId,
       correct: optionId === exercise.correctOptionId,
@@ -61,15 +85,17 @@ export default function TrainingSession() {
 
     setAttempts((current) => [...current, attempt]);
     appendAttempts([attempt]);
-    if (!attempt.correct) {
-      setQueue((current) => reprioritizeAfterError(current, index, exercise));
-    }
+    const nextQueue = attempt.correct ? queue : reprioritizeAfterError(queue, index, exercise);
+    setQueue(nextQueue);
+    const nextActive = updateActiveSession(activeSession.current!, nextQueue, index + 1);
+    activeSession.current = nextActive;
+    writeActiveTrainingSession(nextActive);
   }
 
   function next() {
     if (!selected) return;
     if (index >= queue.length - 1) {
-      setFinished(true);
+      setIndex(queue.length);
       return;
     }
     setIndex((current) => current + 1);
@@ -86,7 +112,7 @@ export default function TrainingSession() {
     );
   }
 
-  if (finished) {
+  if (index >= queue.length) {
     const correctCount = attempts.filter((attempt) => attempt.correct).length;
     const errorSkills = [...new Set(attempts.filter((attempt) => !attempt.correct).map((attempt) => attempt.primarySkill))];
     return (
@@ -107,8 +133,11 @@ export default function TrainingSession() {
           </article>
         </div>
 
-        <Link href="/" className="primary-cta">Concluir</Link>
-        <Link href="/session" className="quiet-link">Treinar mais</Link>
+        <Link href="/" className="primary-cta" onClick={clearActiveTrainingSession}>Concluir</Link>
+        <button type="button" className="quiet-link button-reset" onClick={() => {
+          clearActiveTrainingSession();
+          startNewSession(readAttempts());
+        }}>Treinar mais</button>
       </main>
     );
   }

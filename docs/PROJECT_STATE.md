@@ -1,4 +1,4 @@
-# Project State — baseline V0.10.1
+# Project State — baseline V0.10.2
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,9 @@ Stack:
 
 ## Versão atual
 
-**V0.10.1 — Evidência Local por Pacote**
+**V0.10.2 — Persistência da Sessão Ativa**
+
+A sessão pedagógica de 12 decisões tem identidade persistente. Navegação e reload retomam a mesma fila e a próxima decisão ainda não respondida. O estado usa `poker-loop-v1:active-session`, sem alterar o histórico ou o schema de `Attempt`.
 
 ### Biblioteca
 

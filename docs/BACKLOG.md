@@ -114,3 +114,12 @@ Permanecem deliberadamente fora da biblioteca ativa: double previous size, turn/
 - relação evaluation → development por `reasoningPattern`, `concept` e `primarySkill`;
 - evidência retention/transfer isolada do suporte, prioridade e `SkillState`;
 - nenhum threshold, exercício, conteúdo, UI, storage ou schema alterado.
+
+## Entregue na V0.10.2
+
+- identidade persistente para a sessão pedagógica de 12 decisões;
+- fila reconstruída da biblioteca atual com ordem, suporte e `sessionRole` persistidos;
+- retomada na próxima decisão, inclusive após saída durante feedback;
+- conclusão e `Treinar mais` encerram explicitamente a sessão ativa;
+- focus diferente substitui a sessão sem apagar Attempts históricos;
+- storage separado, sem migração ou mudança em `Attempt`.
