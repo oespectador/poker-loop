@@ -355,7 +355,7 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Relação de evidência:** evaluation prefere development de mesmo `reasoningPattern`, depois `concept` e finalmente `primarySkill`.
 - **Separação:** `getActualSupport` e `exercisePriority` filtram tentativas para `purpose=development`; `SkillState` já mantinha e continua mantendo essa separação.
 - **Arquivos:** `lib/trainingEngine.ts`, `tests/trainingEngine.test.ts`, `docs/PROJECT_STATE.md`, `docs/LEARNING_MODEL.md`, `docs/TESTING.md`, `docs/BACKLOG.md` e este log.
-- **Validação:** `npm test` (85 testes), `npm run typecheck`, `npm run build` e `git diff --check`.
+- **Validação:** `npm test` (101 testes), `npm run typecheck`, `npm run build` e `git diff --check`.
 - **Riscos conhecidos:** completude depende deliberadamente da biblioteca atual e de qualquer tentativa registrada para cada ID, não da posição ordinal do pacote.
 - **Decisões humanas pendentes:** nenhuma.
 - **Escopo preservado:** thresholds, recuperação diagnóstica, conteúdo, UI, storage, schema, ordem dos pacotes, microblocos, limite e determinismo não mudaram.
