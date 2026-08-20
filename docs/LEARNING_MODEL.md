@@ -152,3 +152,7 @@ Velocidade vem depois de compreensão e independência. Cronômetro pode futuram
 ## Aplicação integrada (V0.9)
 
 O quarto pacote estruturado reaplica conceitos existentes em novas superfícies: ações atualizam o range, objetivos definem mãos-alvo e a qualidade da evidência calibra a confiança. Seus 12 development entram em três microblocos de quatro. Enquanto a primeira apresentação estiver pendente, retenção, transferência e reforço diagnóstico permanecem bloqueados; depois, os reasoningPatterns existentes tornam os itens superfícies adaptativas e diagnósticas sem novos thresholds ou estados.
+
+## Pistas de força do range (V0.10)
+
+O quinto pacote estruturado ensina leitura de range por heurísticas condicionais: size é evidência, não revelação. Os 12 development avançam de pistas isoladas para empilhamento, exceções e sinais conflitantes em três microblocos. O contexto modifica o valor informativo do size; boards muito static/dry e 3-bet pots são boundary cases explícitos. Enquanto a apresentação estiver pendente, avaliação e reforço diagnóstico continuam bloqueados pela infraestrutura genérica. Depois, os três novos `reasoningPattern` podem alimentar o diagnóstico existente sem alterar seus thresholds.

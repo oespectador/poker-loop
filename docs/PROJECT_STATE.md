@@ -1,4 +1,4 @@
-# Project State — baseline V0.9
+# Project State — baseline V0.10
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.9 — Aplicação Integrada em Novas Superfícies**
+**V0.10 — Pistas de Força do Range**
 
 ### Biblioteca
 
@@ -24,9 +24,10 @@ Stack:
 - 12 exercícios V0.4 — Da Leitura à Decisão;
 - 12 exercícios V0.5 — Lógica × Calibração;
 - 12 exercícios V0.9 — Aplicação Integrada em Novas Superfícies;
-- 30 itens reservados de retenção/transferência fora do treino normal.
+- 12 exercícios V0.10 — Pistas de Força do Range;
+- 36 itens reservados de retenção/transferência fora do treino normal.
 
-Total ativo após todos os pacotes serem apresentados: **60 exercícios de desenvolvimento**.
+Total ativo após todos os pacotes serem apresentados: **72 exercícios de desenvolvimento**.
 
 ## Pacotes estruturados
 
@@ -36,6 +37,7 @@ Ordem:
 2. `range-to-decision`
 3. `calibration`
 4. `integrated-application`
+5. `range-strength-signals`
 
 Cada pacote tem 12 itens divididos em três microblocos de quatro.
 
@@ -71,7 +73,7 @@ Comportamentos já implementados:
 - repriorização de variação após erro somente fora de introdução;
 - progresso conservador por habilidade.
 
-Depois da apresentação completa dos quatro pacotes estruturados, uma sessão pode
+Depois da apresentação completa dos cinco pacotes estruturados, uma sessão pode
 incluir no máximo um item elegível de retenção e um de transferência, sem passar
 de 12 decisões. Cada item reservado aparece no máximo uma vez neste piloto.
 
@@ -99,7 +101,7 @@ exercícios, desativam o sinal por enquanto — uma heurística provisória de
 recuperação, não prova de domínio. Esses limiares são heurísticas do protótipo,
 não medidas validadas. `candidate` permanece read-only.
 
-Somente depois da apresentação completa dos quatro pacotes, o primeiro sinal
+Somente depois da apresentação completa dos cinco pacotes, o primeiro sinal
 `recurring` compatível com o foco já escolhido pode reservar um único exercício
 development relacionado. A seleção evita a superfície da tentativa mais recente
 quando existe alternativa, prefere a menos recentemente respondida e usa a ordem
@@ -156,3 +158,7 @@ Evitar `região mais forte`. Para força global usar `range mais forte`; para nu
 - gamificação pesada;
 - grande redesign visual;
 - tendências específicas de NL2 sem fonte/dados adequados.
+
+## V0.10 — política de conteúdo
+
+O quinto pacote deriva apenas das heurísticas condicionais registradas no claim map do Hungry Horse. Size é evidência, não revelação do range, e seu valor informativo muda com board e configuração. Static/dry e 3-bet pot são boundary cases explícitos. Claims de turn, river, donk e double previous size permanecem fora da biblioteca ativa; nenhuma tendência foi transplantada para NL2/GGPoker como fato. Motor, storage e schema de tentativas permanecem inalterados.

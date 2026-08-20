@@ -1263,6 +1263,81 @@ export const developmentExercises: Exercise[] = [
     prompt: "Qual raciocínio é mais preciso?", options: [{ id: "calibrated", label: "Se decidirmos blefar, o size grande é mais coerente com a função, mas a frequência real de folds continua incerta." }, { id: "paralyzed", label: "Como a evidência é mista, não é possível tomar nenhuma decisão." }, { id: "certain", label: "Como já vimos um fold, devemos tratar o fold contra size grande como uma leitura confiável." }], correctOptionId: "calibrated",
     feedback: { short: "Calibração não exige certeza para agir. Ela exige distinguir o que a ação precisa fazer de quanta confiança temos na reação esperada." }, sourceKind: "theory", variantGroup: "application-calibration", learningPackage: "integrated-application", packageSequence: 12, concept: "logic-calibration", subconcept: "decision-under-uncertainty", reasoningPattern: "distinguir lógica de calibração"
   },
+
+  // V0.10 — Pistas de Força do Range. Heurísticas condicionais, nunca regras universais.
+  {
+    id: "dev-range-signals-01", purpose: "development", primarySkill: "range-reading", support: "guided",
+    spot: { label: "Flop · Heads-up", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["Vilão faz uma c-bet relativamente grande"] },
+    prompt: "Qual leitura é mais calibrada?", options: [{ id: "evidence", label: "O size adiciona evidência de que o range pode estar mais forte, mas não determina isso sozinho." }, { id: "certain", label: "O size mostra que o range é forte." }, { id: "none", label: "O size não contém nenhuma informação útil." }], correctOptionId: "evidence",
+    feedback: { short: "O size é uma pista contextual: aumenta a evidência, sem revelar sozinho a força do range." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 1, concept: "range-strength-evidence", subconcept: "large-size-signal", reasoningPattern: "stack-range-strength-clues", supportNote: "Trate o size como evidência que atualiza uma leitura, não como um veredito."
+  },
+  {
+    id: "dev-range-signals-02", purpose: "development", primarySkill: "range-reading", support: "supported",
+    spot: { label: "Flop · Multiway", pot: "Pote multiway", stack: "100bb", hero: "Herói", action: ["Vilão faz uma c-bet contra mais de um jogador"] },
+    prompt: "Segundo a heurística estudada, o que esse contexto acrescenta?", options: [{ id: "clue", label: "É mais uma pista em direção a range relativamente forte, sem transformar isso em certeza." }, { id: "proof", label: "Multiway prova que ele tem uma mão forte." }, { id: "nothing", label: "O número de jogadores nunca informa a leitura do range." }], correctOptionId: "clue",
+    feedback: { short: "A c-bet multiway acrescenta uma pista; não prova a composição do range." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 2, concept: "range-strength-evidence", subconcept: "multiway-signal", reasoningPattern: "stack-range-strength-clues", supportNote: "Pergunte se o contexto adiciona evidência ou produz certeza."
+  },
+  {
+    id: "dev-range-signals-03", purpose: "development", primarySkill: "range-reading", support: "supported",
+    spot: { label: "Configurações preflop", pot: "Comparação", stack: "100bb", hero: "Herói", action: ["A: early vs early", "B: button vs big blind"] },
+    prompt: "Qual configuração, isolando esse fator, fornece mais evidência inicial para ranges relativamente fortes?", options: [{ id: "a", label: "A: early vs early" }, { id: "b", label: "B: button vs big blind" }, { id: "same", label: "As duas fornecem necessariamente a mesma evidência" }], correctOptionId: "a",
+    feedback: { short: "Early vs early é relativamente mais tight. Isso compara a composição inicial dos ranges; não afirma que toda ação ali representa força." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 3, concept: "range-strength-evidence", subconcept: "tight-configuration", reasoningPattern: "stack-range-strength-clues", supportNote: "Compare quão amplos são os ranges iniciais, sem transformar a configuração em regra absoluta."
+  },
+  {
+    id: "dev-range-signals-04", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Empilhar pistas", pot: "Comparação", stack: "100bb", hero: "Herói", action: ["A: size grande, multiway e configuração tight", "B: apenas size grande, heads-up e configuração wide"] },
+    prompt: "Qual situação reúne mais pistas coerentes de range forte?", options: [{ id: "a", label: "Situação A" }, { id: "b", label: "Situação B" }, { id: "certain", label: "As duas provam range forte porque há size grande" }], correctOptionId: "a",
+    feedback: { short: "Mais pistas coerentes aumentam a sustentação da leitura; nenhuma delas individualmente cria certeza." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 4, concept: "range-strength-evidence", subconcept: "clue-stacking", reasoningPattern: "stack-range-strength-clues"
+  },
+  {
+    id: "dev-range-signals-05", purpose: "development", primarySkill: "range-reading", support: "guided",
+    spot: { label: "Flop · Contexto combinado", pot: "Heads-up · configuração wide", stack: "100bb", hero: "Herói", action: ["Board wet/dynamic", "Vilão faz uma c-bet pequena"] },
+    prompt: "Qual leitura é mais compatível com a heurística da fonte?", options: [{ id: "hypothesis", label: "Há várias pistas de que o range pode estar relativamente mais fraco, mas isso continua sendo uma hipótese." }, { id: "weak", label: "A c-bet pequena revela um range fraco." }, { id: "strong", label: "O contexto prova que o range está forte." }], correctOptionId: "hypothesis",
+    feedback: { short: "Small size ganha significado apenas em combinação com heads-up, configuração wide e board wet/dynamic; ainda é uma hipótese." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 5, concept: "range-strength-evidence", subconcept: "small-dynamic-wide", reasoningPattern: "stack-range-strength-clues", supportNote: "Combine todas as pistas descritas e mantenha a conclusão probabilística."
+  },
+  {
+    id: "dev-range-signals-06", purpose: "development", primarySkill: "range-reading", support: "supported",
+    spot: { label: "Configurações wide e tight", pot: "Comparação", stack: "100bb", hero: "Herói", action: ["A: button vs big blind", "B: early vs early"] },
+    prompt: "Em qual configuração a fonte considera mais provável que existam mãos fracas compondo o range?", options: [{ id: "a", label: "A: button vs big blind" }, { id: "b", label: "B: early vs early" }, { id: "absolute", label: "Nenhuma: configurações não alteram a composição possível" }], correctOptionId: "a",
+    feedback: { short: "Button vs big blind é uma comparação relativamente mais wide, não uma descrição absoluta de todo o range." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 6, concept: "range-strength-evidence", subconcept: "wide-configuration", reasoningPattern: "stack-range-strength-clues", supportNote: "Compare a possibilidade relativa de mãos fracas, não rotule o range inteiro."
+  },
+  {
+    id: "dev-range-signals-07", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Minimal pair · Mesmo size", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["A: c-bet de 33% em board muito static/dry", "B: c-bet de 33% em board wet/dynamic, heads-up e configuração wide"] },
+    prompt: "O mesmo size fornece a mesma evidência de fraqueza nas duas situações?", options: [{ id: "no", label: "Não. Board e contexto alteram o valor informativo do size." }, { id: "yes", label: "Sim. Um size de 33% sempre carrega o mesmo sinal." }], correctOptionId: "no",
+    feedback: { short: "Board e contexto alteram o significado informativo do size. Em board muito static/dry, mãos fortes também podem usar size pequeno porque há menos turns ruins a temer; isso é uma exceção, não uma estratégia universal de c-bet." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 7, concept: "range-strength-evidence", subconcept: "static-dry-boundary", reasoningPattern: "context-modulates-size-signal"
+  },
+  {
+    id: "dev-range-signals-08", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Flop · 3-bet pot", pot: "3-bet pot", stack: "100bb", hero: "Herói", action: ["Vilão faz uma c-bet pequena"] },
+    prompt: "Podemos concluir apenas pelo size que o range está fraco?", options: [{ id: "no", label: "Não. A configuração também informa a leitura, e o size isolado não a resolve." }, { id: "yes", label: "Sim. C-bet pequena basta para identificar fraqueza." }], correctOptionId: "no",
+    feedback: { short: "A própria configuração já contém ranges relativamente mais estreitos e fortes que muitos single-raised pots; o size pequeno isoladamente não resolve a leitura." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 8, concept: "range-strength-evidence", subconcept: "three-bet-pot-boundary", reasoningPattern: "context-modulates-size-signal"
+  },
+  {
+    id: "dev-range-signals-09", purpose: "development", primarySkill: "range-reading", support: "supported",
+    spot: { label: "Flop · Uma informação", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["A única informação pós-flop é uma c-bet grande"] },
+    prompt: "Qual formulação é melhor?", options: [{ id: "verdict", label: "Range forte." }, { id: "clue", label: "Temos uma pista em direção a força, mas ainda pouca informação." }, { id: "ignore", label: "O size deve ser ignorado." }], correctOptionId: "clue",
+    feedback: { short: "Uma pista pede atualização pequena e contextual, não veredito nem descarte." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 9, concept: "range-strength-calibration", subconcept: "single-clue", reasoningPattern: "calibrate-range-signal", supportNote: "Procure a resposta que atualiza a leitura sem fingir precisão."
+  },
+  {
+    id: "dev-range-signals-10", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Flop · Sinais conflitantes", pot: "Heads-up · configuração wide", stack: "100bb", hero: "Herói", action: ["Vilão usa size relativamente grande"] },
+    prompt: "Qual leitura é mais calibrada?", options: [{ id: "mixed", label: "Há sinais em direções diferentes; não há motivo para fingir certeza." }, { id: "size", label: "O size domina todo o contexto, então o range é forte." }, { id: "config", label: "A configuração domina todo o size, então o range é fraco." }], correctOptionId: "mixed",
+    feedback: { short: "Quando as pistas apontam em direções diferentes, a evidência permanece mista." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 10, concept: "range-strength-calibration", subconcept: "conflicting-clues", reasoningPattern: "calibrate-range-signal"
+  },
+  {
+    id: "dev-range-signals-11", purpose: "development", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Flop · Configuração tight", pot: "Configuração tight", stack: "100bb", hero: "Herói", action: ["Vilão faz uma c-bet pequena"] },
+    prompt: "Qual erro devemos evitar?", options: [{ id: "automatic", label: "Concluir automaticamente que small size significa range fraco." }, { id: "context", label: "Considerar a configuração junto com o size." }, { id: "uncertain", label: "Manter incerteza quando as pistas não resolvem a leitura." }], correctOptionId: "automatic",
+    feedback: { short: "O contexto pode contrariar ou enfraquecer a leitura gerada pelo size." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 11, concept: "range-strength-calibration", subconcept: "tight-small-boundary", reasoningPattern: "context-modulates-size-signal"
+  },
+  {
+    id: "dev-range-signals-12", purpose: "development", primarySkill: "integrated-decision", support: "independent",
+    spot: { label: "Integração · Duas situações", pot: "Comparação", stack: "100bb", hero: "Herói", action: ["A: wide, heads-up, wet/dynamic e small c-bet", "B: tight, multiway e large c-bet"] },
+    prompt: "Qual comparação é mais coerente com as pistas ensinadas?", options: [{ id: "relative", label: "B reúne mais sinais de força relativa; A reúne mais sinais de fraqueza relativa; nenhuma leitura é certeza." }, { id: "size", label: "O size sozinho decide a leitura nas duas situações." }, { id: "same", label: "As duas situações são equivalentes." }], correctOptionId: "relative",
+    feedback: { short: "A leitura ganha sustentação quando pistas condicionais coerentes são empilhadas, sem se tornar certeza." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", packageSequence: 12, concept: "range-strength-calibration", subconcept: "integrated-clues", reasoningPattern: "stack-range-strength-clues"
+  },
+
 ];
 
 export const evaluationExercises: Exercise[] = [
@@ -1735,6 +1810,32 @@ export const evaluationExercises: Exercise[] = [
     id: "transfer-application-03", purpose: "transfer", primarySkill: "integrated-decision", support: "independent",
     spot: { label: "SRP · OOP", pot: "Single-raised pot", stack: "100bb", hero: "Herói OOP", action: ["Uma leitura individual veio de uma única situação", "Se a leitura for verdadeira, a ação escolhida cumpre logicamente o objetivo"] }, prompt: "Qual conclusão distingue lógica de calibração?", options: [{ id: "split", label: "A ação pode ser coerente sob a leitura, enquanto a confiança na leitura permanece baixa." }, { id: "same", label: "Se a leitura é frágil, a ação é necessariamente incoerente." }], correctOptionId: "split", feedback: { short: "A função da ação pode estar correta sob a premissa sem que a evidência torne essa premissa confiável." }, sourceKind: "theory", variantGroup: "application-calibration", learningPackage: "integrated-application", concept: "logic-calibration", subconcept: "premise-vs-action", reasoningPattern: "distinguir lógica de calibração"
   },
+
+  {
+    id: "retention-range-signals-01", purpose: "retention", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Retenção · Flop", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["Vilão usa uma c-bet grande"] }, prompt: "O que esse size permite inferir?", options: [{ id: "clue", label: "É uma pista de range possivelmente mais forte, não uma certeza." }, { id: "proof", label: "É prova de range forte." }], correctOptionId: "clue", feedback: { short: "Size adiciona evidência; não revela sozinho o range." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", concept: "range-strength-evidence", subconcept: "large-size-retrieval", reasoningPattern: "calibrate-range-signal"
+  },
+  {
+    id: "retention-range-signals-02", purpose: "retention", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Retenção · Minimal pair", pot: "Heads-up", stack: "100bb", hero: "Herói", action: ["A: 30% em board muito static/dry", "B: 30% em board wet/dynamic e configuração wide"] }, prompt: "O sinal do size é igual?", options: [{ id: "different", label: "Não; o contexto modifica seu valor informativo." }, { id: "same", label: "Sim; small size tem significado fixo." }], correctOptionId: "different", feedback: { short: "O board static/dry é um boundary case: mãos fortes também podem usar size pequeno." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", concept: "range-strength-evidence", subconcept: "static-dry-boundary", reasoningPattern: "context-modulates-size-signal"
+  },
+  {
+    id: "retention-range-signals-03", purpose: "retention", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Retenção · Pistas coerentes", pot: "Multiway · configuração tight", stack: "100bb", hero: "Herói", action: ["Vilão usa uma c-bet grande"] }, prompt: "Como combinar essas informações?", options: [{ id: "stack", label: "As pistas coerentes dão mais sustentação à hipótese de range relativamente forte, sem certeza." }, { id: "one", label: "Somente o size importa." }], correctOptionId: "stack", feedback: { short: "Multiway, configuração e size podem ser empilhados como evidências condicionais." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", concept: "range-strength-evidence", subconcept: "clue-stacking", reasoningPattern: "stack-range-strength-clues"
+  },
+  {
+    id: "transfer-range-signals-01", purpose: "transfer", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Transferência · Flop", pot: "Heads-up · button vs big blind", stack: "100bb", hero: "Herói", action: ["Board wet/dynamic", "Vilão c-beta 25% do pote"] }, prompt: "Qual leitura é proporcional às pistas?", options: [{ id: "hypothesis", label: "O conjunto torna um range relativamente mais fraco mais plausível, mas continua sendo hipótese." }, { id: "rule", label: "25% significa range fraco." }], correctOptionId: "hypothesis", feedback: { short: "O tamanho numérico mudou, mas a estrutura condicional permanece: wide, heads-up, wet/dynamic e small." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", concept: "range-strength-evidence", subconcept: "small-dynamic-wide", reasoningPattern: "stack-range-strength-clues"
+  },
+  {
+    id: "transfer-range-signals-02", purpose: "transfer", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Transferência · 3-bet pot", pot: "3-bet pot", stack: "100bb", hero: "Herói", action: ["Vilão faz c-bet de 25%"] }, prompt: "Por que o size sozinho não resolve a leitura?", options: [{ id: "context", label: "Porque a própria configuração já contém ranges relativamente mais estreitos/fortes que muitos single-raised pots." }, { id: "weak", label: "Porque qualquer c-bet pequena revela fraqueza apenas fora de 3-bet pots." }], correctOptionId: "context", feedback: { short: "A configuração modula o sinal; não substituímos uma regra universal por outra." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", concept: "range-strength-evidence", subconcept: "three-bet-pot-boundary", reasoningPattern: "context-modulates-size-signal"
+  },
+  {
+    id: "transfer-range-signals-03", purpose: "transfer", primarySkill: "range-reading", support: "independent",
+    spot: { label: "Transferência · Evidência mista", pot: "Heads-up · configuração wide", stack: "100bb", hero: "Herói", action: ["Vilão faz uma c-bet relativamente grande"] }, prompt: "Qual resposta evita uma decisão mecânica entre forte e fraco?", options: [{ id: "mixed", label: "Incerto: há evidência mista em direções diferentes." }, { id: "strong", label: "Forte, porque size domina." }, { id: "weak", label: "Fraco, porque configuração domina." }], correctOptionId: "mixed", feedback: { short: "Pistas conflitantes pedem incerteza calibrada, sem porcentagens inventadas." }, sourceKind: "heuristic", variantGroup: "range-strength-signals", learningPackage: "range-strength-signals", concept: "range-strength-calibration", subconcept: "conflicting-clues", reasoningPattern: "calibrate-range-signal"
+  },
+
 ];
 
 export const allExercises = [...developmentExercises, ...evaluationExercises];

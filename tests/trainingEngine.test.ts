@@ -64,7 +64,7 @@ test("a primeira sessão contém os 12 exercícios fundadores em ordem", () => {
   );
 });
 
-test("pacote pendente respeita a ordem global dos quatro pacotes", () => {
+test("pacote pendente respeita a ordem global dos cinco pacotes", () => {
   const attempts = attemptsFor(founders);
   assert.equal(getPendingLearningPackage(attempts), "range-actions");
 
@@ -78,6 +78,9 @@ test("pacote pendente respeita a ordem global dos quatro pacotes", () => {
   assert.equal(getPendingLearningPackage(attempts), "integrated-application");
 
   attempts.push(...attemptsFor(packageExercises("integrated-application"), { sessionId: "integrated-application" }));
+  assert.equal(getPendingLearningPackage(attempts), "range-strength-signals");
+
+  attempts.push(...attemptsFor(packageExercises("range-strength-signals"), { sessionId: "range-strength-signals" }));
   assert.equal(getPendingLearningPackage(attempts), undefined);
 });
 
@@ -653,12 +656,12 @@ test("após integrated-application, avaliações e novas superfícies diagnósti
   assert.ok(selected && selected.learningPackage === "integrated-application");
 });
 
-test("V0.9 possui 60 development, 30 reservados e exatamente seis avaliações de aplicação", () => {
+test("V0.10 possui 72 development, 36 reservados e seis avaliações de aplicação", () => {
   const applicationEvaluations = evaluationExercises.filter(
     ({ learningPackage }) => learningPackage === "integrated-application",
   );
-  assert.equal(developmentExercises.length, 60);
-  assert.equal(evaluationExercises.length, 30);
+  assert.equal(developmentExercises.length, 72);
+  assert.equal(evaluationExercises.length, 36);
   assert.equal(applicationEvaluations.length, 6);
   assert.deepEqual(
     applicationEvaluations.map(({ purpose }) => purpose).sort(),
@@ -671,6 +674,76 @@ test("V0.9 mantém determinismo e limite de 12 itens", () => {
   const attempts = completedDevelopmentAttempts();
   const first = buildRecommendedSession(attempts, "integrated-decision", "v09-stable", NOW);
   const second = buildRecommendedSession(attempts, "integrated-decision", "v09-stable", NOW);
+  assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
+  assert.ok(first.length <= 12);
+});
+
+test("range-strength-signals é o quinto pacote e fica bloqueado até integrated-application completo", () => {
+  const beforeApplicationEnds = developmentExercises.filter(({ learningPackage, id }) =>
+    learningPackage !== "range-strength-signals" && id !== "dev-application-12");
+  assert.equal(getPendingLearningPackage(attemptsFor(beforeApplicationEnds)), "integrated-application");
+  const previous = developmentExercises.filter(({ learningPackage }) => learningPackage !== "range-strength-signals");
+  assert.equal(getPendingLearningPackage(attemptsFor(previous)), "range-strength-signals");
+});
+
+test("range-strength-signals entra em 01–04, 05–08 e 09–12, retomando sem embaralhar por erro", () => {
+  const previous = developmentExercises.filter(({ learningPackage }) => learningPackage !== "range-strength-signals");
+  const attempts = attemptsFor(previous);
+  const first = buildRecommendedSession(attempts, undefined, "signals-first").filter(({ sessionRole }) => sessionRole === "introduction");
+  assert.deepEqual(first.map(({ id }) => id), packageIds("range-strength-signals", 1, 4));
+  assert.deepEqual(reprioritizeAfterError(first, 0, first[0]).map(({ id }) => id), first.map(({ id }) => id));
+  attempts.push(...attemptsFor(first.slice(0, 2), { sessionId: "signals-partial" }));
+  const resumed = buildRecommendedSession(attempts, undefined, "signals-resumed").filter(({ sessionRole }) => sessionRole === "introduction");
+  assert.deepEqual(resumed.map(({ id }) => id), packageIds("range-strength-signals", 1, 4).slice(2));
+  attempts.push(...attemptsFor(resumed, { sessionId: "signals-rest-first" }));
+  for (const [start, end] of [[5, 8], [9, 12]] as const) {
+    const block = buildRecommendedSession(attempts, undefined, `signals-${start}`).filter(({ sessionRole }) => sessionRole === "introduction");
+    assert.deepEqual(block.map(({ id }) => id), packageIds("range-strength-signals", start, end));
+    attempts.push(...attemptsFor(block, { sessionId: `signals-${start}` }));
+  }
+});
+
+test("treino manual, avaliação e diagnóstico não vazam enquanto range-strength-signals está pendente", () => {
+  const incomplete = developmentExercises.filter(({ id }) => id !== "dev-range-signals-12");
+  const family = packageExercises("range-strength-signals").filter(({ reasoningPattern }) => reasoningPattern === "stack-range-strength-clues");
+  const attempts = [...attemptsFor(incomplete), ...diagnosticErrors(family, 3, 10)];
+  const manual = buildRecommendedSession(attempts, "sizing", "signals-manual", NOW);
+  assert.equal(manual.filter(({ id }) => id === "dev-range-signals-12").every(({ sessionRole }) => sessionRole === "introduction"), true);
+  assert.ok(manual.every(({ purpose }) => purpose === "development"));
+  assert.equal(manual.some(({ purpose }) => purpose === "retention" || purpose === "transfer"), false);
+});
+
+test("após o quinto pacote, avaliação e os novos reasoningPatterns voltam a ser elegíveis", () => {
+  const reserved = evaluationExercises.find(({ id }) => id === "transfer-range-signals-01");
+  assert.ok(reserved);
+  const family = packageExercises("range-strength-signals").filter(({ reasoningPattern }) => reasoningPattern === "stack-range-strength-clues");
+  const attempts = [...completedDevelopmentAttempts(), ...evidenceFor(reserved), ...diagnosticErrors(family, 3, 20)];
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === reserved.id), true);
+  const selected = selectDiagnosticReinforcement(attempts, "range-reading");
+  assert.ok(selected && ["stack-range-strength-clues", "context-modulates-size-signal", "calibrate-range-signal"].includes(selected.reasoningPattern ?? ""));
+});
+
+test("há exatamente seis reservados de sinais, independentes e sem packageSequence", () => {
+  const items = evaluationExercises.filter(({ learningPackage }) => learningPackage === "range-strength-signals");
+  assert.equal(items.length, 6);
+  assert.deepEqual(items.map(({ purpose }) => purpose).sort(), ["retention", "retention", "retention", "transfer", "transfer", "transfer"]);
+  assert.ok(items.every(({ support, packageSequence }) => support === "independent" && packageSequence === undefined));
+});
+
+test("conteúdo de sinais mantém heurísticas condicionais e representa os dois boundary cases", () => {
+  const items = [...packageExercises("range-strength-signals"), ...evaluationExercises.filter(({ learningPackage }) => learningPackage === "range-strength-signals")];
+  assert.ok(items.every(({ sourceKind }) => sourceKind === "heuristic"));
+  const text = items.flatMap(({ options, feedback }) => [...options.map(({ label }) => label), feedback.short]).join(" ").toLowerCase();
+  assert.equal(text.includes("small bet = weak"), false);
+  assert.equal(text.includes("big bet = strong"), false);
+  assert.ok(items.some(({ subconcept }) => subconcept === "static-dry-boundary"));
+  assert.ok(items.some(({ subconcept }) => subconcept === "three-bet-pot-boundary"));
+});
+
+test("V0.10 preserva determinismo e sessões de no máximo 12 decisões", () => {
+  const attempts = completedDevelopmentAttempts();
+  const first = buildRecommendedSession(attempts, "range-reading", "v010-stable", NOW);
+  const second = buildRecommendedSession(attempts, "range-reading", "v010-stable", NOW);
   assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
   assert.ok(first.length <= 12);
 });

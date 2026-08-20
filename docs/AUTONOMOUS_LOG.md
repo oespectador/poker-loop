@@ -335,3 +335,14 @@ Expandir a biblioteca com superfícies de aplicação, discriminação e integra
 ### Validação, riscos e escopo
 
 A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram executados na validação final. As respostas dependem apenas de premissas explícitas e princípios existentes; nenhuma afirmação populacional, frequência de solver ou tendência de NL2 foi adicionada. Não houve mudança de UI além da copy, nem mudança em CSS, storage, schema, `Attempt`, `SkillState`, Skills ou algoritmo de spacing. Não há decisão humana pendente.
+
+## 2026-08-20 — V0.10 Pistas de Força do Range
+
+- **Objetivo/hipótese:** ensinar o jogador a combinar pistas condicionais de size, board e configuração sem converter uma heurística da fonte em certeza.
+- **Antes/depois:** a biblioteca tinha quatro pacotes, 60 development e 30 avaliações; agora tem cinco pacotes, 72 development e 36 avaliações, com `range-strength-signals` em três microblocos.
+- **Arquivos alterados:** tipos e configuração genérica de pacote, biblioteca/validador, copy da Home, testes e documentação; criado o claim map `docs/research/HUNGRY_HORSE_RANGE_STRENGTH_SIGNALS.md`.
+- **Escopo estratégico:** somente os oito claims autorizados. Size permanece evidência contextual. Static/dry e 3-bet pot são exceções explícitas. Claims de turn, river, donk e double previous size ficaram fora; nenhuma tendência foi atribuída a NL2/GGPoker.
+- **Motor/persistência/schema:** scheduler, diagnóstico, thresholds, storage e formato de `Attempt` não mudaram. A união fechada de `LearningPackage`, a ordem/foco e o validador apenas registram o novo pacote.
+- **Riscos conhecidos:** clareza e dificuldade dos distractors ainda requerem validação humana; a fonte continua registrada sem metadados bibliográficos não fornecidos.
+- **Decisões humanas pendentes:** nenhuma para esta unidade explicitamente especificada.
+- **Próximo passo recomendado:** teste humano dos três microblocos antes de auditar qualquer claim mantido fora da biblioteca ativa.
