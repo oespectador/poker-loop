@@ -94,6 +94,18 @@ Não diagnosticar “lógica”, “calibração”, “range” etc. apenas pel
 
 Exercícios diagnósticos devem ser usados apenas quando discriminam hipóteses úteis; não transformar toda mão em interrogatório.
 
+Na V0.7, a camada diagnóstica detecta **sinais de dificuldade**, não leaks
+confirmados. Somente development independente entra na análise. Exercícios são
+relacionados por `reasoningPattern`, com `concept` como fallback; `primarySkill`
+não é usado como hipótese causal.
+
+O nível `candidate` requer erros em pelo menos dois exercícios e duas sessões;
+`recurring` requer erros em pelo menos três exercícios e duas sessões. Três
+acertos independentes recentes em pelo menos dois exercícios desativam o sinal
+por enquanto. Tanto os limiares quanto essa recuperação são heurísticas
+provisórias do protótipo, não medidas psicométricas ou prova de domínio. A camada
+é read-only e ainda não muda o treino recomendado.
+
 ## Lógica × calibração
 
 Lente útil, não taxonomia absoluta de todos os erros humanos.

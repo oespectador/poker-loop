@@ -247,3 +247,35 @@ avaliações e a cobertura preservada de `SkillState`. Typecheck, build e
 `git diff --check` também passaram. Não houve mudança de CSS, conteúdo
 estratégico, exercícios, regras de avaliação, tamanho de sessão ou decisões
 pedagógicas. Não há decisão humana pendente.
+
+## 2026-08-20 — V0.7 Sinais Diagnósticos Conservadores
+
+### Objetivo e hipótese trabalhada
+
+Criar uma camada pura, interpretável e read-only que identifique candidatos a
+padrões recorrentes no histórico. A hipótese operacional é que erros
+independentes repetidos em exercícios e sessões diferentes justificam um sinal
+para investigação futura, sem constituir um leak confirmado.
+
+### Alterações e comportamento
+
+- `lib/diagnostics.ts` agrupa somente tentativas development independentes;
+- a chave prioriza `reasoningPattern` e usa `concept` como fallback;
+- `primarySkill`, `variantGroup` e misconceptions não são causas diagnósticas;
+- `candidate` exige dois erros em dois exercícios e duas sessões;
+- `recurring` exige três erros em três exercícios e pelo menos duas sessões;
+- três acertos independentes mais recentes em dois exercícios desativam o sinal
+  por enquanto;
+- a saída traz chave, fonte, status, contagens, erros recentes e último timestamp,
+  com ordenação determinística;
+- 16 testes cobrem os filtros, limiares, separação, recuperação e ordenação.
+
+### Validação, riscos e próximo passo
+
+A suíte passou com 55 testes, além de typecheck, build e `git diff --check`.
+Os limiares e a regra de recuperação são heurísticas provisórias do protótipo,
+não medidas psicométricas nem prova de domínio. Scheduler, `chooseFocus`, Home,
+Progresso, storage, schema de `Attempt`, exercícios, conteúdo e UI não mudaram.
+O próximo passo possível é avaliar, separadamente, uma integração conservadora
+dos sinais ao treino recomendado; ela não foi implementada nesta versão. Não há
+decisão humana pendente.
