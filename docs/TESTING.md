@@ -119,3 +119,14 @@ exclusão de guided, supported, retention e transfer. A integração confirma qu
 recuperação e um erro novo não reservam reforço, candidate continua read-only e
 um recurring novo volta a reservar exatamente um, preservando determinismo,
 `SkillState`, prioridades de avaliação e teto de 12 decisões.
+
+## V0.13
+
+A suíte possui 147 testes. A cobertura adicional verifica qualificação somente
+após recurring, exclusão de sequências comuns e de candidate, identidade por
+reasoningPattern/concept sem primarySkill, bloqueio por recurring ativo apenas
+da mesma chave, liberação imediata de transfer, âncora exata de 24h para
+retention, nova recurrence e recovery posterior, resumo de verificações depois
+de `recoveredAt`, consumo one-shot, coexistência, limite de um item por purpose,
+teto de 12 e determinismo. Evaluation permanece fora do diagnóstico e do
+SkillState pelos testes de isolamento já existentes.

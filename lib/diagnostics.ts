@@ -16,6 +16,17 @@ export interface DifficultyPattern {
   lastAttemptAt: string;
 }
 
+export interface DifficultyRecovery {
+  key: string;
+  source: DifficultyPatternSource;
+  recoveredAt: string;
+}
+
+export interface RecoveryVerification extends DifficultyRecovery {
+  retention: { answered: number; correct: number };
+  transfer: { answered: number; correct: number };
+}
+
 export type DiagnosticExercise = Pick<
   Exercise,
   "id" | "purpose" | "reasoningPattern" | "concept"
@@ -27,12 +38,19 @@ interface KeyedAttempt {
   source: DifficultyPatternSource;
 }
 
+interface DifficultyAnalysis {
+  activeEvidence: KeyedAttempt[];
+  recoveries: DifficultyRecovery[];
+}
+
 /**
  * Retorna somente a evidência posterior à última recuperação confirmada.
  * A janela é derivada do histórico elegível e não remove nenhuma Attempt.
  */
-function activeEvidenceSinceRecovery(group: KeyedAttempt[]): KeyedAttempt[] {
+function analyzeDifficultyGroup(group: KeyedAttempt[]): DifficultyAnalysis {
   let recoveryEnd = -1;
+  let previousBoundary = -1;
+  const recoveries: DifficultyRecovery[] = [];
 
   for (let index = 2; index < group.length; index += 1) {
     const window = group.slice(index - 2, index + 1);
@@ -40,11 +58,25 @@ function activeEvidenceSinceRecovery(group: KeyedAttempt[]): KeyedAttempt[] {
       window.every(({ attempt }) => attempt.correct) &&
       new Set(window.map(({ attempt }) => attempt.exerciseId)).size >= 2
     ) {
+      const episodeBeforeBoundary = group.slice(previousBoundary + 1, index - 2);
+      const errors = episodeBeforeBoundary.filter(({ attempt }) => !attempt.correct);
+      if (
+        errors.length >= 3 &&
+        new Set(errors.map(({ attempt }) => attempt.exerciseId)).size >= 3 &&
+        new Set(errors.map(({ attempt }) => attempt.sessionId)).size >= 2
+      ) {
+        recoveries.push({
+          key: group[index].key,
+          source: group[index].source,
+          recoveredAt: group[index].attempt.timestamp,
+        });
+      }
       recoveryEnd = index;
+      previousBoundary = index;
     }
   }
 
-  return group.slice(recoveryEnd + 1);
+  return { activeEvidence: group.slice(recoveryEnd + 1), recoveries };
 }
 
 /** Mantém exatamente a chave exclusiva usada pela análise da V0.7. */
@@ -57,6 +89,17 @@ export function matchesDifficultyPattern(
     return exercise.reasoningPattern === pattern.key;
   }
   return !exercise.reasoningPattern && exercise.concept === pattern.key;
+}
+
+/** Compara somente a identidade causal, inclusive para itens de avaliação. */
+export function matchesDifficultyIdentity(
+  exercise: DiagnosticExercise,
+  identity: Pick<DifficultyRecovery, "key" | "source">,
+): boolean {
+  if (identity.source === "reasoningPattern") {
+    return exercise.reasoningPattern === identity.key;
+  }
+  return !exercise.reasoningPattern && exercise.concept === identity.key;
 }
 
 function timestampValue(value: string): number {
@@ -133,34 +176,12 @@ export function summarizeDifficultyPatterns(
   attempts: Attempt[],
   exercises: readonly DiagnosticExercise[] = allExercises,
 ): DifficultyPattern[] {
-  const exerciseById = new Map(exercises.map((exercise) => [exercise.id, exercise]));
-  const groups = new Map<string, KeyedAttempt[]>();
-
-  for (const attempt of attempts) {
-    const exercise = exerciseById.get(attempt.exerciseId);
-    if (attempt.support !== "independent" || exercise?.purpose !== "development") continue;
-
-    const source: DifficultyPatternSource | undefined = exercise.reasoningPattern
-      ? "reasoningPattern"
-      : exercise.concept
-        ? "concept"
-        : undefined;
-    if (!source) continue;
-
-    const key = source === "reasoningPattern" ? exercise.reasoningPattern : exercise.concept;
-    if (!key) continue;
-
-    const groupId = `${source}:${key}`;
-    const group = groups.get(groupId) ?? [];
-    group.push({ attempt, key, source });
-    groups.set(groupId, group);
-  }
+  const groups = groupedDevelopmentAttempts(attempts, exercises);
 
   const patterns: DifficultyPattern[] = [];
 
   for (const group of groups.values()) {
-    group.sort((a, b) => chronological(a.attempt, b.attempt));
-    const activeEvidence = activeEvidenceSinceRecovery(group);
+    const { activeEvidence } = analyzeDifficultyGroup(group);
     const recent = activeEvidence.slice(-3);
 
     const errors = activeEvidence.filter(({ attempt }) => !attempt.correct);
@@ -191,5 +212,63 @@ export function summarizeDifficultyPatterns(
       a.key.localeCompare(b.key) ||
       a.source.localeCompare(b.source)
     );
+  });
+}
+
+function groupedDevelopmentAttempts(
+  attempts: Attempt[],
+  exercises: readonly DiagnosticExercise[],
+): Map<string, KeyedAttempt[]> {
+  const exerciseById = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+  const groups = new Map<string, KeyedAttempt[]>();
+  for (const attempt of attempts) {
+    const exercise = exerciseById.get(attempt.exerciseId);
+    if (attempt.support !== "independent" || exercise?.purpose !== "development") continue;
+    const source: DifficultyPatternSource | undefined = exercise.reasoningPattern
+      ? "reasoningPattern"
+      : exercise.concept ? "concept" : undefined;
+    const key = source === "reasoningPattern" ? exercise.reasoningPattern : exercise?.concept;
+    if (!source || !key) continue;
+    const id = `${source}:${key}`;
+    groups.set(id, [...(groups.get(id) ?? []), { attempt, key, source }]);
+  }
+  for (const group of groups.values()) group.sort((a, b) => chronological(a.attempt, b.attempt));
+  return groups;
+}
+
+/** Retorna a recuperação qualificada mais recente de cada identidade diagnóstica. */
+export function summarizeDifficultyRecoveries(
+  attempts: Attempt[],
+  exercises: readonly DiagnosticExercise[] = allExercises,
+): DifficultyRecovery[] {
+  const result: DifficultyRecovery[] = [];
+  for (const group of groupedDevelopmentAttempts(attempts, exercises).values()) {
+    const latest = analyzeDifficultyGroup(group).recoveries.at(-1);
+    if (latest) result.push(latest);
+  }
+  return result.sort((a, b) => Date.parse(b.recoveredAt) - Date.parse(a.recoveredAt) || a.key.localeCompare(b.key));
+}
+
+/** Observações one-shot respondidas depois da recuperação qualificada mais recente. */
+export function summarizeRecoveryVerification(
+  attempts: Attempt[],
+  exercises: readonly DiagnosticExercise[] = allExercises,
+): RecoveryVerification[] {
+  const byId = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+  return summarizeDifficultyRecoveries(attempts, exercises).map((recovery) => {
+    const summary: RecoveryVerification = {
+      ...recovery,
+      retention: { answered: 0, correct: 0 },
+      transfer: { answered: 0, correct: 0 },
+    };
+    for (const attempt of attempts) {
+      const exercise = byId.get(attempt.exerciseId);
+      if (!exercise || (exercise.purpose !== "retention" && exercise.purpose !== "transfer")) continue;
+      if (timestampValue(attempt.timestamp) <= timestampValue(recovery.recoveredAt)) continue;
+      if (!matchesDifficultyIdentity(exercise, recovery)) continue;
+      summary[exercise.purpose].answered += 1;
+      if (attempt.correct) summary[exercise.purpose].correct += 1;
+    }
+    return summary;
   });
 }
