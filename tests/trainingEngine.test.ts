@@ -700,7 +700,7 @@ test("após integrated-application, avaliações e novas superfícies diagnósti
     ...evidenceFor(reserved),
     ...diagnosticErrors(family, 3, 10),
   ];
-  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === reserved.id), true);
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === reserved.id), false);
   const selected = selectDiagnosticReinforcement(attempts, "range-reading");
   assert.ok(selected && selected.learningPackage === "integrated-application");
 });
@@ -765,7 +765,7 @@ test("após o quinto pacote, avaliação e os novos reasoningPatterns voltam a s
   assert.ok(reserved);
   const family = packageExercises("range-strength-signals").filter(({ reasoningPattern }) => reasoningPattern === "stack-range-strength-clues");
   const attempts = [...completedDevelopmentAttempts(), ...evidenceFor(reserved), ...diagnosticErrors(family, 3, 20)];
-  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === reserved.id), true);
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === reserved.id), false);
   const selected = selectDiagnosticReinforcement(attempts, "range-reading");
   assert.ok(selected && ["stack-range-strength-clues", "context-modulates-size-signal", "calibrate-range-signal"].includes(selected.reasoningPattern ?? ""));
 });
@@ -1239,4 +1239,93 @@ test("V0.11 preserva determinismo e o limite de 12 decisões", () => {
   const second = buildRecommendedSession(attempts, "integrated-decision", "v011-stable", NOW);
   assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
   assert.ok(first.length <= 12);
+});
+
+function recoveryFixture(purpose: "retention" | "transfer") {
+  const evaluation = evaluationExercises.find((item) => {
+    if (item.purpose !== purpose || !item.reasoningPattern) return false;
+    return developmentExercises.filter((dev) => dev.reasoningPattern === item.reasoningPattern).length >= 3;
+  });
+  assert.ok(evaluation);
+  const family = developmentExercises.filter(
+    (dev) => dev.reasoningPattern === evaluation.reasoningPattern,
+  ).slice(0, 3);
+  const errors = family.map((exercise, index) => ({
+    ...attemptsFor([exercise], { correct: false, sessionId: `recurring-${index % 2}` })[0],
+    id: `recurring-${purpose}-${index}`,
+    support: "independent" as const,
+    timestamp: new Date(NOW - 30 * 60_000 + index * 60_000).toISOString(),
+  }));
+  const recovery = [family[0], family[1], family[0]].map((exercise, index) => ({
+    ...attemptsFor([exercise], { sessionId: `recovery-${index}` })[0],
+    id: `recovery-${purpose}-${index}`,
+    support: "independent" as const,
+    timestamp: new Date(NOW + index * 60_000).toISOString(),
+  }));
+  return { evaluation, family, errors, recovery, recoveredAt: NOW + 2 * 60_000 };
+}
+
+test("recurring ativo bloqueia somente avaliações da mesma identidade", () => {
+  const { evaluation, errors } = recoveryFixture("transfer");
+  const other = evaluationExercises.find(
+    (item) => item.purpose === "transfer" && item.reasoningPattern !== evaluation.reasoningPattern,
+  );
+  assert.ok(other);
+  const attempts = [...completedDevelopmentAttempts(), ...evidenceFor(other), ...errors];
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === evaluation.id), false);
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === other.id), true);
+});
+
+test("candidate não bloqueia evaluation e permanece sem efeito novo", () => {
+  const { evaluation, errors } = recoveryFixture("transfer");
+  const attempts = [...completedDevelopmentAttempts(), ...evidenceFor(evaluation), ...errors.slice(0, 2)];
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === evaluation.id), true);
+});
+
+test("transfer relacionada é liberada pela recuperação sem duas sessões novas", () => {
+  const { evaluation, errors, recovery } = recoveryFixture("transfer");
+  const attempts = [...completedDevelopmentAttempts(), ...errors, ...recovery];
+  assert.equal(eligibleTransferExercises(attempts).some(({ id }) => id === evaluation.id), true);
+});
+
+test("retention pós-recuperação usa recoveredAt e libera exatamente após 24h", () => {
+  const { evaluation, errors, recovery, recoveredAt } = recoveryFixture("retention");
+  const attempts = [...completedDevelopmentAttempts(), ...errors, ...recovery];
+  assert.equal(eligibleRetentionExercises(attempts, recoveredAt + 86_400_000 - 1).some(({ id }) => id === evaluation.id), false);
+  assert.equal(eligibleRetentionExercises(attempts, recoveredAt + 86_400_000).some(({ id }) => id === evaluation.id), true);
+});
+
+test("nova recurrence bloqueia novamente e nova recovery relibera item não usado", () => {
+  const fixture = recoveryFixture("transfer");
+  const recovered = [...completedDevelopmentAttempts(), ...fixture.errors, ...fixture.recovery];
+  const relapse = fixture.family.map((exercise, index) => ({
+    ...fixture.errors[index], id: `relapse-${index}`, sessionId: `relapse-${index % 2}`,
+    timestamp: new Date(fixture.recoveredAt + (index + 1) * 60_000).toISOString(),
+  }));
+  assert.equal(eligibleTransferExercises([...recovered, ...relapse]).some(({ id }) => id === fixture.evaluation.id), false);
+  const secondRecovery = fixture.recovery.map((attempt, index) => ({
+    ...attempt, id: `second-recovery-${index}`,
+    timestamp: new Date(fixture.recoveredAt + (index + 10) * 60_000).toISOString(),
+  }));
+  assert.equal(eligibleTransferExercises([...recovered, ...relapse, ...secondRecovery]).some(({ id }) => id === fixture.evaluation.id), true);
+});
+
+test("avaliações pós-recuperação continuam one-shot, coexistentes, determinísticas e sob o teto", () => {
+  const transfer = recoveryFixture("transfer");
+  const retention = recoveryFixture("retention");
+  const attempts = [
+    ...completedDevelopmentAttempts(), ...transfer.errors, ...transfer.recovery,
+    ...retention.errors, ...retention.recovery,
+  ];
+  const now = Math.max(transfer.recoveredAt, retention.recoveredAt) + 86_400_000;
+  const first = buildRecommendedSession(attempts, undefined, "post-recovery", now);
+  const second = buildRecommendedSession(attempts, undefined, "post-recovery", now);
+  assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
+  assert.ok(first.length <= 12);
+  assert.ok(first.filter(({ purpose }) => purpose === "retention").length <= 1);
+  assert.ok(first.filter(({ purpose }) => purpose === "transfer").length <= 1);
+  assert.ok(first.some(({ purpose }) => purpose === "retention"));
+  assert.ok(first.some(({ purpose }) => purpose === "transfer"));
+  const answered = attemptsFor([transfer.evaluation], { sessionId: "used-evaluation" });
+  assert.equal(eligibleTransferExercises([...attempts, ...answered]).some(({ id }) => id === transfer.evaluation.id), false);
 });

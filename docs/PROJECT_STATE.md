@@ -1,4 +1,4 @@
-# Project State — baseline V0.12
+# Project State — baseline V0.13
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.12 — Fronteira de Recuperação Diagnóstica**
+**V0.13 — Verificação Pós-Recuperação**
 
 A recuperação diagnóstica agora cria uma fronteira longitudinal de evidência. O conteúdo V0.11 e a persistência V0.10.2 permanecem compatíveis e inalterados.
 
@@ -130,6 +130,26 @@ Retention, transfer, guided e supported real não criam fronteira. Nenhuma
 inferência de domínio, alteração em `SkillState`, UI, conteúdo, `Attempt` ou
 storage foi introduzida. O scheduler não ganhou mecanismo novo: continua
 consumindo `summarizeDifficultyPatterns()`.
+
+## V0.13 — verificação pós-recuperação
+
+Uma recuperação qualificada deriva somente de um episódio que atingiu
+`recurring` e depois cruzou a fronteira existente de três acertos development
+independentes consecutivos em ao menos dois exercícios. Ela ancora avaliações
+posteriores da mesma identidade causal: `reasoningPattern` exato ou `concept`
+apenas como fallback quando não há reasoningPattern. `primarySkill` não cria
+esse vínculo.
+
+Transfer relacionada pode ser liberada pela recuperação sem exigir duas novas
+sessões de evidência-base. Retention relacionada conta as 24 horas a partir do
+terceiro acerto (`recoveredAt`). Um `recurring` ativo bloqueia apenas avaliações
+da mesma chave, preservando os itens escassos; `candidate` continua read-only.
+Avaliações permanecem one-shot e no máximo uma de cada purpose por sessão. Se
+não houver item ainda não usado, não há observação disponível neste piloto.
+
+`summarizeRecoveryVerification()` descreve acertos e respostas de retention e
+transfer posteriores à recuperação mais recente. Evaluation não cria nem remove
+diagnóstico, recovery ou `SkillState`; nenhuma inferência de domínio foi criada.
 
 ## Persistência
 

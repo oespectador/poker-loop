@@ -1,5 +1,11 @@
 import { allExercises, developmentExercises, evaluationExercises } from "./exercises";
-import { selectDiagnosticReinforcement } from "./diagnostics";
+import {
+  matchesDifficultyIdentity,
+  selectDiagnosticReinforcement,
+  summarizeDifficultyPatterns,
+  summarizeDifficultyRecoveries,
+  type DifficultyRecovery,
+} from "./diagnostics";
 import type { Attempt, Exercise, LearningPackage, Skill, SkillState, SupportLevel } from "./types";
 
 export const skillLabels: Record<Skill, string> = {
@@ -116,24 +122,47 @@ function unansweredEvaluationExercises(attempts: Attempt[], purpose: "retention"
   );
 }
 
+function relatedRecovery(exercise: Exercise, recoveries: DifficultyRecovery[]) {
+  return recoveries.find((recovery) => matchesDifficultyIdentity(exercise, recovery));
+}
+
+function recoveryContext(attempts: Attempt[]) {
+  return {
+    recoveries: summarizeDifficultyRecoveries(attempts),
+    activeRecurring: summarizeDifficultyPatterns(attempts).filter(
+      ({ status }) => status === "recurring",
+    ),
+  };
+}
+
 export function eligibleRetentionExercises(attempts: Attempt[], now = Date.now()): Exercise[] {
+  const context = recoveryContext(attempts);
   return unansweredEvaluationExercises(attempts, "retention").filter((exercise) => {
     if (!isLearningPackageComplete(attempts, exercise.learningPackage ?? "foundations")) return false;
+    if (context.activeRecurring.some((pattern) => matchesDifficultyIdentity(exercise, pattern))) return false;
+    const recovery = relatedRecovery(exercise, context.recoveries);
+    if (recovery) return now - timestampValue(recovery.recoveredAt) >= RETENTION_INTERVAL_MS;
     const evidence = hasIndependentBaseEvidence(exercise, attempts);
     return evidence.sufficient && evidence.latestAt > 0 && now - evidence.latestAt >= RETENTION_INTERVAL_MS;
   });
 }
 
 export function eligibleTransferExercises(attempts: Attempt[]): Exercise[] {
+  const context = recoveryContext(attempts);
   return unansweredEvaluationExercises(attempts, "transfer").filter(
     (exercise) =>
       isLearningPackageComplete(attempts, exercise.learningPackage ?? "foundations") &&
-      hasIndependentBaseEvidence(exercise, attempts).sufficient,
+      !context.activeRecurring.some((pattern) => matchesDifficultyIdentity(exercise, pattern)) &&
+      (Boolean(relatedRecovery(exercise, context.recoveries)) ||
+        hasIndependentBaseEvidence(exercise, attempts).sufficient),
   );
 }
 
-function selectEvaluation(items: Exercise[], focus?: Skill): Exercise | undefined {
-  return items.find((exercise) => exercise.primarySkill === focus) ?? items[0];
+function selectEvaluation(items: Exercise[], attempts: Attempt[], focus?: Skill): Exercise | undefined {
+  const recoveries = summarizeDifficultyRecoveries(attempts);
+  const recoveryLinked = items.filter((exercise) => relatedRecovery(exercise, recoveries));
+  const preferred = recoveryLinked.length ? recoveryLinked : items;
+  return preferred.find((exercise) => exercise.primarySkill === focus) ?? preferred[0];
 }
 
 function unseenPackageExercises(attempts: Attempt[], packageName: LearningPackage): Exercise[] {
@@ -358,8 +387,8 @@ export function buildRecommendedSession(
     }));
 
   const evaluationItems = [
-    selectEvaluation(eligibleRetentionExercises(attempts, now), resolvedFocus),
-    selectEvaluation(eligibleTransferExercises(attempts), resolvedFocus),
+    selectEvaluation(eligibleRetentionExercises(attempts, now), attempts, resolvedFocus),
+    selectEvaluation(eligibleTransferExercises(attempts), attempts, resolvedFocus),
   ].filter((exercise): exercise is Exercise => Boolean(exercise));
   const completedDevelopment = developmentExercises.filter((exercise) =>
     isLearningPackageComplete(attempts, exercise.learningPackage ?? "foundations"),

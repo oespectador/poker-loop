@@ -405,3 +405,25 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
   suporte e separação de retention/transfer não mudaram. Nenhuma inferência de
   domínio foi adicionada.
 - **Validação:** 136 testes, typecheck, build e `git diff --check`.
+
+## 2026-08-21 — V0.13 Verificação Pós-Recuperação
+
+- **Hipótese:** uma recovery de dificuldade recurring pode ancorar observações
+  posteriores sem ser tratada como domínio ou estado persistido.
+- **Ciclo:** `recurring → reinforcement → recuperado por enquanto → transfer
+  posterior → retention posterior`.
+- **Qualificação:** somente recurring seguido de três acertos development
+  independentes consecutivos em ao menos dois exerciseIds; candidate permanece
+  read-only e três acertos sem recurring não ganham efeito novo.
+- **Vínculo:** reasoningPattern exato, ou concept apenas quando é a chave fallback;
+  primarySkill não afirma relação longitudinal.
+- **Scheduler:** recurring ativo bloqueia evaluations relacionadas; recovery
+  libera transfer e ancora as 24h de retention em recoveredAt. A recovery mais
+  recente é a âncora, itens respondidos nunca reaparecem e continuam no máximo
+  uma retention e uma transfer em sessões de até 12.
+- **Observação:** `summarizeRecoveryVerification()` conta somente evaluations
+  relacionadas respondidas depois da âncora. Zero significa ausência de
+  observação disponível, não resultado pedagógico.
+- **Escopo preservado:** evaluation não cria/remove diagnóstico ou recovery;
+  Attempt, storage, UI, SkillState, suporte, conteúdo, pacotes e thresholds não
+  mudaram. Nenhuma inferência de domínio foi introduzida.

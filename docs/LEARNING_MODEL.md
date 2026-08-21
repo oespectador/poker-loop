@@ -174,3 +174,17 @@ Uma sessão de 12 decisões mantém a mesma identidade durante navegação e rel
 ## V0.11 — função contextual da mão
 
 Depois de estimar a força do range, o aluno conecta `range → mão → função → objetivo → mãos-alvo → resposta ao tamanho → decisão`. CPFS, Thick Value, Thin Value, SDV, Draw e Air organizam o raciocínio, mas não são rótulos permanentes nem tabelas de ação. A adaptação deve ser proporcional à sustentação da leitura; range forte/fraco não determina ação sozinho.
+
+## V0.13 — verificação pós-recuperação
+
+O ciclo observável agora é `recurring → reinforcement → recuperado por enquanto
+→ transfer posterior → retention posterior`. A recuperação só é qualificada
+quando o mesmo episódio já alcançou `recurring` antes da fronteira de três
+acertos independentes em duas superfícies. Candidate não qualifica nem bloqueia.
+
+A recuperação é âncora, não domínio: transfer observa nova superfície e
+retention observa depois de 24 horas contadas de `recoveredAt`. Ambas se ligam
+pela identidade diagnóstica exata, nunca por Skill ampla. Seus resultados não
+entram em diagnóstico, suporte, fading, prioridade development ou SkillState.
+Ausência de item one-shot disponível significa ausência de observação, não
+sucesso ou fracasso.

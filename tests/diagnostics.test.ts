@@ -3,7 +3,9 @@ import test from "node:test";
 
 import {
   matchesDifficultyPattern,
+  summarizeDifficultyRecoveries,
   summarizeDifficultyPatterns,
+  summarizeRecoveryVerification,
   type DiagnosticExercise,
 } from "../lib/diagnostics";
 import type { Attempt, Skill, SupportLevel } from "../lib/types";
@@ -323,4 +325,62 @@ test("resultado tem ordenação determinística por status, erros recentes, rec�
 
 test("histórico vazio retorna lista vazia", () => {
   assert.deepEqual(summarize([]), []);
+});
+
+test("três acertos sem recurring anterior não criam recuperação qualificada", () => {
+  assert.deepEqual(summarizeDifficultyRecoveries([
+    attempt("rp-a", "s1", { correct: true }), attempt("rp-b", "s2", { correct: true }),
+    attempt("rp-a", "s3", { correct: true }),
+  ], exercises), []);
+});
+
+test("recurring seguido da fronteira cria recuperação qualificada no terceiro acerto", () => {
+  const items = [
+    attempt("rp-a", "s1"), attempt("rp-b", "s2"), attempt("rp-c", "s2"),
+    attempt("rp-a", "s3", { correct: true }), attempt("rp-b", "s4", { correct: true }),
+    attempt("rp-a", "s4", { correct: true }),
+  ];
+  const [recovery] = summarizeDifficultyRecoveries(items, exercises);
+  assert.equal(recovery.key, "pattern-a");
+  assert.equal(recovery.source, "reasoningPattern");
+  assert.equal(recovery.recoveredAt, items.at(-1)?.timestamp);
+});
+
+test("candidate seguido da fronteira não cria recuperação qualificada", () => {
+  assert.deepEqual(summarizeDifficultyRecoveries([
+    attempt("rp-a", "s1"), attempt("rp-b", "s2"),
+    attempt("rp-a", "s3", { correct: true }), attempt("rp-b", "s4", { correct: true }),
+    attempt("rp-a", "s5", { correct: true }),
+  ], exercises), []);
+});
+
+test("nova recuperação qualificada substitui a âncora anterior", () => {
+  const firstEpisode = [
+    attempt("rp-a", "s1"), attempt("rp-b", "s2"), attempt("rp-c", "s2"),
+    attempt("rp-a", "s3", { correct: true }), attempt("rp-b", "s4", { correct: true }),
+    attempt("rp-a", "s4", { correct: true }),
+  ];
+  const secondEpisode = [
+    attempt("rp-a", "s5"), attempt("rp-b", "s6"), attempt("rp-c", "s6"),
+    attempt("rp-a", "s7", { correct: true }), attempt("rp-b", "s8", { correct: true }),
+    attempt("rp-a", "s8", { correct: true }),
+  ];
+  const [recovery] = summarizeDifficultyRecoveries([...firstEpisode, ...secondEpisode], exercises);
+  assert.equal(recovery.recoveredAt, secondEpisode.at(-1)?.timestamp);
+});
+
+test("resumo pós-recuperação ignora avaliação anterior e outra chave", () => {
+  const items = [
+    attempt("transfer", "before", { correct: true, minute: 1 }),
+    attempt("rp-a", "s1", { minute: 10 }), attempt("rp-b", "s2", { minute: 11 }),
+    attempt("rp-c", "s2", { minute: 12 }),
+    attempt("rp-a", "s3", { correct: true, minute: 20 }),
+    attempt("rp-b", "s4", { correct: true, minute: 21 }),
+    attempt("rp-a", "s4", { correct: true, minute: 22 }),
+    attempt("retention", "after", { correct: false, minute: 23 }),
+    attempt("rp-other-a", "irrelevant", { correct: true, minute: 24 }),
+  ];
+  const [summary] = summarizeRecoveryVerification(items, exercises);
+  assert.deepEqual(summary.retention, { answered: 1, correct: 0 });
+  assert.deepEqual(summary.transfer, { answered: 0, correct: 0 });
 });
