@@ -384,3 +384,24 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Antes/depois:** `dev-hand-range-04` aceitava duas leituras corretas para “qual erro evitar”; agora pede a integração entre força do range e função da mão. Distractors antes denunciados por absolutos foram substituídos por erros próximos: adaptação exagerada, inércia de função, peso excessivo a uma pista e ação desconectada das mãos-alvo.
 - **Escopo preservado:** IDs, purpose, support, pacotes, sequências, conceitos, reasoningPatterns, contagens 84/42, scheduler, diagnóstico, avaliações, active session, storage e schemas não mudaram.
 - **Teste:** a auditoria editorial existente agora protege especificamente a integração de `dev-hand-range-04` e exige feedback de misconception para cada alternativa incorreta, mantendo 126 testes.
+
+## 2026-08-21 — V0.12 Fronteira de Recuperação Diagnóstica
+
+- **Hipótese:** tratar recuperação suficiente como fronteira evita que um erro
+  novo ressuscite imediatamente um episódio histórico, sem transformar
+  “recuperado por enquanto” em domínio comprovado.
+- **Implementação:** por chave exclusiva de `reasoningPattern` ou fallback de
+  `concept`, a última janela de três acertos development independentes
+  consecutivos em ao menos dois exercícios delimita a evidência ativa. Attempts
+  anteriores permanecem intactas no histórico; apenas deixam de compor campos e
+  thresholds do `DifficultyPattern` atual.
+- **Depois da fronteira:** um erro não sinaliza; dois erros em dois exercícios e
+  sessões formam `candidate`; três erros em três exercícios e ao menos duas
+  sessões formam `recurring`. Os thresholds não mudaram.
+- **Scheduler:** nenhum mecanismo ou prioridade foi alterado. O reforço continua
+  derivado de `summarizeDifficultyPatterns()`: recuperação e um erro novo não
+  reservam, candidate é read-only e recurring pós-fronteira pode reservar um.
+- **Escopo preservado:** `Attempt`, storage, UI, conteúdo, Skills, `SkillState`,
+  suporte e separação de retention/transfer não mudaram. Nenhuma inferência de
+  domínio foi adicionada.
+- **Validação:** 136 testes, typecheck, build e `git diff --check`.

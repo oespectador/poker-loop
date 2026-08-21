@@ -107,3 +107,15 @@ A suíte possui 116 testes. A cobertura adicional verifica criação, serializa�
 ## V0.11
 
 A suíte possui 126 testes. A cobertura adicional protege o sexto pacote `hand-function-vs-range`, seus três microblocos, retomada e ordem após erro, ausência de vazamento manual, elegibilidade local de evaluation, coexistência com evaluations e diagnóstico anteriores, contrato 1–12, seis reservados, contagens 84/42, determinismo, limite de sessão e compatibilidade de active session V0.10.2. Auditorias editoriais protegem função contextual, Thin Value/SDV dependentes do range e alvos, ausência de agressão automática com Draw/Air, calibração e exclusão dos claims proibidos e de `solver-reference`.
+
+## V0.12
+
+A suíte possui 136 testes. A cobertura nova verifica a fronteira após três
+acertos development independentes consecutivos em dois exercícios; ausência de
+sinal após um erro novo; reconstrução de `candidate` com dois erros e de
+`recurring` com três; campos limitados à evidência pós-fronteira; independência
+por `reasoningPattern`/fallback de `concept`; uso da fronteira mais recente; e
+exclusão de guided, supported, retention e transfer. A integração confirma que
+recuperação e um erro novo não reservam reforço, candidate continua read-only e
+um recurring novo volta a reservar exatamente um, preservando determinismo,
+`SkillState`, prioridades de avaliação e teto de 12 decisões.

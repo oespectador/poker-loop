@@ -461,6 +461,51 @@ test("recurring recuperado não reserva reforço e sessão sem recurring mantém
   assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
 });
 
+test("fronteira impede reserva após recuperação e após um único erro novo", () => {
+  const family = diagnosticFamily();
+  const errors = diagnosticErrors(family, 3, 10);
+  const recovery = [family[0], family[1], family[0]].map((exercise, index) => ({
+    ...attemptsFor([exercise], { sessionId: `recovery-${index}` })[0],
+    id: `recovery-${index}`,
+    support: "independent" as const,
+    timestamp: new Date(NOW + (20 + index) * 60_000).toISOString(),
+  }));
+  const recovered = [...completedDevelopmentAttempts(), ...errors, ...recovery];
+
+  assert.equal(selectDiagnosticReinforcement(recovered, family[0].primarySkill), undefined);
+  assert.equal(
+    selectDiagnosticReinforcement(
+      [...recovered, ...diagnosticErrors([family[2]], 1, 30)],
+      family[0].primarySkill,
+    ),
+    undefined,
+  );
+});
+
+test("candidate pós-recuperação continua read-only e novo recurring volta a reservar um", () => {
+  const family = diagnosticFamily();
+  const recovery = [family[0], family[1], family[0]].map((exercise, index) => ({
+    ...attemptsFor([exercise], { sessionId: `boundary-${index}` })[0],
+    id: `boundary-${index}`,
+    support: "independent" as const,
+    timestamp: new Date(NOW + (20 + index) * 60_000).toISOString(),
+  }));
+  const recovered = [
+    ...completedDevelopmentAttempts(),
+    ...diagnosticErrors(family, 3, 10),
+    ...recovery,
+  ];
+  const candidate = [...recovered, ...diagnosticErrors(family, 2, 30)];
+  assert.equal(selectDiagnosticReinforcement(candidate, family[0].primarySkill), undefined);
+
+  const recurring = [...recovered, ...diagnosticErrors(family, 3, 30)];
+  const selected = selectDiagnosticReinforcement(recurring, family[0].primarySkill);
+  assert.ok(selected);
+  const session = buildRecommendedSession(recurring, family[0].primarySkill, "relapse", NOW);
+  assert.equal(session.filter(({ id }) => id === selected.id).length, 1);
+  assert.ok(session.length <= 12);
+});
+
 test("sessão piloto respeita 12 itens e no máximo um item de cada avaliação", () => {
   const retention = evaluationExercises.find((item) => item.purpose === "retention");
   const transfer = evaluationExercises.find((item) => item.purpose === "transfer");

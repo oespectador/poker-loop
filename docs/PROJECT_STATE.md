@@ -1,4 +1,4 @@
-# Project State — baseline V0.11
+# Project State — baseline V0.12
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,9 +15,9 @@ Stack:
 
 ## Versão atual
 
-**V0.11 — Função da Mão × Força do Range**
+**V0.12 — Fronteira de Recuperação Diagnóstica**
 
-A leitura da força relativa do range agora alimenta a reavaliação contextual da função da mão, do objetivo e das mãos-alvo. A persistência V0.10.2 permanece compatível e inalterada.
+A recuperação diagnóstica agora cria uma fronteira longitudinal de evidência. O conteúdo V0.11 e a persistência V0.10.2 permanecem compatíveis e inalterados.
 
 A sessão pedagógica de 12 decisões tem identidade persistente. Navegação e reload retomam a mesma fila e a próxima decisão ainda não respondida. O estado usa `poker-loop-v1:active-session`, sem alterar o histórico ou o schema de `Attempt`.
 
@@ -115,6 +115,21 @@ quando existe alternativa, prefere a menos recentemente respondida e usa a ordem
 da biblioteca como desempate. O diagnóstico não escolhe Skill, não desloca
 retenção/transferência, reutiliza o suporte existente e não altera storage ou UI.
 A recuperação continua inferida do histórico, sem marcação manual.
+
+## V0.12 — fronteira longitudinal
+
+A última janela válida de três acertos development independentes consecutivos
+em pelo menos dois exercícios da mesma chave (`reasoningPattern`, ou `concept`
+somente na ausência dela) define o início da evidência ativa. As Attempts e os
+erros anteriores permanecem armazenados, mas deixam de sustentar sinais ativos e
+de compor os campos de um novo `DifficultyPattern`. A dificuldade fica
+**recuperada por enquanto** e, para reaparecer, precisa reconstruir depois da
+fronteira os thresholds inalterados de `candidate` ou `recurring`.
+
+Retention, transfer, guided e supported real não criam fronteira. Nenhuma
+inferência de domínio, alteração em `SkillState`, UI, conteúdo, `Attempt` ou
+storage foi introduzida. O scheduler não ganhou mecanismo novo: continua
+consumindo `summarizeDifficultyPatterns()`.
 
 ## Persistência
 

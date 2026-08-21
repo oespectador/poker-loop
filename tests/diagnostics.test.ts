@@ -173,6 +173,123 @@ test("três acertos independentes recentes em dois exercícios desativam sinal a
   ]), []);
 });
 
+test("recuperação cria fronteira e um erro novo não ressuscita erros históricos", () => {
+  const items = [
+    attempt("rp-a", "s1"),
+    attempt("rp-b", "s2"),
+    attempt("rp-c", "s2"),
+    attempt("rp-a", "s3", { correct: true }),
+    attempt("rp-b", "s4", { correct: true }),
+    attempt("rp-a", "s4", { correct: true }),
+    attempt("rp-c", "s5"),
+  ];
+
+  assert.deepEqual(summarize(items), []);
+});
+
+test("dois erros pós-recuperação reconstroem candidate somente com evidência ativa", () => {
+  const items = [
+    attempt("rp-a", "s1"), attempt("rp-b", "s2"), attempt("rp-c", "s2"),
+    attempt("rp-a", "s3", { correct: true }),
+    attempt("rp-b", "s4", { correct: true }),
+    attempt("rp-a", "s4", { correct: true }),
+    attempt("rp-c", "s5"), attempt("rp-b", "s6"),
+  ];
+  const [pattern] = summarize(items);
+
+  assert.deepEqual(pattern, {
+    key: "pattern-a",
+    source: "reasoningPattern",
+    status: "candidate",
+    attempts: 2,
+    errors: 2,
+    distinctExercises: 2,
+    sessions: 2,
+    recentErrors: 2,
+    lastAttemptAt: pattern.lastAttemptAt,
+  });
+});
+
+test("três erros pós-recuperação reconstroem recurring como novo episódio", () => {
+  const items = [
+    attempt("rp-a", "s1"), attempt("rp-b", "s2"), attempt("rp-c", "s2"),
+    attempt("rp-a", "s3", { correct: true }),
+    attempt("rp-b", "s4", { correct: true }),
+    attempt("rp-a", "s4", { correct: true }),
+    attempt("rp-a", "s5"), attempt("rp-b", "s6"), attempt("rp-c", "s6"),
+  ];
+  const [pattern] = summarize(items);
+
+  assert.equal(pattern.status, "recurring");
+  assert.equal(pattern.attempts, 3);
+  assert.equal(pattern.errors, 3);
+  assert.equal(pattern.distinctExercises, 3);
+  assert.equal(pattern.sessions, 2);
+});
+
+test("duas respostas corretas não criam fronteira", () => {
+  const [pattern] = summarize([
+    attempt("rp-a", "s1"), attempt("rp-b", "s2"), attempt("rp-c", "s2"),
+    attempt("rp-a", "s3", { correct: true }), attempt("rp-b", "s4", { correct: true }),
+    attempt("rp-a", "s5"),
+  ]);
+  assert.equal(pattern.status, "recurring");
+  assert.equal(pattern.errors, 4);
+});
+
+test("três respostas corretas no mesmo exercício não criam fronteira", () => {
+  const [pattern] = summarize([
+    attempt("rp-a", "s1"), attempt("rp-b", "s2"), attempt("rp-c", "s2"),
+    attempt("rp-a", "s3", { correct: true }), attempt("rp-a", "s4", { correct: true }),
+    attempt("rp-a", "s5", { correct: true }), attempt("rp-b", "s6"),
+  ]);
+  assert.equal(pattern.status, "recurring");
+  assert.equal(pattern.errors, 4);
+});
+
+test("guided, supported, retention e transfer não formam fronteira", () => {
+  for (const excluded of [
+    attempt("rp-a", "s3", { correct: true, support: "guided" }),
+    attempt("rp-b", "s3", { correct: true, support: "supported" }),
+    attempt("retention", "s3", { correct: true }),
+    attempt("transfer", "s3", { correct: true }),
+  ]) {
+    const [pattern] = summarize([
+      attempt("rp-a", "s1"), attempt("rp-b", "s2"), attempt("rp-c", "s2"),
+      excluded,
+      attempt("rp-a", "s4", { correct: true }), attempt("rp-b", "s5", { correct: true }),
+    ]);
+    assert.equal(pattern.status, "recurring");
+  }
+});
+
+test("fronteiras permanecem independentes entre reasoningPattern e concept fallback", () => {
+  const patterns = summarize([
+    attempt("rp-a", "s1"), attempt("rp-b", "s2"),
+    attempt("concept-a", "s1"), attempt("concept-b", "s2"),
+    attempt("rp-a", "s3", { correct: true }), attempt("rp-b", "s4", { correct: true }),
+    attempt("rp-a", "s5", { correct: true }),
+    attempt("concept-a", "s6"),
+  ]);
+
+  assert.deepEqual(patterns.map(({ key }) => key), ["concept-only"]);
+  assert.equal(patterns[0].errors, 3);
+});
+
+test("múltiplas recuperações usam somente a fronteira mais recente", () => {
+  const items = [
+    attempt("rp-a", "s1"), attempt("rp-b", "s2"),
+    attempt("rp-a", "s3", { correct: true }), attempt("rp-b", "s4", { correct: true }),
+    attempt("rp-a", "s4", { correct: true }),
+    attempt("rp-a", "s5"), attempt("rp-b", "s6"),
+    attempt("rp-a", "s7", { correct: true }), attempt("rp-b", "s8", { correct: true }),
+    attempt("rp-a", "s8", { correct: true }),
+    attempt("rp-c", "s9"),
+  ];
+
+  assert.deepEqual(summarize(items), []);
+});
+
 test("reasoningPatterns diferentes ficam separados mesmo com primarySkill igual", () => {
   const patterns = summarize([
     attempt("rp-a", "s1"),

@@ -2,6 +2,14 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.12 — Fronteira de Recuperação Diagnóstica
+
+- recuperação confirmada cria fronteira derivada, sem apagar `Attempt`;
+- evidência anterior deixa de sustentar `candidate`/`recurring` ativo;
+- reaparecimento precisa reconstruir os thresholds inalterados após a fronteira;
+- scheduler continua usando o mesmo resumo e candidate permanece read-only;
+- retention/transfer, UI, storage, conteúdo e `SkillState` seguem separados.
+
 ## P0 — ideal para primeiro teste de agente externo
 
 ### 1. Criar uma suíte de testes automatizados do motor atual
