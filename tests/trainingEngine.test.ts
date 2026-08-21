@@ -1169,6 +1169,18 @@ test("conteúdo V0.11 mantém função contextual, alvos, calibração e exclus�
   assert.ok(items.some(({ subconcept }) => subconcept === "draw-without-target"));
   assert.ok(items.some(({ subconcept }) => subconcept === "air-without-target"));
   assert.ok(items.some(({ concept }) => concept === "range-response-calibration"));
+  const thickValueBoundary = items.find(({ id }) => id === "dev-hand-range-04");
+  assert.ok(thickValueBoundary);
+  assert.match(thickValueBoundary.prompt, /integra/i);
+  assert.match(
+    thickValueBoundary.options.find(({ id }) => id === thickValueBoundary.correctOptionId)?.label ?? "",
+    /range mais forte.*função de Thick Value/i,
+  );
+  const incorrectOptionIds = thickValueBoundary.options
+    .filter(({ id }) => id !== thickValueBoundary.correctOptionId)
+    .map(({ id }) => id)
+    .sort();
+  assert.deepEqual(Object.keys(thickValueBoundary.feedback.misconception ?? {}).sort(), incorrectOptionIds);
   const correctText = items.map((item) => item.options.find(({ id }) => id === item.correctOptionId)?.label ?? "").join(" ").toLowerCase();
   assert.equal(/range forte[^.]{0,40}(fold|foldar)/.test(correctText), false);
   assert.equal(/range (mais )?fraco[^.]{0,40}(bet|raise|apost)/.test(correctText), false);

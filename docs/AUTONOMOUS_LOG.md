@@ -377,3 +377,10 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Compatibilidade:** nenhuma alteração em `Attempt`, scheduler genérico, thresholds/recuperação diagnóstica, regras de retention/transfer, chave/versão de storage ou schema de active session. Um teste restaura uma sessão V0.10.2 composta só por IDs anteriores sem trocar `sessionId`.
 - **Risco conhecido:** clareza e dificuldade dos novos distractors ainda requerem validação humana; não há decisão estrutural pendente.
 - **Próximo passo recomendado:** teste humano dos três microblocos antes de qualquer pacote de turn/river.
+
+## 2026-08-21 — revisão editorial da V0.11
+
+- **Objetivo:** remover a ambiguidade de `dev-hand-range-04` e tornar plausíveis os distractors dos itens independent e das seis avaliações, sem alterar a resposta estratégica pretendida.
+- **Antes/depois:** `dev-hand-range-04` aceitava duas leituras corretas para “qual erro evitar”; agora pede a integração entre força do range e função da mão. Distractors antes denunciados por absolutos foram substituídos por erros próximos: adaptação exagerada, inércia de função, peso excessivo a uma pista e ação desconectada das mãos-alvo.
+- **Escopo preservado:** IDs, purpose, support, pacotes, sequências, conceitos, reasoningPatterns, contagens 84/42, scheduler, diagnóstico, avaliações, active session, storage e schemas não mudaram.
+- **Teste:** a auditoria editorial existente agora protege especificamente a integração de `dev-hand-range-04` e exige feedback de misconception para cada alternativa incorreta, mantendo 126 testes.
