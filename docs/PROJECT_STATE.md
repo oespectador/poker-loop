@@ -1,4 +1,4 @@
-# Project State — baseline V0.16
+# Project State — baseline V0.17
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,9 +15,11 @@ Stack:
 
 ## Versão atual
 
-**V0.16 — Importação GG/PokerCraft com Triagem de Atenção**
+**V0.17 — Revisão Rápida de uma Decisão Real**
 
-A importação local de `.txt` GG/PokerCraft mantém as mãos apenas em memória durante o parsing e persiste no máximo cinco sugestões estruturais. Uma sugestão não é tarefa nem diagnóstico: somente **Salvar para revisão** cria um `RealHandReview`, sem preencher dúvida, street ou foco. As categorias são determinísticas e resultado financeiro não participa da seleção ou desempate. Uma sessão pendente bloqueia outra importação; fingerprints SHA-256 impedem repetir o mesmo arquivo sem persistir seu conteúdo integral.
+Uma `RealHandReview` reconhecida pelo parser GG/PokerCraft pode reconstruir uma ação voluntária do Herói sem mostrar board, ações ou desfecho posteriores. O jogador pode salvar um autorrelato curto em um único `RealHandReasoningSnapshot` por mão. Esse registro permanece separado de `Attempt`, diagnóstico, `SkillState`, recovery, retention, transfer, scheduler e sessão ativa. O vínculo usa o `sourceHandId` do parser e todos os dados observáveis da ação; snapshots V0.17 legados sem proveniência mantêm o autorrelato, mas exigem nova escolha explícita. A apresentação conserva o marcador de all-in fornecido pelo parser, sem estimar pot ou stacks.
+
+A camada V0.16 continua responsável pela importação local de `.txt` e pela triagem determinística de no máximo cinco sugestões estruturais. Resultado financeiro não participa da seleção ou desempate, e somente **Salvar para revisão** cria um `RealHandReview`.
 
 A evidência longitudinal já derivada pelo motor agora possui uma representação conservadora em Progresso. O scheduler, o conteúdo V0.11 e a persistência V0.10.2 permanecem compatíveis e inalterados.
 
@@ -239,3 +241,7 @@ O sexto pacote conecta força estimada do range à função contextual da mão. 
 ## V0.15 — ponte com mãos reais
 
 A rota `/hands` mantém `RealHandReview` em `poker-loop-v1:real-hands`, separado de `Attempt` e da sessão ativa. O jogador cola `rawHandText` opaco, registra quatro reflexões e pode escolher manualmente uma Skill ampla. Esse foco apenas cria o link `/session?focus=<Skill>` para o treino normal. Criação, edição e exclusão não entram em diagnóstico, `SkillState`, recovery, retention, transfer nem no loop longitudinal. Não existe parser, extração ou análise estratégica automática. O reset de progresso pedagógico não apaga esse material do jogador.
+
+## V0.17 — revisão rápida de uma decisão real
+
+Mãos GG/PokerCraft salvas podem reconstruir uma ação voluntária do Herói sem revelar board, ações ou desfecho posteriores. Um autorrelato opcional é persistido em `poker-loop-v1:reasoning-snapshots`, com unicidade por mão. Ele não integra o motor pedagógico; o reset de progresso o preserva e a exclusão explícita da mão remove seu snapshot.

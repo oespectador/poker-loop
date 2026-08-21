@@ -208,3 +208,7 @@ Uma mão real registrada é fonte separada de contexto e reflexão, não evidên
 ## V0.16 — importação como triagem, não evidência
 
 O parser produz estruturas temporárias e a triagem reduz a sessão a no máximo cinco situações. `ParsedGgHand`, sugestão e `RealHandReview` são fronteiras distintas. Importar, descartar ou promover não cria `Attempt`, diagnóstico, `SkillState`, recovery, retention ou transfer. A seleção descreve apenas propriedades observáveis da linha e nunca acerto, erro, EV, range ou prioridade pedagógica.
+
+## V0.17 — autorrelato em uma decisão real
+
+Uma revisão rápida reconstrói apenas as informações disponíveis até uma ação escolhida do Herói e salva um `RealHandReasoningSnapshot`. O campo `selfRatedSupport` descreve quanto o próprio jogador achava que sua leitura estava sustentada naquele momento; não mede a sustentação real. Snapshot é material do jogador, separado de `Attempt`, diagnóstico, Skills, scheduler, recovery, retention e transfer.

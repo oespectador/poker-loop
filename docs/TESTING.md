@@ -151,3 +151,7 @@ A suíte possui 180 testes. Os 16 testes novos cobrem storage vazio/corrompido, 
 ## V0.16
 
 A suíte possui 195 testes. Os 15 testes de importação cobrem fronteira por cabeçalho e CRLF, tolerância a bloco inválido, `Hero: shows` separado da section SHOWDOWN, exclusão de cashout/posts/collected, decisão real por street, agressão através de calls intermediários, raise enfrentado, accounting de raise e retorno, all-in, teto/categorias/unicidade, independência do resultado financeiro, storage defensivo, exclusividade do detalhe aberto e promoção sem inferência para `RealHandReview`.
+
+## V0.17 — revisão rápida
+
+A suíte possui 218 testes. `tests/realHandReasoning.test.ts` cobre extração das ações do Herói, múltiplas decisões na mesma street, corte anti-hindsight de ações/board, labels e all-in, normalização dos fatores, validação/storage defensivos e isolamento do reset pedagógico. Também protege snapshots legados sem `sourceHandId`, o matching exato por proveniência e dados observáveis, e a edição quando o histórico muda: não há fallback silencioso para outra decisão, o snapshot fica intacto até uma escolha explícita e a reassociação preserva sua identidade temporal.
