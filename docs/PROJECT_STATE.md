@@ -1,4 +1,4 @@
-# Project State — baseline V0.17
+# Project State — baseline V0.17.1
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,13 @@ Stack:
 
 ## Versão atual
 
-**V0.17 — Revisão Rápida de uma Decisão Real**
+**V0.17.1 — Visualização e Revisão Rápida por Opções**
+
+A mão reconhecida agora é apresentada como cartas, board e ações separadas por
+street; o histórico bruto permanece recolhido como apoio. A revisão rápida usa
+até dois fatores e uma seleção de sustentação percebida, com observação curta
+opcional. A reflexão detalhada também fica recolhida. A Decision View reutiliza
+essa apresentação sem mudar seu corte anti-hindsight nem o matching exato.
 
 Uma `RealHandReview` reconhecida pelo parser GG/PokerCraft pode reconstruir uma ação voluntária do Herói sem mostrar board, ações ou desfecho posteriores. O jogador pode salvar um autorrelato curto em um único `RealHandReasoningSnapshot` por mão. Esse registro permanece separado de `Attempt`, diagnóstico, `SkillState`, recovery, retention, transfer, scheduler e sessão ativa. O vínculo usa o `sourceHandId` do parser e todos os dados observáveis da ação; snapshots V0.17 legados sem proveniência mantêm o autorrelato, mas exigem nova escolha explícita. A apresentação conserva o marcador de all-in fornecido pelo parser, sem estimar pot ou stacks.
 

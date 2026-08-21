@@ -252,3 +252,33 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 .reasoning-form { display: grid; gap: 20px; } .reasoning-form label { display: grid; gap: 7px; font-weight: 800; } .reasoning-form small { color: var(--muted); font-weight: 500; }
 .reasoning-form textarea { border: 1px solid var(--line); border-radius: 11px; padding: 11px; background: var(--bg); color: var(--text); }
 .reasoning-form fieldset { border: 0; padding: 0; margin: 0; } .reasoning-form legend { font-weight: 800; }
+
+/* V0.17.1 — a mão visual é a superfície principal; o texto bruto fica como apoio. */
+.hand-visual { display: grid; gap: 20px; margin: 20px 0; border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--bg); }
+.hand-visual-header { display: flex; justify-content: space-between; align-items: start; gap: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.hand-visual-header > span, .visual-unavailable { color: var(--muted); font-size: 13px; }
+.hero-hand { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border-radius: 13px; background: rgba(94,231,244,.06); font-weight: 800; }
+.hand-cards, .street-board { display: flex; gap: 7px; }
+.hand-card { width: 43px; height: 56px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; background: #f6f8f9; color: #111820; box-shadow: 0 5px 13px rgba(0,0,0,.22); font-size: 16px; font-weight: 900; line-height: 1; }
+.hand-card.red-suit { color: #c63544; }
+.street-flow { display: grid; gap: 12px; }
+.street-block { overflow: hidden; border: 1px solid var(--line); border-radius: 13px; background: var(--bg-soft); }
+.street-block > header { min-height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.street-block h3 { margin: 0; font-size: 15px; }
+.street-block .hand-card { width: 34px; height: 43px; border-radius: 6px; font-size: 13px; box-shadow: none; }
+.street-actions { display: grid; }
+.street-action { display: grid; grid-template-columns: minmax(80px, .35fr) 1fr auto; align-items: center; gap: 10px; padding: 10px 14px; border-top: 1px solid rgba(255,255,255,.04); font-size: 14px; }
+.street-action:first-child { border-top: 0; }
+.street-action.hero-action { background: rgba(94,231,244,.035); }
+.street-action.selected-decision { border-left: 4px solid var(--cyan); background: rgba(94,231,244,.12); }
+.street-action small { color: var(--cyan); font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+.detailed-reflection { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.detailed-reflection > summary { cursor: pointer; color: var(--muted); font-weight: 800; }
+.reasoning-form > fieldset > small { display: block; margin-top: 5px; color: var(--muted); }
+.optional-note { margin-top: 4px; }
+@media (max-width: 620px) {
+  .hand-visual { padding: 14px; }
+  .hand-visual-header { flex-direction: column; }
+  .street-action { grid-template-columns: 72px 1fr; }
+  .street-action small { grid-column: 2; }
+}

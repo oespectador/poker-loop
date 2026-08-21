@@ -155,3 +155,13 @@ A suíte possui 195 testes. Os 15 testes de importação cobrem fronteira por ca
 ## V0.17 — revisão rápida
 
 A suíte possui 218 testes. `tests/realHandReasoning.test.ts` cobre extração das ações do Herói, múltiplas decisões na mesma street, corte anti-hindsight de ações/board, labels e all-in, normalização dos fatores, validação/storage defensivos e isolamento do reset pedagógico. Também protege snapshots legados sem `sourceHandId`, o matching exato por proveniência e dados observáveis, e a edição quando o histórico muda: não há fallback silencioso para outra decisão, o snapshot fica intacto até uma escolha explícita e a reassociação preserva sua identidade temporal.
+
+## V0.17.1 — mão visual e revisão por opções
+
+A suíte possui 225 testes. Os testes da correção de composição protegem o modelo visual sem
+`rawHandText`, a organização de board e ações por street, o destaque exato da
+decisão, a troca de anchor, o corte de streets/ações futuras e a propriedade
+única da superfície visual pela Quick Review em mãos salvas. A cobertura V0.17 existente continua
+protegendo snapshots antigos, observação opcional, limite de dois fatores,
+matching exato, storage separado e isolamento de `Attempt`, `SkillState` e do
+scheduler.
