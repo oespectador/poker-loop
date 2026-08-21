@@ -204,3 +204,7 @@ de `SkillState`, suporte, fading ou prioridades.
 ## V0.15 — mãos reais como contexto
 
 Uma mão real registrada é fonte separada de contexto e reflexão, não evidência diagnóstica. A escolha opcional de `trainingFocus` pertence ao jogador e reutiliza o scheduler normal sem vincular a mão à sessão. O caminho futuro a estudar é `mão real → hipótese sobre raciocínio → treino relacionado → recovery → retention → transfer → novas mãos reais`, mas nenhuma hipótese ou relação causal é inferida nesta versão. Antes disso, deve ser estudado um contrato explícito de interpretação.
+
+## V0.16 — importação como triagem, não evidência
+
+O parser produz estruturas temporárias e a triagem reduz a sessão a no máximo cinco situações. `ParsedGgHand`, sugestão e `RealHandReview` são fronteiras distintas. Importar, descartar ou promover não cria `Attempt`, diagnóstico, `SkillState`, recovery, retention ou transfer. A seleção descreve apenas propriedades observáveis da linha e nunca acerto, erro, EV, range ou prioridade pedagógica.

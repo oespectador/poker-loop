@@ -147,3 +147,7 @@ scheduler, teto de 12, one-shot e active session.
 ## V0.15
 
 A suíte possui 180 testes. Os 16 testes novos cobrem storage vazio/corrompido, validação defensiva, persistência integral, texto opaco, IDs, edição com identidade temporal preservada, foco opcional, exclusão isolada, reset pedagógico separado, ordenação, labels humanas, link de treino e ausência de `Attempt`, diagnóstico ou mudança no resumo longitudinal. A cobertura anterior continua protegendo scheduler determinístico, sessão ativa, teto de 12 e avaliações one-shot.
+
+## V0.16
+
+A suíte possui 193 testes. Os 13 testes de importação cobrem fronteira por cabeçalho e CRLF, tolerância a bloco inválido, `Hero: shows` separado da section SHOWDOWN, exclusão de cashout/posts/collected, decisão real por street, agressão através de calls intermediários, raise enfrentado, accounting de raise e retorno, all-in, teto/categorias/unicidade, independência do resultado financeiro e storage defensivo separado do reset pedagógico.

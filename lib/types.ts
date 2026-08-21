@@ -93,6 +93,50 @@ export interface RealHandReview {
 
 export type RealHandReviewInput = Omit<RealHandReview, "id" | "createdAt">;
 
+export type DecisionStreet = "preflop" | "flop" | "turn" | "river";
+export type ParsedActionType = "fold" | "check" | "call" | "bet" | "raise";
+
+/** Temporary structural representation; it is never persisted as learning evidence. */
+export interface ParsedGgHand {
+  sourceHandId: string;
+  playedAt: string;
+  game: "holdem-no-limit";
+  smallBlind: number;
+  bigBlind: number;
+  tableName?: string;
+  maxPlayers?: number;
+  buttonSeat?: number;
+  heroSeat?: number;
+  heroStartingStack?: number;
+  heroCards: [string, string];
+  flop?: [string, string, string];
+  turn?: string;
+  river?: string;
+  actions: Array<{ actor: string; street: DecisionStreet; type: ParsedActionType; amount?: number; toAmount?: number; allIn?: boolean }>;
+  heroDecisionStreets: DecisionStreet[];
+  heroDecisionCount: number;
+  heroFacedAggressionStreets: DecisionStreet[];
+  heroAllIn: boolean;
+  heroShows: boolean;
+  heroContribution?: number;
+  heroCommitmentRatio?: number;
+  rawHandText: string;
+}
+
+export type HandReviewSuggestionReason = "high-commitment" | "river-decision" | "hero-showdown" | "multi-street-pressure" | "long-line";
+export interface HandReviewSuggestion {
+  id: string;
+  source: "gg-pokercraft";
+  sourceHandId: string;
+  reason: HandReviewSuggestionReason;
+  createdAt: string;
+  heroCards: [string, string];
+  playedAt: string;
+  reasonLabel: string;
+  reasonMessage: string;
+  rawHandText: string;
+}
+
 export interface ActiveTrainingSessionItem {
   exerciseId: string;
   support: SupportLevel;

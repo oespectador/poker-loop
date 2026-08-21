@@ -163,3 +163,13 @@ Permanecem deliberadamente fora da biblioteca ativa: double previous size, turn/
 - calibração proporcional da adaptação, sem atalhos `range forte → fold` ou `range fraco → bet/raise`;
 - claims de turn/river, donk, timing, pools e solver mantidos fora;
 - nenhuma mudança em scheduler, diagnóstico, retention/transfer, `Attempt`, storage ou sessão persistente.
+
+## Concluído na V0.16 — Importação GG/PokerCraft com Triagem de Atenção
+
+- parser conservador do formato observado, processado localmente;
+- até cinco sugestões determinísticas e estruturalmente justificadas, sem usar resultado;
+- promoção explícita para `RealHandReview`, com reflexão deixada em branco;
+- storage defensivo separado, bloqueio de nova sessão pendente e fingerprint do arquivo;
+- nenhuma biblioteca bruta, análise estratégica ou alteração pedagógica.
+
+Limitação deliberada: arquivos diferentes parcialmente sobrepostos não são deduplicados por uma base histórica de milhares de `sourceHandId`; somente o mesmo conteúdo integral e os IDs dentro da sessão atual são protegidos.
