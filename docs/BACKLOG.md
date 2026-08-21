@@ -2,13 +2,21 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.14 — Loop de Aprendizagem Visível
+
+- Progresso mostra recurring ativo e recovery qualificada com linguagem conservadora;
+- verificações posteriores mostram observações factuais, não domínio;
+- candidate permanece interno e recurring atual supersede recovery da mesma identidade;
+- labels humanas validadas impedem vazamento de `reasoningPattern`/`concept` na UI;
+- modelo de apresentação puro combina os três resumos existentes sem alterar o scheduler.
+
 ## Concluído na V0.13 — Verificação Pós-Recuperação
 
 - recovery qualificada deriva de recurring seguido da fronteira V0.12;
 - transfer relacionada usa a recovery como readiness e retention ancora 24h em `recoveredAt`;
 - recurring ativo preserva avaliações one-shot da mesma identidade;
 - resumo puro descreve observações posteriores sem inferir domínio;
-- candidate, Attempt, storage, UI, SkillState e conteúdo permanecem inalterados.
+- candidate, Attempt, storage, SkillState e conteúdo permanecem inalterados.
 
 ## Concluído na V0.12 — Fronteira de Recuperação Diagnóstica
 

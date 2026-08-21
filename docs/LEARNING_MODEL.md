@@ -188,3 +188,14 @@ pela identidade diagnóstica exata, nunca por Skill ampla. Seus resultados não
 entram em diagnóstico, suporte, fading, prioridade development ou SkillState.
 Ausência de item one-shot disponível significa ausência de observação, não
 sucesso ou fracasso.
+
+## V0.14 — representação do loop longitudinal
+
+Progresso torna o ciclo longitudinal legível sem criar evidência nova. Um
+`recurring` ativo aparece como **Em reforço**; uma recovery qualificada sem
+recurring atual aparece como **Recuperado por enquanto**; transfer e retention
+posteriores são observações factuais, inclusive quando ainda não ocorreram.
+`candidate` permanece interno por ser preliminar. Labels humanas explícitas
+impedem que `reasoningPattern` ou o fallback de `concept` apareçam na interface.
+A camada é derivada depois dos resumos diagnósticos e não participa do scheduler,
+de `SkillState`, suporte, fading ou prioridades.

@@ -130,3 +130,15 @@ retention, nova recurrence e recovery posterior, resumo de verificações depois
 de `recoveredAt`, consumo one-shot, coexistência, limite de um item por purpose,
 teto de 12 e determinismo. Evaluation permanece fora do diagnóstico e do
 SkillState pelos testes de isolamento já existentes.
+
+## V0.14
+
+A suíte possui 164 testes. Os 17 testes novos exercitam o modelo puro do loop:
+estado vazio; invisibilidade de candidate; estados reinforcement/recovered;
+linguagem conservadora; contagens específicas e ausência de observação para
+transfer/retention; corte em `recoveredAt`; precedência de recurring sobre a
+recovery da mesma identidade; coexistência entre identidades; ordenação estável;
+limite de três itens; inventário e labels humanas completos; e falha explícita
+para identidade desconhecida, sem fallback de metadata. A suíte preexistente
+continua protegendo `SkillState`, resumo global de evaluation, determinismo do
+scheduler, teto de 12, one-shot e active session.
