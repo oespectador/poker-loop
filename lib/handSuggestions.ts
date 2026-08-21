@@ -1,4 +1,4 @@
-import type { HandReviewSuggestion, HandReviewSuggestionReason, ParsedGgHand } from "./types";
+import type { HandReviewSuggestion, HandReviewSuggestionReason, ParsedGgHand, RealHandReviewInput } from "./types";
 
 const details: Record<HandReviewSuggestionReason, [string, string]> = {
   "high-commitment": ["ALTA EXPOSIÇÃO", "Esta foi uma das situações em que uma parcela maior do seu stack entrou no pot."],
@@ -8,6 +8,30 @@ const details: Record<HandReviewSuggestionReason, [string, string]> = {
   "long-line": ["LINHA EM VÁRIAS STREETS", "Suas decisões evoluíram ao longo de várias streets nesta mão."],
 };
 const postflopCount = (hand: ParsedGgHand) => hand.heroDecisionStreets.filter((street) => street !== "preflop").length;
+const cardLabel = (card: string) => card.replace("h", "♥").replace("d", "♦").replace("c", "♣").replace("s", "♠");
+
+export interface HandDetailSelection { selectedId?: string; selectedSuggestionId?: string }
+
+/** Returns an exclusive detail selection: a saved hand or a pending suggestion, never both. */
+export function selectHandDetail(kind: "saved" | "suggestion", id: string): HandDetailSelection {
+  return kind === "saved" ? { selectedId: id, selectedSuggestionId: undefined } : { selectedId: undefined, selectedSuggestionId: id };
+}
+
+/** Promotes only imported context; reflection and pedagogical fields remain deliberately unset. */
+export function suggestionToRealHandInput(suggestion: HandReviewSuggestion): RealHandReviewInput {
+  const [, year, month, day, hour, minute] = suggestion.playedAt.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/) ?? [];
+  const playedAtLabel = year ? `${day}/${month} ${hour}:${minute}` : suggestion.playedAt;
+  return {
+    title: `${suggestion.heroCards.map(cardLabel).join(" ")} · ${playedAtLabel}`,
+    rawHandText: suggestion.rawHandText,
+    doubt: "",
+    rangeRead: "",
+    objective: "",
+    targetsAndSizeResponse: "",
+    street: undefined,
+    trainingFocus: undefined,
+  };
+}
 function structuralCompare(a: ParsedGgHand, b: ParsedGgHand) {
   return b.heroDecisionStreets.length - a.heroDecisionStreets.length || b.heroDecisionCount - a.heroDecisionCount ||
     b.heroFacedAggressionStreets.length - a.heroFacedAggressionStreets.length || a.playedAt.localeCompare(b.playedAt) || a.sourceHandId.localeCompare(b.sourceHandId);

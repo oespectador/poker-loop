@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { parseGgHand, parseGgPokerCraftFile } from "../lib/ggHandParser";
-import { selectHandReviewSuggestions } from "../lib/handSuggestions";
+import { selectHandDetail, selectHandReviewSuggestions, suggestionToRealHandInput } from "../lib/handSuggestions";
 import { clearHandSuggestions, GG_IMPORTS_KEY, HAND_SUGGESTIONS_KEY, hasProcessedImport, readHandSuggestions, recordProcessedImport, removeHandSuggestion, writeHandSuggestions } from "../lib/handSuggestionStorage";
 import { clearPrototypeProgress } from "../lib/storage";
 
@@ -27,3 +27,18 @@ test("triagem respeita ordem, unicidade, elegibilidade e teto de cinco", () => {
 test("resultado financeiro e sua inversão não mudam a seleção", () => { const won = parseGgHand(hand("A", riverLine, "Hero collected $9 from pot"))!; const lost = parseGgHand(hand("B", riverLine, "Villain collected $9 from pot"))!; const first = selectHandReviewSuggestions([won, lost], { createdAt: "2026-08-21T00:00:00Z" }).map((x) => [x.reason, x.sourceHandId]); const inverted = selectHandReviewSuggestions([parseGgHand(hand("A", riverLine, "Villain collected $9 from pot"))!, parseGgHand(hand("B", riverLine, "Hero collected $9 from pot"))!], { createdAt: "2026-08-21T00:00:00Z" }).map((x) => [x.reason, x.sourceHandId]); assert.deepEqual(inverted, first); });
 test("storage defensivo limita cinco, remove isoladamente e não entra no reset pedagógico", () => { const values = installStorage(); const parsed = parseGgHand(hand("A", riverLine))!; const item = selectHandReviewSuggestions([parsed], { createdAt: "2026-08-21T00:00:00Z" })[0]; writeHandSuggestions([item, item, item, item, item, item]); assert.equal(readHandSuggestions().length, 5); removeHandSuggestion(item.id); assert.equal(readHandSuggestions().length, 0); writeHandSuggestions([item]); clearPrototypeProgress(); assert.equal(values.has(HAND_SUGGESTIONS_KEY), true); cleanup(); });
 test("storage ignora JSON e registros inválidos e fingerprint não guarda conteúdo", () => { const hash = "a".repeat(64); const values = installStorage(new Map([[HAND_SUGGESTIONS_KEY, "{"], [GG_IMPORTS_KEY, JSON.stringify(["bad"])]])); assert.deepEqual(readHandSuggestions(), []); assert.equal(hasProcessedImport(hash), false); recordProcessedImport(hash); assert.equal(hasProcessedImport(hash), true); assert.equal(values.get(GG_IMPORTS_KEY), JSON.stringify([hash])); cleanup(); });
+test("seleção de detalhe é exclusiva nos dois sentidos", () => {
+  assert.deepEqual(selectHandDetail("suggestion", "suggestion-a"), { selectedId: undefined, selectedSuggestionId: "suggestion-a" });
+  assert.deepEqual(selectHandDetail("saved", "hand-a"), { selectedId: "hand-a", selectedSuggestionId: undefined });
+});
+test("promoção preserva a mão e não infere reflexão, street ou Skill", () => {
+  const parsed = parseGgHand(hand("A", riverLine))!;
+  const suggestion = selectHandReviewSuggestions([parsed], { createdAt: "2026-08-21T00:00:00Z" })[0];
+  const input = suggestionToRealHandInput(suggestion);
+  assert.deepEqual(input, {
+    title: "A♥ 4♥ · 20/08 23:19",
+    rawHandText: suggestion.rawHandText,
+    doubt: "", rangeRead: "", objective: "", targetsAndSizeResponse: "",
+    street: undefined, trainingFocus: undefined,
+  });
+});

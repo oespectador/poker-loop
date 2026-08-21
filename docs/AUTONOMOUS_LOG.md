@@ -468,3 +468,11 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Escopo preservado:** nenhuma criação de Attempt, SkillState, diagnóstico, candidate/recurring/recovery, retention/transfer ou mudança no scheduler.
 - **Limitação deliberada:** sem deduplicação global entre arquivos diferentes parcialmente sobrepostos, evitando uma base crescente de IDs.
 - **Validação:** 193 testes automatizados, typecheck, build e auditoria de diff.
+
+### Patch de revisão — exclusividade do detalhe
+
+- Abrir uma sugestão ou uma mão salva agora limpa explicitamente a seleção do
+  outro tipo; descarte, promoção e edição também fecham o detalhe incompatível.
+- A regra de seleção exclusiva e a transformação neutra de sugestão em
+  `RealHandReview` foram extraídas em funções puras pequenas e cobertas por dois
+  testes, sem framework de UI ou mudança de escopo.
