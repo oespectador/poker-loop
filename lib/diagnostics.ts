@@ -27,6 +27,26 @@ interface KeyedAttempt {
   source: DifficultyPatternSource;
 }
 
+/**
+ * Retorna somente a evidência posterior à última recuperação confirmada.
+ * A janela é derivada do histórico elegível e não remove nenhuma Attempt.
+ */
+function activeEvidenceSinceRecovery(group: KeyedAttempt[]): KeyedAttempt[] {
+  let recoveryEnd = -1;
+
+  for (let index = 2; index < group.length; index += 1) {
+    const window = group.slice(index - 2, index + 1);
+    if (
+      window.every(({ attempt }) => attempt.correct) &&
+      new Set(window.map(({ attempt }) => attempt.exerciseId)).size >= 2
+    ) {
+      recoveryEnd = index;
+    }
+  }
+
+  return group.slice(recoveryEnd + 1);
+}
+
 /** Mantém exatamente a chave exclusiva usada pela análise da V0.7. */
 export function matchesDifficultyPattern(
   exercise: DiagnosticExercise,
@@ -140,25 +160,21 @@ export function summarizeDifficultyPatterns(
 
   for (const group of groups.values()) {
     group.sort((a, b) => chronological(a.attempt, b.attempt));
-    const recent = group.slice(-3);
-    const recoveredForNow =
-      recent.length === 3 &&
-      recent.every(({ attempt }) => attempt.correct) &&
-      new Set(recent.map(({ attempt }) => attempt.exerciseId)).size >= 2;
-    if (recoveredForNow) continue;
+    const activeEvidence = activeEvidenceSinceRecovery(group);
+    const recent = activeEvidence.slice(-3);
 
-    const errors = group.filter(({ attempt }) => !attempt.correct);
+    const errors = activeEvidence.filter(({ attempt }) => !attempt.correct);
     const distinctExercises = new Set(errors.map(({ attempt }) => attempt.exerciseId)).size;
     const sessions = new Set(errors.map(({ attempt }) => attempt.sessionId)).size;
     if (errors.length < 2 || distinctExercises < 2 || sessions < 2) continue;
 
     const recurring = errors.length >= 3 && distinctExercises >= 3 && sessions >= 2;
-    const last = group[group.length - 1];
+    const last = activeEvidence[activeEvidence.length - 1];
     patterns.push({
       key: last.key,
       source: last.source,
       status: recurring ? "recurring" : "candidate",
-      attempts: group.length,
+      attempts: activeEvidence.length,
       errors: errors.length,
       distinctExercises,
       sessions,

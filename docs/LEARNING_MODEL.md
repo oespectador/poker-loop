@@ -101,14 +101,20 @@ não é usado como hipótese causal.
 
 O nível `candidate` requer erros em pelo menos dois exercícios e duas sessões;
 `recurring` requer erros em pelo menos três exercícios e duas sessões. Três
-acertos independentes recentes em pelo menos dois exercícios desativam o sinal
-por enquanto. Tanto os limiares quanto essa recuperação são heurísticas
-provisórias do protótipo, não medidas psicométricas ou prova de domínio. Na V0.8,
+acertos development independentes consecutivos em pelo menos dois exercícios
+marcam o padrão como **recuperado por enquanto** e criam uma fronteira de
+evidência. Erros anteriores continuam no histórico, mas não sustentam um sinal
+ativo novo; uma dificuldade que reaparece precisa reconstruir os mesmos
+thresholds depois da fronteira. Tanto os limiares quanto essa recuperação são
+heurísticas provisórias do protótipo, não medidas psicométricas ou prova de domínio. Na V0.8,
 `candidate` continua read-only. Somente um sinal `recurring`, restrito a conteúdo de pacotes completamente
 apresentados e compatível com o foco já resolvido, pode reservar um development
 por sessão. O diagnóstico não escolhe Skill; retention e transfer
 mantêm prioridade, o suporte normal é reutilizado e a recuperação continua sendo
-inferida pelas tentativas recentes, nunca marcada manualmente.
+inferida pelo histórico, nunca marcada manualmente. Somente a última janela
+válida delimita a evidência ativa de cada chave. Guided, supported real, retention
+e transfer não participam da recuperação ou da fronteira; nenhuma nova
+inferência de domínio foi introduzida.
 
 ## Lógica × calibração
 
