@@ -1,4 +1,4 @@
-# Project State — baseline V0.14
+# Project State — baseline V0.15
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.14 — Loop de Aprendizagem Visível**
+**V0.15 — Ponte com Mãos Reais**
 
 A evidência longitudinal já derivada pelo motor agora possui uma representação conservadora em Progresso. O scheduler, o conteúdo V0.11 e a persistência V0.10.2 permanecem compatíveis e inalterados.
 
@@ -230,3 +230,8 @@ A trava global de avaliação foi removida. A completude é determinada pelos ID
 ## V0.11 — política de conteúdo
 
 O sexto pacote conecta força estimada do range à função contextual da mão. Range forte/fraco não determina ação sozinho; Thin Value e SDV dependem das mãos-alvo, e Draw/Air não determinam agressão. A adaptação é proporcional à sustentação da leitura. Claims de turn/river e tendências de pool seguem fora. Diagnóstico, scheduler, retention, transfer, `Attempt`, storage e active session não mudaram.
+
+
+## V0.15 — ponte com mãos reais
+
+A rota `/hands` mantém `RealHandReview` em `poker-loop-v1:real-hands`, separado de `Attempt` e da sessão ativa. O jogador cola `rawHandText` opaco, registra quatro reflexões e pode escolher manualmente uma Skill ampla. Esse foco apenas cria o link `/session?focus=<Skill>` para o treino normal. Criação, edição e exclusão não entram em diagnóstico, `SkillState`, recovery, retention, transfer nem no loop longitudinal. Não existe parser, extração ou análise estratégica automática. O reset de progresso pedagógico não apaga esse material do jogador.

@@ -8,6 +8,7 @@ const links = [
   { href: "/", label: "Hoje" },
   { href: "/train", label: "Treinar" },
   { href: "/progress", label: "Progresso" },
+  { href: "/hands", label: "Mãos" },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {

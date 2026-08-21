@@ -142,3 +142,8 @@ limite de três itens; inventário e labels humanas completos; e falha explícit
 para identidade desconhecida, sem fallback de metadata. A suíte preexistente
 continua protegendo `SkillState`, resumo global de evaluation, determinismo do
 scheduler, teto de 12, one-shot e active session.
+
+
+## V0.15
+
+A suíte possui 180 testes. Os 16 testes novos cobrem storage vazio/corrompido, validação defensiva, persistência integral, texto opaco, IDs, edição com identidade temporal preservada, foco opcional, exclusão isolada, reset pedagógico separado, ordenação, labels humanas, link de treino e ausência de `Attempt`, diagnóstico ou mudança no resumo longitudinal. A cobertura anterior continua protegendo scheduler determinístico, sessão ativa, teto de 12 e avaliações one-shot.
