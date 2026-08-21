@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { parseGgHand } from "../lib/ggHandParser";
-import { buildHeroDecisionView, extractHeroDecisionAnchors, formatAction, initialQuickReviewAnchor, matchSnapshotDecisionAnchor, toggleReasoningFactor } from "../lib/realHandReasoning";
+import { buildHandVisualModel, buildHeroDecisionView, extractHeroDecisionAnchors, formatAction, initialQuickReviewAnchor, matchSnapshotDecisionAnchor, toggleReasoningFactor } from "../lib/realHandReasoning";
 import { deleteReasoningSnapshotForHand, isRealHandReasoningSnapshot, readReasoningSnapshots, REASONING_SNAPSHOTS_KEY, saveReasoningSnapshot } from "../lib/reasoningSnapshotStorage";
 import { clearPrototypeProgress } from "../lib/storage";
 import type { RealHandReasoningSnapshot } from "../lib/types";
@@ -31,3 +31,6 @@ test("snapshot legado é lido mas não confirmado nem salvo como novo",()=>{ con
 test("sourceHandId presente vazio ou inválido é rejeitado",()=>{ assert.equal(isRealHandReasoningSnapshot({...snapshot,sourceHandId:""}),false); assert.equal(isRealHandReasoningSnapshot({...snapshot,sourceHandId:42}),false); });
 test("allIn armazenado precisa ser boolean",()=>{ assert.equal(isRealHandReasoningSnapshot({...snapshot,sourceDecision:{...snapshot.sourceDecision,allIn:"yes"}}),false); });
 test("Decision View rejeita anchor com amount, toAmount ou allIn adulterado",()=>{ const parsed=hand("Hero: raises $1.20 to $1.60 and is all-in"); const anchor=extractHeroDecisionAnchors(parsed)[0]; assert.equal(buildHeroDecisionView(parsed,{...anchor,amount:9}),null); assert.equal(buildHeroDecisionView(parsed,{...anchor,toAmount:9}),null); assert.equal(buildHeroDecisionView(parsed,{...anchor,allIn:false}),null); assert.ok(buildHeroDecisionView(parsed,anchor)); });
+
+test("modelo visual organiza board e ações por street sem carregar texto bruto",()=>{ const parsed=hand("Hero: calls $0.02\n*** FLOP *** [2c 3d 5s]\nVillain: checks\nHero: bets $0.08\n*** TURN *** [2c 3d 5s] [Kd]\nHero: checks"); const visual=buildHandVisualModel(parsed)!; assert.deepEqual(visual.map(x=>x.street),["preflop","flop","turn"]); assert.deepEqual(visual[1].board,["2c","3d","5s"]); assert.deepEqual(visual[1].actions.map(x=>x.actor),["Villain","Hero"]); assert.equal("rawHandText" in visual,false); });
+test("modelo visual da decisão destaca a ação e mantém corte anti-hindsight",()=>{ const parsed=hand("Hero: calls $0.02\n*** FLOP *** [2c 3d 5s]\nVillain: checks\nHero: bets $0.08\n*** TURN *** [2c 3d 5s] [Kd]\nVillain: bets $0.20\nHero: calls $0.20"); const anchor=extractHeroDecisionAnchors(parsed)[1]; const visual=buildHandVisualModel(parsed,anchor)!; assert.deepEqual(visual.map(x=>x.street),["preflop","flop"]); assert.equal(visual.flatMap(x=>x.actions).at(-1)?.selected,true); assert.equal(visual.flatMap(x=>x.actions).some(x=>x.street==="turn"),false); });

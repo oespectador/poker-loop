@@ -3,7 +3,7 @@ import type { HeroDecisionAnchor, HeroDecisionView, ParsedGgHand, ReasoningFacto
 export const decisionStreetLabels = { preflop: "Pré-flop", flop: "Flop", turn: "Turn", river: "River" } as const;
 export const reasoningFactorLabels: Record<ReasoningFactor, string> = {
   size: "Tamanho da aposta", board: "Board", "previous-actions": "Ações anteriores", configuration: "Posição / configuração",
-  "player-read": "Leitura do jogador", automatic: "Fui mais no automático", other: "Outro",
+  "player-read": "Leitura do Vilão", automatic: "Fui no automático", other: "Outro",
 };
 
 export function extractHeroDecisionAnchors(hand: ParsedGgHand): HeroDecisionAnchor[] {
@@ -62,4 +62,17 @@ export function formatAction(action: { action?: string; type?: string; amount?: 
   else if (type === "raise") label = action.toAmount === undefined ? "Raise" : `Raise para ${money(action.toAmount)}`;
   else { label = type === "call" ? "Call" : "Bet"; if (action.amount !== undefined) label += ` ${money(action.amount)}`; }
   return action.allIn ? `${label} · all-in` : label;
+}
+
+/** UI-ready hand structure. Intentionally excludes rawHandText and never expands a Decision View. */
+export function buildHandVisualModel(hand: ParsedGgHand, anchor?: HeroDecisionAnchor) {
+  const decisionView = anchor ? buildHeroDecisionView(hand, anchor) : undefined;
+  if (anchor && !decisionView) return null;
+  const actions = decisionView?.actionsThroughDecision ?? hand.actions;
+  const board = decisionView?.board ?? { flop: hand.flop, turn: hand.turn, river: hand.river };
+  return (["preflop", "flop", "turn", "river"] as const).flatMap((street) => {
+    const streetBoard = street === "flop" ? board.flop : street === "turn" ? (board.turn ? [board.turn] : undefined) : street === "river" ? (board.river ? [board.river] : undefined) : undefined;
+    const streetActions = actions.flatMap((action, sequenceIndex) => action.street === street ? [{ ...action, sequenceIndex, selected: anchor?.sequenceIndex === sequenceIndex }] : []);
+    return street === "preflop" || streetBoard || streetActions.length ? [{ street, board: streetBoard, actions: streetActions }] : [];
+  });
 }

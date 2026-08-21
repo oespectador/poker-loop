@@ -498,3 +498,20 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - Registros V0.17 legados sem `sourceHandId` continuam legíveis e preservados, mas nunca são vinculados automaticamente; salvar após escolha explícita completa sua proveniência sem trocar `id` ou `createdAt`.
 - Decision View e labels conservam all-in fornecido pelo parser, sem qualquer cálculo ou interpretação estratégica.
 - **Validação:** 218 testes, typecheck, build e `git diff --check`.
+
+## 2026-08-21 — V0.17.1 Mão Visual e Revisão por Opções
+
+- **Hipótese:** cartas e ações agrupadas por street reduzem o esforço de
+  reconstruir a jogada, enquanto escolhas curtas tornam o autorrelato mais leve.
+- **Visualização:** cabeçalho, hole cards reutilizáveis, boards e ações por
+  street substituem o texto bruto como superfície principal em sugestões, mãos
+  salvas e Decision View. O texto original permanece recolhido.
+- **Revisão:** o fluxo principal exige somente seleção de até dois fatores e da
+  sustentação percebida; a observação curta é opcional. `automatic` continua
+  exclusivo e sem atribuição artificial de sustentação.
+- **Anti-hindsight:** o modelo visual recebe exatamente o recorte já produzido
+  por `buildHeroDecisionView`; streets e ações futuras não são reconstruídas.
+- **Escopo preservado:** schemas e compatibilidade de snapshots, matching por
+  `sourceHandId`, parser/triagem V0.16, `Attempt`, `SkillState`, scheduler,
+  diagnóstico, recovery, retention, transfer e motor pedagógico não mudaram.
+- **Validação:** 220 testes, typecheck, build e `git diff --check`.
