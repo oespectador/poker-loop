@@ -173,3 +173,12 @@ Permanecem deliberadamente fora da biblioteca ativa: double previous size, turn/
 - nenhuma biblioteca bruta, análise estratégica ou alteração pedagógica.
 
 Limitação deliberada: arquivos diferentes parcialmente sobrepostos não são deduplicados por uma base histórica de milhares de `sourceHandId`; somente o mesmo conteúdo integral e os IDs dentro da sessão atual são protegidos.
+
+## Concluído na V0.17 — Revisão Rápida de uma Decisão Real
+
+- âncoras cronológicas para todas as ações voluntárias do Herói reconhecidas pelo parser existente;
+- Decision View anti-hindsight, sem pot/stacks estimados ou resultado;
+- um snapshot de autorrelato por mão, editável e isolado de toda evidência pedagógica;
+- fluxo compacto em `/hands`, mantendo a reflexão profunda e históricos não reconhecidos válidos.
+
+Ficam fora: análise estratégica, agregações, hipóteses, associação ao treino, IA/solver e UI em Progresso.

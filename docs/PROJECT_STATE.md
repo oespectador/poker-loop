@@ -239,3 +239,7 @@ O sexto pacote conecta força estimada do range à função contextual da mão. 
 ## V0.15 — ponte com mãos reais
 
 A rota `/hands` mantém `RealHandReview` em `poker-loop-v1:real-hands`, separado de `Attempt` e da sessão ativa. O jogador cola `rawHandText` opaco, registra quatro reflexões e pode escolher manualmente uma Skill ampla. Esse foco apenas cria o link `/session?focus=<Skill>` para o treino normal. Criação, edição e exclusão não entram em diagnóstico, `SkillState`, recovery, retention, transfer nem no loop longitudinal. Não existe parser, extração ou análise estratégica automática. O reset de progresso pedagógico não apaga esse material do jogador.
+
+## V0.17 — revisão rápida de uma decisão real
+
+Mãos GG/PokerCraft salvas podem reconstruir uma ação voluntária do Herói sem revelar board, ações ou desfecho posteriores. Um autorrelato opcional é persistido em `poker-loop-v1:reasoning-snapshots`, com unicidade por mão. Ele não integra o motor pedagógico; o reset de progresso o preserva e a exclusão explícita da mão remove seu snapshot.

@@ -123,6 +123,37 @@ export interface ParsedGgHand {
   rawHandText: string;
 }
 
+export interface HeroDecisionAnchor {
+  id: string;
+  street: DecisionStreet;
+  sequenceIndex: number;
+  action: ParsedActionType;
+  amount?: number;
+  toAmount?: number;
+  allIn?: boolean;
+}
+
+export interface HeroDecisionView {
+  anchor: HeroDecisionAnchor;
+  heroCards: [string, string];
+  board: { flop?: [string, string, string]; turn?: string; river?: string };
+  actionsThroughDecision: ParsedGgHand["actions"];
+}
+
+export type ReasoningFactor = "size" | "board" | "previous-actions" | "configuration" | "player-read" | "automatic" | "other";
+export type SelfRatedSupport = "low" | "medium" | "high" | "unclear";
+
+/** A player's self-report, not evidence that the reading was actually supported. */
+export interface RealHandReasoningSnapshot {
+  id: string;
+  handReviewId: string;
+  createdAt: string;
+  sourceDecision: Omit<HeroDecisionAnchor, "id" | "allIn">;
+  thought?: string;
+  factors: ReasoningFactor[];
+  selfRatedSupport?: SelfRatedSupport;
+}
+
 export type HandReviewSuggestionReason = "high-commitment" | "river-decision" | "hero-showdown" | "multi-street-pressure" | "long-line";
 export interface HandReviewSuggestion {
   id: string;

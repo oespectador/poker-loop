@@ -476,3 +476,11 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - A regra de seleção exclusiva e a transformação neutra de sugestão em
   `RealHandReview` foram extraídas em funções puras pequenas e cobertas por dois
   testes, sem framework de UI ou mudança de escopo.
+
+## 2026-08-21 — V0.17 Revisão Rápida de uma Decisão Real
+
+- **Hipótese:** uma reconstrução curta, limitada ao conhecimento disponível na decisão, facilita registrar o raciocínio sem transformar uma mão real em evidência pedagógica.
+- **Implementação:** o parser GG existente alimenta âncoras cronológicas e uma Decision View que corta ações e board na decisão. A última ação é somente sugestão inicial, e todas as outras permanecem escolhíveis sem ranking.
+- **Autorrelato:** pensamento e avaliação percebida são opcionais; fatores aceitam no máximo dois e `automatic` é exclusivo. Um único snapshot por mão é salvo em storage próprio e edições preservam `id`/`createdAt`.
+- **Escopo preservado:** nenhuma análise estratégica, hipótese, Attempt, SkillState, diagnóstico, scheduler, sessão, recovery, retention ou transfer foi alterado. Reset pedagógico preserva snapshots; exclusão da mão remove o relacionado.
+- **Validação:** suíte automatizada, typecheck, build e auditoria de diff.

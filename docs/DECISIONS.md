@@ -55,3 +55,9 @@ Estas decisões foram tomadas durante exploração e testes. Agentes autônomos 
 
 1. Importações GG/PokerCraft reduzem volume a até cinco sugestões estruturais; não criam biblioteca, tarefa, diagnóstico ou interpretação estratégica.
 2. Resultado financeiro não participa da triagem, e somente uma promoção explícita cria `RealHandReview`.
+
+## V0.17 — revisão rápida sem hindsight
+
+1. Uma mão salva possui no máximo um snapshot de autorrelato, em storage próprio; edição preserva sua identidade e criação.
+2. A reconstrução corta board e ações exatamente na decisão selecionada. Não calcula pot, stacks ou resultado e não analisa estratégia.
+3. `selfRatedSupport` é percepção relatada, não qualidade objetiva da evidência. `automatic` é exclusivo e remove esse campo.
