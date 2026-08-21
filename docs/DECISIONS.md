@@ -50,3 +50,8 @@ Estas decisões foram tomadas durante exploração e testes. Agentes autônomos 
 5. evitar `região mais forte`.
 6. evitar `nutted`.
 7. ensinar elasticidade por “essas mãos mudam de decisão se o tamanho aumentar?”.
+
+## V0.16 — triagem de importação
+
+1. Importações GG/PokerCraft reduzem volume a até cinco sugestões estruturais; não criam biblioteca, tarefa, diagnóstico ou interpretação estratégica.
+2. Resultado financeiro não participa da triagem, e somente uma promoção explícita cria `RealHandReview`.

@@ -1,4 +1,4 @@
-# Project State — baseline V0.15
+# Project State — baseline V0.16
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,9 @@ Stack:
 
 ## Versão atual
 
-**V0.15 — Ponte com Mãos Reais**
+**V0.16 — Importação GG/PokerCraft com Triagem de Atenção**
+
+A importação local de `.txt` GG/PokerCraft mantém as mãos apenas em memória durante o parsing e persiste no máximo cinco sugestões estruturais. Uma sugestão não é tarefa nem diagnóstico: somente **Salvar para revisão** cria um `RealHandReview`, sem preencher dúvida, street ou foco. As categorias são determinísticas e resultado financeiro não participa da seleção ou desempate. Uma sessão pendente bloqueia outra importação; fingerprints SHA-256 impedem repetir o mesmo arquivo sem persistir seu conteúdo integral.
 
 A evidência longitudinal já derivada pelo motor agora possui uma representação conservadora em Progresso. O scheduler, o conteúdo V0.11 e a persistência V0.10.2 permanecem compatíveis e inalterados.
 
@@ -172,6 +174,8 @@ thresholds não mudaram.
 ## Persistência
 
 Histórico local salvo a cada resposta. Não quebrar compatibilidade do storage sem migração explícita.
+
+Sugestões usam `poker-loop-v1:hand-review-suggestions` (teto de cinco) e fingerprints mínimos usam `poker-loop-v1:gg-imports`. O reset pedagógico remove somente attempts e sessão ativa: mãos reais e sugestões pertencem à área `/hands`.
 
 ## UI atual
 

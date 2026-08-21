@@ -458,3 +458,21 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Escopo preservado:** nenhuma mão cria `Attempt`, difficulty pattern, recovery, retention, transfer ou `SkillState`; scheduler, sessão ativa e limite de 12 não mudaram.
 - **Fora de escopo:** parser, extração, diagnóstico e análise estratégica automática não foram criados. O próximo estudo possível é um contrato de interpretação antes de qualquer inferência.
 - **Validação:** `npm test` (180 testes), `npm run typecheck`, `npm run build` e `git diff --check`.
+
+## 2026-08-21 — V0.16 Importação GG/PokerCraft com Triagem de Atenção
+
+- **Hipótese:** centenas de mãos podem melhorar a seleção de atenção sem gerar centenas de tarefas, mantendo parsing, sugestão e revisão separados.
+- **Implementação:** parser estrutural conservador e seleção determinística de até cinco categorias; resultado financeiro não é feature nem desempate.
+- **Fluxo:** o `.txt` é lido localmente; somente sugestões são persistidas. Apenas promoção explícita cria `RealHandReview` vazio de reflexão, street e foco.
+- **Persistência:** sugestões têm key própria e teto de cinco; SHA-256 impede repetição exata. O reset pedagógico não apaga sugestões nem mãos reais.
+- **Escopo preservado:** nenhuma criação de Attempt, SkillState, diagnóstico, candidate/recurring/recovery, retention/transfer ou mudança no scheduler.
+- **Limitação deliberada:** sem deduplicação global entre arquivos diferentes parcialmente sobrepostos, evitando uma base crescente de IDs.
+- **Validação:** 193 testes automatizados, typecheck, build e auditoria de diff.
+
+### Patch de revisão — exclusividade do detalhe
+
+- Abrir uma sugestão ou uma mão salva agora limpa explicitamente a seleção do
+  outro tipo; descarte, promoção e edição também fecham o detalhe incompatível.
+- A regra de seleção exclusiva e a transformação neutra de sugestão em
+  `RealHandReview` foram extraídas em funções puras pequenas e cobertas por dois
+  testes, sem framework de UI ou mudança de escopo.
