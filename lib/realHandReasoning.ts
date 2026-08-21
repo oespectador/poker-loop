@@ -76,3 +76,9 @@ export function buildHandVisualModel(hand: ParsedGgHand, anchor?: HeroDecisionAn
     return street === "preflop" || streetBoard || streetActions.length ? [{ street, board: streetBoard, actions: streetActions }] : [];
   });
 }
+
+export type QuickReviewMode = "idle" | "choose" | "form" | "view";
+export function quickReviewVisualDecision(mode: QuickReviewMode, anchor?: HeroDecisionAnchor) {
+  if (mode === "idle") return { kind: "full" as const };
+  return anchor ? { kind: "decision" as const, anchor } : null;
+}

@@ -158,9 +158,10 @@ A suíte possui 218 testes. `tests/realHandReasoning.test.ts` cobre extração d
 
 ## V0.17.1 — mão visual e revisão por opções
 
-A suíte possui 220 testes. Os dois testes novos protegem o modelo visual sem
+A suíte possui 225 testes. Os testes da correção de composição protegem o modelo visual sem
 `rawHandText`, a organização de board e ações por street, o destaque exato da
-decisão e o corte de streets/ações futuras. A cobertura V0.17 existente continua
+decisão, a troca de anchor, o corte de streets/ações futuras e a propriedade
+única da superfície visual pela Quick Review em mãos salvas. A cobertura V0.17 existente continua
 protegendo snapshots antigos, observação opcional, limite de dois fatores,
 matching exato, storage separado e isolamento de `Attempt`, `SkillState` e do
 scheduler.

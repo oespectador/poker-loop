@@ -515,3 +515,16 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
   `sourceHandId`, parser/triagem V0.16, `Attempt`, `SkillState`, scheduler,
   diagnóstico, recovery, retention, transfer e motor pedagógico não mudaram.
 - **Validação:** 220 testes, typecheck, build e `git diff --check`.
+
+### Patch anti-hindsight — composição da mão salva
+
+- A visualização completa da mão salva saiu de `page.tsx`; `QuickReview` agora é
+  a única proprietária da superfície visual nesse detalhe.
+- Em `idle`, a Quick Review mostra a mão completa. Em `choose`, `form` e `view`,
+  mostra somente a visualização cortada pela anchor atual, inclusive durante a
+  troca de decisão. Sugestões pendentes continuam mostrando a mão completa.
+- O histórico bruto permanece recolhido e os componentes CSS de carta não
+  mudaram.
+- **Escopo preservado:** parser, triagem, matching, snapshot storage, `Attempt`,
+  `SkillState`, scheduler, diagnóstico e motor pedagógico não mudaram.
+- **Validação:** 225 testes, typecheck, build e `git diff --check`.
