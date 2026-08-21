@@ -136,3 +136,21 @@ test("reset remove attempts no formato anterior e active session", () => {
   assert.equal(values.size, 0);
   delete (globalThis as { window?: unknown }).window;
 });
+
+test("sessão V0.10.2 com IDs anteriores continua restaurável após novo pacote", () => {
+  const oldIds = ["dev-range-signals-09", "dev-range-signals-10", "dev-application-12"];
+  const active: ActiveTrainingSession = {
+    version: 1,
+    sessionId: "pre-v011-session",
+    startedAt,
+    focus: null,
+    items: oldIds.map((exerciseId) => ({ exerciseId, support: "independent" })),
+    nextIndex: 1,
+  };
+  const resumed = resumeTrainingSession(active, [], undefined);
+  assert.ok(resumed);
+  assert.equal(resumed.active, active);
+  assert.equal(resumed.active.version, 1);
+  assert.equal(resumed.active.sessionId, "pre-v011-session");
+  assert.deepEqual(resumed.queue.map(({ id }) => id), oldIds);
+});

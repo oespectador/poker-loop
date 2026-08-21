@@ -1,4 +1,4 @@
-# Project State — baseline V0.10.2
+# Project State — baseline V0.11
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,9 @@ Stack:
 
 ## Versão atual
 
-**V0.10.2 — Persistência da Sessão Ativa**
+**V0.11 — Função da Mão × Força do Range**
+
+A leitura da força relativa do range agora alimenta a reavaliação contextual da função da mão, do objetivo e das mãos-alvo. A persistência V0.10.2 permanece compatível e inalterada.
 
 A sessão pedagógica de 12 decisões tem identidade persistente. Navegação e reload retomam a mesma fila e a próxima decisão ainda não respondida. O estado usa `poker-loop-v1:active-session`, sem alterar o histórico ou o schema de `Attempt`.
 
@@ -27,9 +29,10 @@ A sessão pedagógica de 12 decisões tem identidade persistente. Navegação e 
 - 12 exercícios V0.5 — Lógica × Calibração;
 - 12 exercícios V0.9 — Aplicação Integrada em Novas Superfícies;
 - 12 exercícios V0.10 — Pistas de Força do Range;
-- 36 itens reservados de retenção/transferência fora do treino normal.
+- 12 exercícios V0.11 — Função da Mão × Força do Range;
+- 42 itens reservados de retenção/transferência fora do treino normal.
 
-Total ativo após todos os pacotes serem apresentados: **72 exercícios de desenvolvimento**.
+Total ativo após todos os pacotes serem apresentados: **84 exercícios de desenvolvimento**.
 
 ## Pacotes estruturados
 
@@ -40,6 +43,7 @@ Ordem:
 3. `calibration`
 4. `integrated-application`
 5. `range-strength-signals`
+6. `hand-function-vs-range`
 
 Cada pacote tem 12 itens divididos em três microblocos de quatro.
 
@@ -169,3 +173,7 @@ O quinto pacote deriva apenas das heurísticas condicionais registradas no claim
 ## V0.10.1 — evidência local por pacote
 
 A trava global de avaliação foi removida. A completude é determinada pelos IDs reais de todos os development do pacote do item, inclusive `foundations`, e não pela posição na ordem. Pacotes futuros não congelam revisão antiga. Tentativas retention/transfer continuam separadas: não influenciam fading, retorno de suporte, prioridade adaptativa nem `SkillState`. Thresholds diagnósticos, conteúdo, UI, storage e schema não mudaram.
+
+## V0.11 — política de conteúdo
+
+O sexto pacote conecta força estimada do range à função contextual da mão. Range forte/fraco não determina ação sozinho; Thin Value e SDV dependem das mãos-alvo, e Draw/Air não determinam agressão. A adaptação é proporcional à sustentação da leitura. Claims de turn/river e tendências de pool seguem fora. Diagnóstico, scheduler, retention, transfer, `Attempt`, storage e active session não mudaram.

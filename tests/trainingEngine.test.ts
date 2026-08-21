@@ -66,7 +66,7 @@ test("a primeira sessão contém os 12 exercícios fundadores em ordem", () => {
   );
 });
 
-test("pacote pendente respeita a ordem global dos cinco pacotes", () => {
+test("pacote pendente respeita a ordem global dos seis pacotes", () => {
   const attempts = attemptsFor(founders);
   assert.equal(getPendingLearningPackage(attempts), "range-actions");
 
@@ -83,6 +83,9 @@ test("pacote pendente respeita a ordem global dos cinco pacotes", () => {
   assert.equal(getPendingLearningPackage(attempts), "range-strength-signals");
 
   attempts.push(...attemptsFor(packageExercises("range-strength-signals"), { sessionId: "range-strength-signals" }));
+  assert.equal(getPendingLearningPackage(attempts), "hand-function-vs-range");
+
+  attempts.push(...attemptsFor(packageExercises("hand-function-vs-range"), { sessionId: "hand-function-vs-range" }));
   assert.equal(getPendingLearningPackage(attempts), undefined);
 });
 
@@ -657,12 +660,10 @@ test("após integrated-application, avaliações e novas superfícies diagnósti
   assert.ok(selected && selected.learningPackage === "integrated-application");
 });
 
-test("V0.10 possui 72 development, 36 reservados e seis avaliações de aplicação", () => {
+test("integrated-application mantém suas seis avaliações reservadas", () => {
   const applicationEvaluations = evaluationExercises.filter(
     ({ learningPackage }) => learningPackage === "integrated-application",
   );
-  assert.equal(developmentExercises.length, 72);
-  assert.equal(evaluationExercises.length, 36);
   assert.equal(applicationEvaluations.length, 6);
   assert.deepEqual(
     applicationEvaluations.map(({ purpose }) => purpose).sort(),
@@ -1090,4 +1091,107 @@ test("sessão com evidência local permanece determinística", () => {
   const first = buildRecommendedSession(attempts, undefined, "local-determinism", NOW);
   const second = buildRecommendedSession(attempts, undefined, "local-determinism", NOW);
   assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
+});
+
+test("V0.11 é o sexto pacote e só aparece após range-strength-signals", () => {
+  const beforeSignalsEnd = developmentExercises.filter(({ learningPackage, id }) =>
+    learningPackage !== "hand-function-vs-range" && id !== "dev-range-signals-12");
+  assert.equal(getPendingLearningPackage(attemptsFor(beforeSignalsEnd)), "range-strength-signals");
+  const previous = developmentExercises.filter(({ learningPackage }) => learningPackage !== "hand-function-vs-range");
+  assert.equal(getPendingLearningPackage(attemptsFor(previous)), "hand-function-vs-range");
+});
+
+test("hand-function-vs-range entra nos três microblocos, retoma parcialmente e erro não embaralha", () => {
+  const previous = developmentExercises.filter(({ learningPackage }) => learningPackage !== "hand-function-vs-range");
+  const attempts = attemptsFor(previous);
+  const first = buildRecommendedSession(attempts, undefined, "hand-range-first").filter(({ sessionRole }) => sessionRole === "introduction");
+  assert.deepEqual(first.map(({ id }) => id), packageIds("hand-function-vs-range", 1, 4));
+  assert.deepEqual(reprioritizeAfterError(first, 0, first[0]).map(({ id }) => id), first.map(({ id }) => id));
+  attempts.push(...attemptsFor(first.slice(0, 2), { sessionId: "hand-range-partial" }));
+  const resumed = buildRecommendedSession(attempts, undefined, "hand-range-resume").filter(({ sessionRole }) => sessionRole === "introduction");
+  assert.deepEqual(resumed.map(({ id }) => id), packageIds("hand-function-vs-range", 1, 4).slice(2));
+  attempts.push(...attemptsFor(resumed, { sessionId: "hand-range-complete-one" }));
+  for (const [start, end] of [[5, 8], [9, 12]] as const) {
+    const block = buildRecommendedSession(attempts, undefined, `hand-range-${start}`).filter(({ sessionRole }) => sessionRole === "introduction");
+    assert.deepEqual(block.map(({ id }) => id), packageIds("hand-function-vs-range", start, end));
+    attempts.push(...attemptsFor(block, { sessionId: `hand-range-${start}` }));
+  }
+});
+
+test("treino manual não vaza V0.11 inédita e avaliações próprias ficam bloqueadas", () => {
+  const incomplete = developmentExercises.filter(({ id }) => id !== "dev-hand-range-12");
+  const attempts = attemptsFor(incomplete);
+  const session = buildRecommendedSession(attempts, "range-reading", "hand-range-manual", NOW);
+  assert.equal(session.some(({ id }) => id === "dev-hand-range-12"), false);
+  assert.equal(eligibleRetentionExercises(attempts, NOW + 86_400_000).some(({ learningPackage }) => learningPackage === "hand-function-vs-range"), false);
+  assert.equal(eligibleTransferExercises(attempts).some(({ learningPackage }) => learningPackage === "hand-function-vs-range"), false);
+});
+
+test("avaliações e diagnóstico anteriores coexistem com a introdução V0.11", () => {
+  const previous = developmentExercises.filter(({ learningPackage }) => learningPackage !== "hand-function-vs-range");
+  const oldTransfer = evaluationExercises.find(({ id }) => id === "transfer-range-signals-01");
+  assert.ok(oldTransfer);
+  const oldFamily = packageExercises("range-strength-signals").filter(({ reasoningPattern }) => reasoningPattern === "stack-range-strength-clues");
+  const attempts = [...attemptsFor(previous), ...evidenceFor(oldTransfer), ...diagnosticErrors(oldFamily, 3, 50)];
+  const session = buildRecommendedSession(attempts, undefined, "hand-range-coexist", NOW);
+  assert.deepEqual(session.slice(0, 4).map(({ id }) => id), packageIds("hand-function-vs-range", 1, 4));
+  assert.ok(session.some(({ purpose }) => purpose === "transfer"));
+  assert.ok(session.slice(4).some(({ reasoningPattern }) => reasoningPattern === "stack-range-strength-clues"));
+  assert.ok(session.length <= 12);
+});
+
+test("V0.11 libera retention e transfer pelas regras normais", () => {
+  const retention = evaluationExercises.find(({ id }) => id === "retention-hand-range-01");
+  const transfer = evaluationExercises.find(({ id }) => id === "transfer-hand-range-01");
+  assert.ok(retention && transfer);
+  const complete = completedDevelopmentAttempts();
+  const retentionAttempts = [...complete, ...evidenceFor(retention, NOW - 86_400_000)];
+  const transferAttempts = [...complete, ...evidenceFor(transfer)];
+  assert.ok(eligibleRetentionExercises(retentionAttempts, NOW).some(({ id }) => id === retention.id));
+  assert.ok(eligibleTransferExercises(transferAttempts).some(({ id }) => id === transfer.id));
+});
+
+test("V0.11 possui 84 development, 42 reservados e exatamente seis avaliações novas", () => {
+  const items = evaluationExercises.filter(({ learningPackage }) => learningPackage === "hand-function-vs-range");
+  assert.equal(developmentExercises.length, 84);
+  assert.equal(evaluationExercises.length, 42);
+  assert.equal(items.length, 6);
+  assert.deepEqual(items.map(({ purpose }) => purpose).sort(), ["retention", "retention", "retention", "transfer", "transfer", "transfer"]);
+  assert.ok(items.every(({ support, packageSequence }) => support === "independent" && packageSequence === undefined));
+  assert.equal(new Set(allExercises.map(({ id }) => id)).size, allExercises.length);
+});
+
+test("conteúdo V0.11 mantém função contextual, alvos, calibração e exclusões editoriais", () => {
+  const items = [...packageExercises("hand-function-vs-range"), ...evaluationExercises.filter(({ learningPackage }) => learningPackage === "hand-function-vs-range")];
+  assert.ok(items.every(({ sourceKind }) => sourceKind !== "solver-reference"));
+  assert.ok(items.some(({ subconcept }) => subconcept === "thin-value-context"));
+  assert.ok(items.some(({ subconcept }) => subconcept === "sdv-context"));
+  assert.ok(items.some(({ subconcept }) => subconcept === "draw-without-target"));
+  assert.ok(items.some(({ subconcept }) => subconcept === "air-without-target"));
+  assert.ok(items.some(({ concept }) => concept === "range-response-calibration"));
+  const thickValueBoundary = items.find(({ id }) => id === "dev-hand-range-04");
+  assert.ok(thickValueBoundary);
+  assert.match(thickValueBoundary.prompt, /integra/i);
+  assert.match(
+    thickValueBoundary.options.find(({ id }) => id === thickValueBoundary.correctOptionId)?.label ?? "",
+    /range mais forte.*função de Thick Value/i,
+  );
+  const incorrectOptionIds = thickValueBoundary.options
+    .filter(({ id }) => id !== thickValueBoundary.correctOptionId)
+    .map(({ id }) => id)
+    .sort();
+  assert.deepEqual(Object.keys(thickValueBoundary.feedback.misconception ?? {}).sort(), incorrectOptionIds);
+  const correctText = items.map((item) => item.options.find(({ id }) => id === item.correctOptionId)?.label ?? "").join(" ").toLowerCase();
+  assert.equal(/range forte[^.]{0,40}(fold|foldar)/.test(correctText), false);
+  assert.equal(/range (mais )?fraco[^.]{0,40}(bet|raise|apost)/.test(correctText), false);
+  const allText = JSON.stringify(items).toLowerCase();
+  for (const forbidden of ["timing tell", "double previous", "checkback", "board pair", "check-raise river", "donk", "ggpoker", "nl2"]) assert.equal(allText.includes(forbidden), false);
+});
+
+test("V0.11 preserva determinismo e o limite de 12 decisões", () => {
+  const attempts = completedDevelopmentAttempts();
+  const first = buildRecommendedSession(attempts, "integrated-decision", "v011-stable", NOW);
+  const second = buildRecommendedSession(attempts, "integrated-decision", "v011-stable", NOW);
+  assert.deepEqual(first.map(({ id }) => id), second.map(({ id }) => id));
+  assert.ok(first.length <= 12);
 });
