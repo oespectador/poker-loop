@@ -1,4 +1,4 @@
-# Project State — baseline V0.16
+# Project State — baseline V0.17
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,9 +15,11 @@ Stack:
 
 ## Versão atual
 
-**V0.16 — Importação GG/PokerCraft com Triagem de Atenção**
+**V0.17 — Revisão Rápida de uma Decisão Real**
 
-A importação local de `.txt` GG/PokerCraft mantém as mãos apenas em memória durante o parsing e persiste no máximo cinco sugestões estruturais. Uma sugestão não é tarefa nem diagnóstico: somente **Salvar para revisão** cria um `RealHandReview`, sem preencher dúvida, street ou foco. As categorias são determinísticas e resultado financeiro não participa da seleção ou desempate. Uma sessão pendente bloqueia outra importação; fingerprints SHA-256 impedem repetir o mesmo arquivo sem persistir seu conteúdo integral.
+Uma `RealHandReview` reconhecida pelo parser GG/PokerCraft pode reconstruir uma ação voluntária do Herói sem mostrar board, ações ou desfecho posteriores. O jogador pode salvar um autorrelato curto em um único `RealHandReasoningSnapshot` por mão. Esse registro permanece separado de `Attempt`, diagnóstico, `SkillState`, recovery, retention, transfer, scheduler e sessão ativa.
+
+A camada V0.16 continua responsável pela importação local de `.txt` e pela triagem determinística de no máximo cinco sugestões estruturais. Resultado financeiro não participa da seleção ou desempate, e somente **Salvar para revisão** cria um `RealHandReview`.
 
 A evidência longitudinal já derivada pelo motor agora possui uma representação conservadora em Progresso. O scheduler, o conteúdo V0.11 e a persistência V0.10.2 permanecem compatíveis e inalterados.
 

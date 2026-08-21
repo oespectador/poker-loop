@@ -1,4 +1,4 @@
-import type { HeroDecisionAnchor, HeroDecisionView, ParsedGgHand, ReasoningFactor } from "./types";
+import type { HeroDecisionAnchor, HeroDecisionView, ParsedGgHand, RealHandReasoningSnapshot, ReasoningFactor } from "./types";
 
 export const decisionStreetLabels = { preflop: "Pré-flop", flop: "Flop", turn: "Turn", river: "River" } as const;
 export const reasoningFactorLabels: Record<ReasoningFactor, string> = {
@@ -11,6 +11,24 @@ export function extractHeroDecisionAnchors(hand: ParsedGgHand): HeroDecisionAnch
     id: `${action.street}-${sequenceIndex}`, street: action.street, sequenceIndex, action: action.type,
     amount: action.amount, toAmount: action.toAmount, allIn: action.allIn,
   }] : []);
+}
+
+export function matchSnapshotDecisionAnchor(
+  anchors: HeroDecisionAnchor[],
+  snapshot: RealHandReasoningSnapshot,
+): HeroDecisionAnchor | undefined {
+  return anchors.find(({ sequenceIndex, street, action }) =>
+    sequenceIndex === snapshot.sourceDecision.sequenceIndex &&
+    street === snapshot.sourceDecision.street &&
+    action === snapshot.sourceDecision.action);
+}
+
+export function initialQuickReviewAnchor(
+  anchors: HeroDecisionAnchor[],
+  snapshot: RealHandReasoningSnapshot | undefined,
+  editing: boolean,
+): HeroDecisionAnchor | undefined {
+  return editing && snapshot ? matchSnapshotDecisionAnchor(anchors, snapshot) : anchors.at(-1);
 }
 
 export function buildHeroDecisionView(hand: ParsedGgHand, anchor: HeroDecisionAnchor): HeroDecisionView | null {

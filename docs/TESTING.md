@@ -154,4 +154,4 @@ A suíte possui 195 testes. Os 15 testes de importação cobrem fronteira por ca
 
 ## V0.17 — revisão rápida
 
-`tests/realHandReasoning.test.ts` cobre extração das ações do Herói, múltiplas decisões na mesma street, corte anti-hindsight de ações/board, labels, normalização dos fatores, validação/storage defensivos e isolamento do reset pedagógico. A suíte completa continua sendo executada com `npm test`.
+`tests/realHandReasoning.test.ts` cobre extração das ações do Herói, múltiplas decisões na mesma street, corte anti-hindsight de ações/board, labels, normalização dos fatores, validação/storage defensivos e isolamento do reset pedagógico. Também protege a edição quando o histórico muda: não há fallback silencioso para outra decisão, o snapshot fica intacto até uma escolha explícita e a reassociação preserva sua identidade temporal. A suíte completa continua sendo executada com `npm test`.
