@@ -123,3 +123,11 @@ Permanecem deliberadamente fora da biblioteca ativa: double previous size, turn/
 - conclusão e `Treinar mais` encerram explicitamente a sessão ativa;
 - focus diferente substitui a sessão sem apagar Attempts históricos;
 - storage separado, sem migração ou mudança em `Attempt`.
+
+## Entregue na V0.11
+
+- sexto pacote `hand-function-vs-range`, com 12 development e seis avaliações reservadas;
+- função da mão tratada contextualmente pela relação com o range, objetivo e mãos-alvo;
+- calibração proporcional da adaptação, sem atalhos `range forte → fold` ou `range fraco → bet/raise`;
+- claims de turn/river, donk, timing, pools e solver mantidos fora;
+- nenhuma mudança em scheduler, diagnóstico, retention/transfer, `Attempt`, storage ou sessão persistente.

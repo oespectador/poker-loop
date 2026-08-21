@@ -51,6 +51,8 @@ export default function TodayPage() {
                     ? "O próximo bloco separa duas perguntas: se a decisão segue das premissas e quanto podemos confiar nessas premissas. Ele entra em microblocos curtos antes de o treino voltar à revisão adaptativa."
                   : pendingPackage === "range-strength-signals"
                     ? "O próximo bloco treina como combinar size, board e configuração para atualizar a leitura do range sem transformar uma pista em certeza."
+                  : pendingPackage === "hand-function-vs-range"
+                    ? "O próximo bloco treina como a leitura do range muda a função da sua mão e o objetivo da decisão."
                   : pendingPackage === "integrated-application"
                     ? "O próximo bloco coloca os conceitos anteriores em novas situações: a linha atualiza o range, o objetivo define as mãos-alvo e a evidência define quanto podemos confiar na leitura."
                   : focusState === "Precisa de reforço"

@@ -137,3 +137,13 @@ test("validador exige 12 itens e sequência 1–12 em range-strength-signals", (
   assert.ok(errors.some((error) => error.includes("range-strength-signals: quantidade de itens 11; esperado 12")));
   assert.ok(errors.some((error) => error.includes("range-strength-signals: packageSequence faltando: 12")));
 });
+
+test("validador exige 12 itens e sequência 1–12 em hand-function-vs-range", () => {
+  const items = developmentExercises.filter(({ learningPackage }) => learningPackage === "hand-function-vs-range");
+  assert.equal(items.length, 12);
+  assert.deepEqual(items.map(({ packageSequence }) => packageSequence), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  const missing = developmentExercises.filter(({ id }) => id !== "dev-hand-range-12");
+  const errors = validateExerciseLibrary(collections(missing, evaluationExercises));
+  assert.ok(errors.some((error) => error.includes("hand-function-vs-range: quantidade de itens 11; esperado 12")));
+  assert.ok(errors.some((error) => error.includes("hand-function-vs-range: packageSequence faltando: 12")));
+});

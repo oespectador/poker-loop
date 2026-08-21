@@ -367,3 +367,13 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Retomada:** fila integral reconstruída da biblioteca; Attempts do mesmo `sessionId` recompõem o resumo; estado inválido é descartado sem restauração parcial.
 - **Fluxos:** sair mantém a sessão; responder avança `nextIndex` durante o feedback; a 12ª resposta restaura a conclusão; `Concluir` limpa e `Treinar mais` cria identidade/fila novas usando o histórico. Focus diferente substitui a sessão ativa.
 - **Escopo preservado:** schema/chave de `Attempt`, scheduler, `chooseFocus`, diagnóstico, fading, repriorização, retention e transfer não mudaram. Não é evidência pedagógica nova.
+
+## 2026-08-20 — V0.11 Função da Mão × Força do Range
+
+- **Hipótese:** depois de aprender a estimar força relativa do range, o aluno consegue adaptar a função da própria mão sem converter forte/fraco em comando de ação quando o exercício explicita objetivo e mãos-alvo.
+- **Antes/depois:** a biblioteca tinha cinco pacotes, 72 development e 36 evaluations; agora possui seis pacotes, 84 development e 42 evaluations. `hand-function-vs-range` entra em três microblocos ordenados e reutiliza integralmente a infraestrutura V0.10.1.
+- **Arquivos:** biblioteca/tipos/validador/ordem/foco e copy da Home; testes; estado, modelo, testing, backlog e novo claim map de pesquisa.
+- **Política de conteúdo:** funções são contextuais, não charts. Claims A–E vêm do framework autorizado; Draw/Air usam a taxonomia da fonte e princípios internos de objetivo/alvos; calibração integra V0.5/V0.10. Turn, river, donk, timing, solver e tendências de pool ficaram fora.
+- **Compatibilidade:** nenhuma alteração em `Attempt`, scheduler genérico, thresholds/recuperação diagnóstica, regras de retention/transfer, chave/versão de storage ou schema de active session. Um teste restaura uma sessão V0.10.2 composta só por IDs anteriores sem trocar `sessionId`.
+- **Risco conhecido:** clareza e dificuldade dos novos distractors ainda requerem validação humana; não há decisão estrutural pendente.
+- **Próximo passo recomendado:** teste humano dos três microblocos antes de qualquer pacote de turn/river.

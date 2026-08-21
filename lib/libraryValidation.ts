@@ -12,6 +12,7 @@ const structuredPackages: Readonly<Record<Exclude<LearningPackage, "foundations"
   calibration: 12,
   "integrated-application": 12,
   "range-strength-signals": 12,
+  "hand-function-vs-range": 12,
 };
 
 export function validateExerciseLibrary({
