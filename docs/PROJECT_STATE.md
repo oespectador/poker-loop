@@ -1,4 +1,4 @@
-# Project State — baseline V0.13
+# Project State — baseline V0.14
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,9 +15,9 @@ Stack:
 
 ## Versão atual
 
-**V0.13 — Verificação Pós-Recuperação**
+**V0.14 — Loop de Aprendizagem Visível**
 
-A recuperação diagnóstica agora cria uma fronteira longitudinal de evidência. O conteúdo V0.11 e a persistência V0.10.2 permanecem compatíveis e inalterados.
+A evidência longitudinal já derivada pelo motor agora possui uma representação conservadora em Progresso. O scheduler, o conteúdo V0.11 e a persistência V0.10.2 permanecem compatíveis e inalterados.
 
 A sessão pedagógica de 12 decisões tem identidade persistente. Navegação e reload retomam a mesma fila e a próxima decisão ainda não respondida. O estado usa `poker-loop-v1:active-session`, sem alterar o histórico ou o schema de `Attempt`.
 
@@ -103,10 +103,11 @@ não são tratados como causas.
 
 Um sinal `candidate` exige ao menos dois erros, em dois exercícios e duas
 sessões diferentes. `recurring` exige ao menos três erros, em três exercícios e
-duas sessões. Três acertos independentes mais recentes, cobrindo ao menos dois
-exercícios, desativam o sinal por enquanto — uma heurística provisória de
-recuperação, não prova de domínio. Esses limiares são heurísticas do protótipo,
-não medidas validadas. `candidate` permanece read-only.
+duas sessões. A última fronteira válida de três acertos development
+independentes consecutivos, cobrindo ao menos dois exercícios, delimita a
+evidência ativa — uma heurística provisória de recuperação, não prova de
+domínio. Esses limiares são heurísticas do protótipo, não medidas validadas.
+`candidate` permanece read-only.
 
 Somente entre conteúdos de pacotes completamente apresentados, o primeiro sinal
 `recurring` compatível com o foco já escolhido pode reservar um único exercício
@@ -150,6 +151,23 @@ não houver item ainda não usado, não há observação disponível neste pilot
 `summarizeRecoveryVerification()` descreve acertos e respostas de retention e
 transfer posteriores à recuperação mais recente. Evaluation não cria nem remove
 diagnóstico, recovery ou `SkillState`; nenhuma inferência de domínio foi criada.
+
+## V0.14 — loop longitudinal visível
+
+A página de Progresso combina, por uma função pura de apresentação,
+`summarizeDifficultyPatterns()`, `summarizeDifficultyRecoveries()` e
+`summarizeRecoveryVerification()`. Ela mostra no máximo três padrões: primeiro
+os `recurring` ativos como **Em reforço** e depois recoveries qualificadas como
+**Recuperado por enquanto**, com as mais recentes primeiro em cada grupo. Um
+novo recurring substitui visualmente a recovery da mesma identidade.
+
+Transfer e retention posteriores à recovery aparecem como contagens factuais;
+quando ausentes, são descritas como ainda não observadas. Isso não é score nem
+domínio. `candidate` continua interno e nenhuma key de `reasoningPattern` ou
+`concept` é renderizada: o inventário de identidades utilizáveis exige labels
+humanas explícitas e falha em desenvolvimento quando uma delas não possui label.
+Scheduler, `Attempt`, storage, active session, `SkillState`, conteúdo, suporte e
+thresholds não mudaram.
 
 ## Persistência
 

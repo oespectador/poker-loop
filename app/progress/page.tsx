@@ -5,6 +5,7 @@ import { AppShell } from "../components/AppShell";
 import { clearPrototypeProgress, readAttempts } from "@/lib/storage";
 import { deriveSkillState, skillLabels, summarizeEvaluationEvidence, summarizeSkill } from "@/lib/trainingEngine";
 import type { Attempt, Skill } from "@/lib/types";
+import { summarizeLearningLoop } from "@/lib/learningLoop";
 
 const skills = Object.keys(skillLabels) as Skill[];
 
@@ -21,6 +22,7 @@ export default function ProgressPage() {
   }
 
   const evaluation = summarizeEvaluationEvidence(attempts);
+  const learningLoop = summarizeLearningLoop(attempts);
 
   return (
     <AppShell>
@@ -45,6 +47,32 @@ export default function ProgressPage() {
           );
         })}
       </section>
+
+      <article className="panel learning-loop-panel">
+        <div className="eyebrow">O QUE O TREINO ESTÁ ACOMPANHANDO</div>
+        <h2>Padrões de raciocínio ao longo do treino</h2>
+        {learningLoop.emptyMessage ? <p>{learningLoop.emptyMessage}</p> : (
+          <div className="learning-loop-list">
+            {learningLoop.items.map((item) => (
+              <section className="learning-loop-item" key={item.id}>
+                <div className="learning-loop-heading">
+                  <h3>{item.label}</h3>
+                  <span className={`state loop-state-${item.state}`}>
+                    {item.state === "reinforcement" ? "EM REFORÇO" : "RECUPERADO POR ENQUANTO"}
+                  </span>
+                </div>
+                <p>{item.message}</p>
+                {item.state === "recovered" && item.transfer && item.retention && (
+                  <div className="verification-list">
+                    <div><strong>TRANSFERÊNCIA</strong><span>{item.transfer.answered === 0 ? "Ainda não observada." : `${item.transfer.answered} ${item.transfer.answered === 1 ? "verificação realizada" : "verificações realizadas"} · ${item.transfer.correct} ${item.transfer.correct === 1 ? "correta" : "corretas"}.`}</span></div>
+                    <div><strong>RETENÇÃO</strong><span>{item.retention.answered === 0 ? "Ainda não observada após intervalo." : `${item.retention.answered} ${item.retention.answered === 1 ? "verificação após intervalo" : "verificações após intervalo"} · ${item.retention.correct} ${item.retention.correct === 1 ? "correta" : "corretas"}.`}</span></div>
+                  </div>
+                )}
+              </section>
+            ))}
+          </div>
+        )}
+      </article>
 
       <article className="panel note-panel">
         <div className="eyebrow">EVIDÊNCIAS DE AVALIAÇÃO</div>

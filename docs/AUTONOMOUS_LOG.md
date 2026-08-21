@@ -427,3 +427,23 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Escopo preservado:** evaluation não cria/remove diagnóstico ou recovery;
   Attempt, storage, UI, SkillState, suporte, conteúdo, pacotes e thresholds não
   mudaram. Nenhuma inferência de domínio foi introduzida.
+
+## 2026-08-21 — V0.14 Loop de Aprendizagem Visível
+
+- **Hipótese:** tornar visível a evidência longitudinal já derivada ajuda o
+  jogador a entender o que o treino acompanha sem expor mecanismos internos nem
+  transformar Progresso em dashboard.
+- **Implementação:** `summarizeLearningLoop()` combina patterns, recoveries e
+  verification em até três itens; recurring vem primeiro e supersede recovery
+  da mesma identidade, seguido das recoveries mais recentes.
+- **Linguagem:** os estados visíveis são **Em reforço** e **Recuperado por
+  enquanto**. Transfer/retention mostram contagens factuais ou “ainda não
+  observada”; não afirmam domínio, resolução ou falha definitiva.
+- **Privacidade do modelo:** candidate continua interno. Um inventário exige
+  label humana para toda identidade diagnóstica utilizável e falha explicitamente
+  em desenvolvimento, sem fallback que exponha `reasoningPattern` ou `concept`.
+- **Escopo preservado:** scheduler, `Attempt`, storage, active session,
+  `SkillState`, conteúdo, pacotes, suporte, fading, prioridades, thresholds e os
+  três resumos diagnósticos não mudaram.
+- **Validação:** `npm test` (164 testes), `npm run typecheck`, `npm run build` e
+  `git diff --check`.
