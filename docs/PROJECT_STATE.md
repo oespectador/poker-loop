@@ -17,7 +17,7 @@ Stack:
 
 **V0.17 — Revisão Rápida de uma Decisão Real**
 
-Uma `RealHandReview` reconhecida pelo parser GG/PokerCraft pode reconstruir uma ação voluntária do Herói sem mostrar board, ações ou desfecho posteriores. O jogador pode salvar um autorrelato curto em um único `RealHandReasoningSnapshot` por mão. Esse registro permanece separado de `Attempt`, diagnóstico, `SkillState`, recovery, retention, transfer, scheduler e sessão ativa.
+Uma `RealHandReview` reconhecida pelo parser GG/PokerCraft pode reconstruir uma ação voluntária do Herói sem mostrar board, ações ou desfecho posteriores. O jogador pode salvar um autorrelato curto em um único `RealHandReasoningSnapshot` por mão. Esse registro permanece separado de `Attempt`, diagnóstico, `SkillState`, recovery, retention, transfer, scheduler e sessão ativa. O vínculo usa o `sourceHandId` do parser e todos os dados observáveis da ação; snapshots V0.17 legados sem proveniência mantêm o autorrelato, mas exigem nova escolha explícita. A apresentação conserva o marcador de all-in fornecido pelo parser, sem estimar pot ou stacks.
 
 A camada V0.16 continua responsável pela importação local de `.txt` e pela triagem determinística de no máximo cinco sugestões estruturais. Resultado financeiro não participa da seleção ou desempate, e somente **Salvar para revisão** cria um `RealHandReview`.
 

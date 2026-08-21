@@ -148,11 +148,16 @@ export interface RealHandReasoningSnapshot {
   id: string;
   handReviewId: string;
   createdAt: string;
-  sourceDecision: Omit<HeroDecisionAnchor, "id" | "allIn">;
+  sourceHandId: string;
+  sourceDecision: Omit<HeroDecisionAnchor, "id">;
   thought?: string;
   factors: ReasoningFactor[];
   selfRatedSupport?: SelfRatedSupport;
 }
+
+/** Read-only compatibility shape for V0.17 records saved before provenance existed. */
+export type LegacyRealHandReasoningSnapshot = Omit<RealHandReasoningSnapshot, "sourceHandId"> & { sourceHandId?: undefined };
+export type StoredRealHandReasoningSnapshot = RealHandReasoningSnapshot | LegacyRealHandReasoningSnapshot;
 
 export type HandReviewSuggestionReason = "high-commitment" | "river-decision" | "hero-showdown" | "multi-street-pressure" | "long-line";
 export interface HandReviewSuggestion {

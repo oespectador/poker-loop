@@ -490,3 +490,11 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - Se a decisão registrada não corresponder mais ao histórico atual, a edição não seleciona outra âncora automaticamente. O autorrelato permanece intacto até o jogador escolher explicitamente uma decisão atual.
 - Nova revisão ainda sugere a última decisão com a pergunta específica; escolha alternativa e edição usam copy neutra.
 - `PROJECT_STATE.md` agora identifica corretamente V0.17 como baseline e versão atual.
+
+
+### Patch de robustez — proveniência e all-in
+
+- Novos snapshots guardam o `sourceHandId` do parser e `allIn`; o matching exige igualdade exata da mão, índice, street, ação, valores e all-in.
+- Registros V0.17 legados sem `sourceHandId` continuam legíveis e preservados, mas nunca são vinculados automaticamente; salvar após escolha explícita completa sua proveniência sem trocar `id` ou `createdAt`.
+- Decision View e labels conservam all-in fornecido pelo parser, sem qualquer cálculo ou interpretação estratégica.
+- **Validação:** 218 testes, typecheck, build e `git diff --check`.
