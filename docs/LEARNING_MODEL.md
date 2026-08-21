@@ -199,3 +199,8 @@ posteriores são observações factuais, inclusive quando ainda não ocorreram.
 impedem que `reasoningPattern` ou o fallback de `concept` apareçam na interface.
 A camada é derivada depois dos resumos diagnósticos e não participa do scheduler,
 de `SkillState`, suporte, fading ou prioridades.
+
+
+## V0.15 — mãos reais como contexto
+
+Uma mão real registrada é fonte separada de contexto e reflexão, não evidência diagnóstica. A escolha opcional de `trainingFocus` pertence ao jogador e reutiliza o scheduler normal sem vincular a mão à sessão. O caminho futuro a estudar é `mão real → hipótese sobre raciocínio → treino relacionado → recovery → retention → transfer → novas mãos reais`, mas nenhuma hipótese ou relação causal é inferida nesta versão. Antes disso, deve ser estudado um contrato explícito de interpretação.

@@ -75,6 +75,24 @@ export interface Attempt {
   timestamp: string;
 }
 
+export type RealHandStreet = "preflop" | "flop" | "turn" | "river" | "multiple";
+
+/** Context supplied by the player. It is deliberately separate from pedagogical evidence. */
+export interface RealHandReview {
+  id: string;
+  createdAt: string;
+  title?: string;
+  rawHandText: string;
+  street?: RealHandStreet;
+  doubt: string;
+  rangeRead: string;
+  objective: string;
+  targetsAndSizeResponse: string;
+  trainingFocus?: Skill;
+}
+
+export type RealHandReviewInput = Omit<RealHandReview, "id" | "createdAt">;
+
 export interface ActiveTrainingSessionItem {
   exerciseId: string;
   support: SupportLevel;

@@ -34,6 +34,7 @@ export default function TodayPage() {
 
         <Link href={`/session?focus=${focus}`} className="primary-cta">Começar treino</Link>
         <Link href="/train" className="quiet-link">Ajustar treino</Link>
+        <Link href="/hands" className="quiet-link">Revisar uma mão real</Link>
       </section>
 
       <section className="two-column">

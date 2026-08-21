@@ -447,3 +447,14 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
   três resumos diagnósticos não mudaram.
 - **Validação:** `npm test` (164 testes), `npm run typecheck`, `npm run build` e
   `git diff --check`.
+
+
+## 2026-08-21 — V0.15 Ponte com Mãos Reais
+
+- **Hipótese:** reflexão estruturada pode conectar uma mão jogada ao treino existente sem promover relato do jogador a evidência pedagógica.
+- **Contrato:** `RealHandReview` é persistido separadamente em `poker-loop-v1:real-hands`; `rawHandText` é texto opaco e as quatro respostas permanecem contexto do jogador.
+- **Fluxo:** criar abre o detalhe; editar preserva `id`/`createdAt`; excluir afeta somente a mão; o reset pedagógico não apaga mãos reais.
+- **Foco:** a Skill ampla é escolha opcional do jogador e só gera `/session?focus=<Skill>`, reutilizando o treino normal.
+- **Escopo preservado:** nenhuma mão cria `Attempt`, difficulty pattern, recovery, retention, transfer ou `SkillState`; scheduler, sessão ativa e limite de 12 não mudaram.
+- **Fora de escopo:** parser, extração, diagnóstico e análise estratégica automática não foram criados. O próximo estudo possível é um contrato de interpretação antes de qualquer inferência.
+- **Validação:** `npm test` (180 testes), `npm run typecheck`, `npm run build` e `git diff --check`.

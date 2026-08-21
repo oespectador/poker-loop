@@ -2,6 +2,14 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.15 — Ponte com Mãos Reais
+
+- fonte local e separada para mãos reais, com criação, reflexão, edição e exclusão;
+- foco amplo escolhido pelo jogador reutiliza `/session?focus=<Skill>`;
+- texto bruto permanece opaco, sem parser ou análise automática;
+- mãos reais não alimentam Attempt, diagnóstico, SkillState ou loop longitudinal;
+- próximo passo possível: estudar contrato de interpretação antes de qualquer inferência.
+
 ## Concluído na V0.14 — Loop de Aprendizagem Visível
 
 - Progresso mostra recurring ativo e recovery qualificada com linguagem conservadora;
