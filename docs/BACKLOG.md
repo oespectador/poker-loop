@@ -219,3 +219,11 @@ Ficam fora: análise estratégica, agregações, hipóteses, associação ao tre
 - `completed`, `stopped` e `inconclusive` preservam factual e exatamente baseline e janela observada;
 - `/hands` lista os ciclos recentes e abre somente mãos ainda existentes, sem alterar contagens ou substituir exclusões;
 - ficam fora comparação entre ciclos, tendências, scores, diagnóstico e qualquer conexão ao motor pedagógico.
+
+## Concluído na V0.22 — Ponte Voluntária entre Investigação e Treino
+
+- episódios históricos `completed` oferecem **Explorar em treino**; `stopped`, `inconclusive` e o acompanhamento ativo não oferecem a ponte;
+- o jogador escolhe sem pré-seleção entre todas as Skills atuais, exibidas de modo neutro com os labels humanos existentes;
+- nenhum `ReasoningFactor`, `factorCount` ou `lowOrUnclearCount` ordena, filtra, destaca ou sugere uma Skill;
+- a navegação reutiliza exatamente `/session?focus=<Skill>` e a política normal de sessão ativa;
+- nenhum storage, schema, vínculo episódio → sessão ou mudança no motor pedagógico foi criado.

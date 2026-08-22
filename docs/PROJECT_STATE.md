@@ -1,4 +1,4 @@
-# Project State — V0.21
+# Project State — V0.22
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,15 @@ Stack:
 
 ## Versão atual
 
-**V0.21 — Histórico de Investigações de Mãos Reais**
+**V0.22 — Ponte Voluntária entre Investigação e Treino**
+
+## V0.22 — Ponte Voluntária entre Investigação e Treino
+
+Depois de concluir uma janela prospectiva, o episódio histórico `completed` oferece uma ponte compacta no próprio card. O jogador escolhe explicitamente, sem pré-seleção, uma entre todas as Skills atuais e segue pelo fluxo normal `/session?focus=<Skill>`. Episódios `stopped` e `inconclusive` e a investigação ainda ativa não exibem essa ponte.
+
+Não existe mapeamento de `ReasoningFactor` para Skill: fator e contagens não influenciam opções, ordem ou destaque. A escolha vive apenas no estado React. Nenhum storage, schema ou proveniência episódio → sessão foi criado; `StoredRealHandInvestigationEpisode`, `Attempt`, `ActiveTrainingSession` e `trainingEngine` permanecem inalterados. Abrir o treino não demonstra conclusão, relevância ou eficácia.
+
+V0.18 = descrição retrospectiva; V0.19 = hipótese; V0.20 = observação prospectiva; V0.21 = memória histórica; V0.22 = ponte voluntária para o treino existente.
 
 ## V0.21 — Histórico de Investigações de Mãos Reais
 

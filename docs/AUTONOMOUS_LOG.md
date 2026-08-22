@@ -582,3 +582,14 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 
 - `completionForProspectiveResult()` centraliza a precedência `inconclusive` → janela 5/5 `completed` → janela parcial `stopped`.
 - Conclusão manual e substituição explícita agora chamam a mesma regra; iniciar outro acompanhamento nunca rebaixa uma janela completa para `stopped`.
+
+## 2026-08-22 — V0.22 Ponte Voluntária entre Investigação e Treino
+
+- **Hipótese:** depois de completar uma observação prospectiva, uma escolha explícita pode reduzir a distância até o treino sem transformar autorrelato em diagnóstico ou prioridade pedagógica.
+- **Implementação:** episódios históricos `completed` agora expandem um seletor local com todas as Skills atuais, sem opção inicial, e abrem o fluxo normal `/session?focus=<Skill>` somente depois da escolha.
+- **Fronteira operacional:** `stopped`, `inconclusive` e investigações ativas não exibem a ponte. A sequência 5/5 ainda exige **Concluir acompanhamento** antes de disponibilizá-la.
+- **Neutralidade:** as opções não recebem o episódio como entrada; `ReasoningFactor`, `factorCount` e `lowOrUnclearCount` não ordenam, filtram, destacam ou pré-selecionam Skills.
+- **Escopo preservado:** nenhum storage ou schema novo, nenhuma proveniência episódio → sessão e nenhuma mudança em `StoredRealHandInvestigationEpisode`, `Attempt`, `ActiveTrainingSession` ou `trainingEngine`.
+- **Interpretação:** abrir o treino não demonstra conclusão, relevância ou eficácia; a sessão permanece pedagogicamente idêntica a uma sessão manual com o mesmo foco.
+- **Validação:** 315 testes automatizados, typecheck, build e `git diff --check` previstos para esta entrega.
+- **Decisões humanas pendentes:** qualquer proveniência episódio → sessão ou comparação de efeito exige decisão futura explícita.
