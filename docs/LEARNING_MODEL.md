@@ -227,3 +227,7 @@ V0.18 é descrição factual longitudinal; V0.19 transforma repetição suficien
 Dados que originaram uma hipótese ficam na baseline e não podem verificar a própria hipótese. Depois da escolha explícita do jogador, somente snapshots com `createdAt > startedAt`, de `handReviewId` não pertencente à baseline, entram nas primeiras cinco revisões futuras. Edição preserva `createdAt`, portanto não transforma passado em evidência nova. A janela relata repetição ou ausência do fator e, quando aplicável, sustentação percebida baixa/incerta; não mede acerto, melhora, dificuldade, confiança ou domínio. Cinco revisões são somente uma hipótese operacional reversível do piloto.
 
 A evidência prospectiva entra em uma lista append-only. No ingresso são congelados identidade, tempo, presença do fator e sustentação percebida aplicável. Depois disso, editar ou excluir a revisão original não reescreve a observação, e revisões posteriores à quinta nunca ocupam seu lugar.
+
+## V0.21 — memória de investigações encerradas
+
+V0.18 descreve retrospectivamente o autorrelato; V0.19 formula uma hipótese cautelosa; V0.20 observa prospectivamente uma janela congelada; V0.21 preserva ciclos concluídos ou encerrados. Uma investigação prospectiva encerrada torna-se um episódio histórico imutável. O episódio preserva o autorrelato observado naquele ciclo e não é reinterpretado a partir do estado atual das mãos ou snapshots. Histórico de investigação não é histórico pedagógico e não produz comparação entre ciclos.

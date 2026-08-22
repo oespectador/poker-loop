@@ -1,4 +1,4 @@
-# Project State — baseline V0.19
+# Project State — V0.21
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,11 @@ Stack:
 
 ## Versão atual
 
-**V0.19 — Hipóteses para Investigar a partir das Revisões Reais**
+**V0.21 — Histórico de Investigações de Mãos Reais**
+
+## V0.21 — Histórico de Investigações de Mãos Reais
+
+Investigações encerradas agora viram episódios V1 imutáveis em storage separado. Cada episódio congela baseline, janela prospectiva, início, fim e motivo factual de encerramento (`completed`, `stopped` ou `inconclusive`). `/hands` mostra os episódios recentes sem comparar ciclos; detalhes dependem apenas das mãos ainda existentes, enquanto as contagens históricas nunca são recalculadas. Histórico de investigação não é histórico pedagógico e permanece fora de Attempt, SkillState, diagnóstico, scheduler e learningLoop.
 
 `/hands` agora resume longitudinalmente os `RealHandReasoningSnapshot` como autorrelato: total de decisões, fatores, sustentação percebida e streets. Até três observações factuais ficam visíveis somente a partir de três ocorrências. Frequência de fator não significa leak, erro, domínio ou evidência pedagógica. Snapshots legados sem `sourceHandId` participam sem matching ou migração.
 
