@@ -198,3 +198,7 @@ A suíte possui 329 testes. `tests/investigationTrainingLaunches.test.ts` cobre 
 ## V0.24 — proveniência da conclusão
 
 `tests/investigationTrainingCompletions.test.ts` cobre parser/storage defensivo, schema mínimo, fronteira da fila, contratos exatos de launch/session/focus, timestamp factual, idempotência/conflito, reload, retomada, **Treinar mais**, join de episódio, reset e isolamento dos schemas e módulos pedagógicos. A cobertura de V0.23 continua protegendo a criação separada do launch. A suíte completa totaliza 349 testes.
+
+## V0.25 — acompanhamento pós-treino
+
+A suíte possui 371 testes. Os 22 testes de `tests/postTrainingRealHandFollowUps.test.ts` cobrem parser/storage defensivo, cadeia exata episode/launch/completion, escolha temporal explícita, fator independente de Skill, baseline, ordenação, deduplicação, append-only, deleção, fechamento na quinta revisão, `automatic`, exclusividade V0.20/V0.25, idempotência, copy factual, reset e isolamento pedagógico. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.

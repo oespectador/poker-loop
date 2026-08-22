@@ -245,3 +245,7 @@ V0.18 descreve retrospectivamente; V0.19 formula uma hipótese; V0.20 observa pr
 ## V0.24 — conclusão operacional com proveniência
 
 O fim da fila persistida é um fato de fluxo, não evidência pedagógica. Launch e completion são eventos distintos: uma sessão lançada pode ainda não ter completion, e uma sessão sem launch nunca recebe completion de investigação. A cadeia factual é V0.18 descrição retrospectiva → V0.19 hipótese → V0.20 observação prospectiva → V0.21 memória histórica → V0.22 ponte voluntária → V0.23 sessão iniciada → V0.24 sessão operacionalmente concluída. Conclusão não significa aprendizagem, retenção, transferência, melhora, eficácia ou resolução.
+
+## V0.25 — observação prospectiva pós-treino
+
+A sequência factual passa a ser `descrição retrospectiva (V0.18) → hipótese (V0.19) → observação prospectiva inicial (V0.20) → memória histórica (V0.21) → ponte voluntária (V0.22) → sessão iniciada (V0.23) → sessão concluída operacionalmente (V0.24) → nova observação prospectiva pós-treino (V0.25)`. Depois de escolher explicitamente uma sessão concluída, o jogador pode abrir uma janela para o mesmo `ReasoningFactor` do episódio. A Skill mantém proveniência separada e não determina o fator. As cinco revisões posteriores são descrição, não comparação ou evidência causal de eficácia.

@@ -108,3 +108,9 @@ V0.18 é descrição retrospectiva; V0.19 é hipótese; V0.20 é observação pr
 **Uma `InvestigationTrainingCompletion` registra somente que uma sessão com proveniência válida atingiu o fim operacional de sua fila de decisões. Conclusão de sessão não é evidência de aprendizagem, melhora, eficácia ou resolução da investigação.**
 
 Launch e completion são dois eventos distintos. Uma sessão pode possuir launch e ainda não possuir completion. Uma sessão sem launch nunca recebe completion de investigação. A autoridade é `items.length > 0 && nextIndex >= items.length`; Attempts podem somente fornecer o instante factual da última decisão. O evento mínimo não duplica episódio, Skill, fatores ou métricas.
+
+## Frozen Decision — V0.25
+
+**Um acompanhamento pós-treino observa prospectivamente o mesmo ReasoningFactor do episódio original em novas revisões de mãos reais. A Skill escolhida no treino não determina o fator observado, e a nova janela não é comparada automaticamente com a anterior.**
+
+A V0.25 produz observação posterior, não evidência causal de eficácia. Uma comparação entre a janela anterior e a posterior exige decisão metodológica própria e não faz parte da V0.25. `startedAt` é o clique explícito; `completion.completedAt` é apenas proveniência. A janela de cinco é uma hipótese operacional do piloto.
