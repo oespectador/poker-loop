@@ -194,3 +194,7 @@ A suíte possui 315 testes. `tests/investigationTrainingBridge.test.ts` protege 
 ## V0.23 — proveniência de início
 
 A suíte possui 329 testes. `tests/investigationTrainingLaunches.test.ts` cobre storage vazio/corrompido, validação item a item, Skill e timestamps, origem exata `completed`, identidade e tempo reais da sessão, unicidade/idempotência/conflito por `sessionId`, múltiplas sessões por episódio, lookup, contagem, reload, reset isolado, schema mínimo, imutabilidade e ausência de dependências pedagógicas ou mapping de fator. `tests/investigationTrainingBridge.test.ts` protege o link com `focus` escolhido e `investigation` exato. A integração em `TrainingSession` registra somente após criação; retomada e **Treinar mais** não chamam a autorização de origem. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
+## V0.24 — proveniência da conclusão
+
+`tests/investigationTrainingCompletions.test.ts` cobre parser/storage defensivo, schema mínimo, fronteira da fila, contratos exatos de launch/session/focus, timestamp factual, idempotência/conflito, reload, retomada, **Treinar mais**, join de episódio, reset e isolamento dos schemas e módulos pedagógicos. A cobertura de V0.23 continua protegendo a criação separada do launch. A suíte completa totaliza 349 testes.

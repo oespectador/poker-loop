@@ -1,4 +1,4 @@
-# Project State — V0.22
+# Project State — V0.24
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,15 @@ Stack:
 
 ## Versão atual
 
-**V0.22 — Ponte Voluntária entre Investigação e Treino**
+**V0.24 — Proveniência da Conclusão de uma Sessão**
+
+## V0.24 — Proveniência da Conclusão de uma Sessão
+
+`InvestigationTrainingCompletion` registra separadamente apenas que uma sessão com launch válido chegou ao fim operacional da fila persistida (`items.length > 0 && nextIndex >= items.length`). O schema exato é `{ version: 1; sessionId: string; completedAt: string }`, na chave `poker-loop-v1:investigation-training-completions`. O horário vem do Attempt mais recente da própria sessão, mas Attempts apenas datam o evento depois de a fila comprovar a conclusão.
+
+Launch e completion são eventos distintos. Uma sessão pode possuir launch e ainda não possuir completion; uma sessão sem launch nunca recebe completion de investigação. Reload reconcilia apenas por `sessionId`, Skill/focus idênticos, fila concluída e timestamp confiável. Sessão retomada conserva a origem; **Treinar mais** não a herda. Nenhuma métrica pedagógica é copiada e os schemas protegidos e o motor permanecem inalterados.
+
+V0.18 = descrição retrospectiva; V0.19 = hipótese; V0.20 = observação prospectiva; V0.21 = memória histórica; V0.22 = ponte voluntária; V0.23 = sessão iniciada; V0.24 = sessão operacionalmente concluída.
 
 ## V0.22 — Ponte Voluntária entre Investigação e Treino
 

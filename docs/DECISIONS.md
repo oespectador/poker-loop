@@ -102,3 +102,9 @@ A ponte aparece somente em episódios `completed`, não em acompanhamentos ativo
 **Uma provenance V0.23 registra somente que uma nova sessão foi criada a partir de um episódio `completed` e de uma Skill escolhida explicitamente pelo jogador. Ela não registra conclusão, aprendizagem, eficácia ou relação causal.**
 
 V0.18 é descrição retrospectiva; V0.19 é hipótese; V0.20 é observação prospectiva; V0.21 é memória histórica; V0.22 é ponte voluntária; V0.23 é proveniência factual do início de uma nova sessão. Retomar uma sessão preexistente não cria retrospectivamente uma origem de investigação. **Treinar mais** não herda automaticamente a origem da sessão anterior. O `sessionId` possui no máximo uma origem, preservada diante de conflito; episódio, `ActiveTrainingSession` e `Attempt` permanecem inalterados.
+
+## Frozen Decision — conclusão operacional de sessão (V0.24)
+
+**Uma `InvestigationTrainingCompletion` registra somente que uma sessão com proveniência válida atingiu o fim operacional de sua fila de decisões. Conclusão de sessão não é evidência de aprendizagem, melhora, eficácia ou resolução da investigação.**
+
+Launch e completion são dois eventos distintos. Uma sessão pode possuir launch e ainda não possuir completion. Uma sessão sem launch nunca recebe completion de investigação. A autoridade é `items.length > 0 && nextIndex >= items.length`; Attempts podem somente fornecer o instante factual da última decisão. O evento mínimo não duplica episódio, Skill, fatores ou métricas.
