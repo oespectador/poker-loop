@@ -550,3 +550,21 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Escopo preservado:** hipóteses não são persistidas, não usam street como candidato, não mapeiam fatores para Skill e não alteram `Attempt`, `SkillState`, diagnóstico, treino, scheduler ou `learningLoop`.
 - **Validação:** 255 testes automatizados, typecheck, build e auditoria de diff previstos para esta entrega.
 - **Decisões humanas pendentes:** qualquer ponte futura entre hipótese e motor pedagógico exige verificação e decisão explícitas.
+
+## 2026-08-22 — V0.20 Verificação Prospectiva de uma Hipótese
+
+- **Hipótese:** observar uma janela futura delimitada evita circularidade sem promover autorrelato a avaliação estratégica.
+- **Implementação:** uma investigação ativa congela fator, instante, IDs de snapshots/mãos e contagens da baseline; a função pura seleciona, em ordem temporal estável, as primeiras cinco novas revisões distintas.
+- **Persistência:** `poker-loop-v1:real-hand-investigation`, versão 1, sem conclusão textual ou histórico permanente. Substituição e encerramento são explícitos.
+- **Defesas:** baseline ausente/alterada produz estado neutro; revisão antiga editada não cruza `startedAt`; mãos posteriores à quinta não mudam a janela; legados válidos participam sem matching aproximado.
+- **Escopo preservado:** nenhum dado alimenta `Attempt`, `SkillState`, diagnóstico, candidate/recurring/recovery, scheduler, sessão ativa, `learningLoop` ou treino.
+- **Validação:** 282 testes automatizados, typecheck, build e auditoria de diff executados.
+- **Decisões humanas pendentes:** validar com jogadores se cinco revisões dão uma janela compreensível; o número é hipótese operacional, não threshold validado.
+
+### Correção do bloqueador append-only do PR #25
+
+- `prospectiveReviews` passou a congelar fatos observados no storage V1.
+- `syncProspectiveInvestigation()` acrescenta candidatos elegíveis até cinco sem remover, substituir ou editar entradas anteriores.
+- A derivação deixou de reconstruir a janela a partir dos snapshots atuais; exclusões e edições posteriores não mudam contagens nem permitem entrada da sexta revisão.
+- `/hands` sincroniza no carregamento e após salvar Quick Review, persistindo somente quando há acréscimo.
+- Validação final: 282 testes; typecheck, build e `git diff --check`.

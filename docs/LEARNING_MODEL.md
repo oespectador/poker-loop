@@ -221,3 +221,9 @@ Contagens de fatores, sustentação percebida e streets descrevem apenas o que o
 ## V0.19 — hipótese cautelosa para investigar
 
 V0.18 é descrição factual longitudinal; V0.19 transforma repetição suficiente somente em uma hipótese de investigação. Nenhuma das duas é diagnóstico pedagógico. Para fatores normais, três mãos distintas e pelo menos duas decisões com sustentação percebida `low`/`unclear` qualificam a hipótese; `automatic` exige apenas três mãos distintas. A sustentação continua pertencendo à decisão inteira, não ao fator. Não existe mapeamento automático entre `ReasoningFactor` e Skill, nem efeito sobre treino, evidência ou scheduler.
+
+## V0.20 — fronteira prospectiva do autorrelato
+
+Dados que originaram uma hipótese ficam na baseline e não podem verificar a própria hipótese. Depois da escolha explícita do jogador, somente snapshots com `createdAt > startedAt`, de `handReviewId` não pertencente à baseline, entram nas primeiras cinco revisões futuras. Edição preserva `createdAt`, portanto não transforma passado em evidência nova. A janela relata repetição ou ausência do fator e, quando aplicável, sustentação percebida baixa/incerta; não mede acerto, melhora, dificuldade, confiança ou domínio. Cinco revisões são somente uma hipótese operacional reversível do piloto.
+
+A evidência prospectiva entra em uma lista append-only. No ingresso são congelados identidade, tempo, presença do fator e sustentação percebida aplicável. Depois disso, editar ou excluir a revisão original não reescreve a observação, e revisões posteriores à quinta nunca ocupam seu lugar.

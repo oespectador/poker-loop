@@ -75,3 +75,12 @@ Estas decisões foram tomadas durante exploração e testes. Agentes autônomos 
 2. A unidade de evidência é `handReviewId` distinto. Fatores normais exigem três revisões e `low`/`unclear` em duas; `automatic` exige três revisões e não recebe sustentação implícita.
 3. Evidências representativas são as três revisões mais recentes, com desempate determinístico, nunca ordenadas por resultado financeiro. Legados qualificam, mas o detalhe só é localizado por `handReviewId` exato.
 4. V0.18 descreve; V0.19 propõe investigar; nenhuma diagnostica ou associa `ReasoningFactor` a Skill.
+
+## V0.20 — verificação prospectiva
+
+1. **Frozen Decision:** dados que originaram uma hipótese não podem ser reutilizados como evidência prospectiva da própria hipótese. A verificação V0.20 possui uma fronteira temporal explícita e continua sendo autorrelato, não validação estratégica.
+2. Somente as primeiras cinco novas revisões distintas após `startedAt` formam a janela imutável; cinco é hipótese operacional do piloto, não threshold validado.
+3. Há no máximo um acompanhamento ativo, sem fila ou histórico permanente. Substituição e encerramento são escolhas explícitas do jogador.
+4. Ausência ou repetição do fator descreve apenas esta janela e não altera `Attempt`, `SkillState`, diagnóstico, scheduler ou treino.
+
+5. A janela prospectiva é append-only: fatos observados são congelados no ingresso. Exclusão/edição posterior não abre vaga nem altera contagens; depois de cinco, nenhuma revisão futura pode entrar.

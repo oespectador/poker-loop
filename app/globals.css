@@ -263,6 +263,9 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 .investigation-list { display: grid; gap: 12px; margin-top: 22px; }
 .investigation-card { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
 .investigation-card p { margin: 8px 0 12px; color: #c5d2db; }
+.investigation-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.active-investigation { margin: -28px 0 48px; border-color: var(--accent); }
+.investigation-progress { display: block; margin: 18px 0 8px; font-size: 1.1rem; }
 .related-hands { display: grid; gap: 8px; margin-top: 12px; }
 .investigations-empty { max-width: 700px; margin-top: 18px; color: var(--muted); }
 

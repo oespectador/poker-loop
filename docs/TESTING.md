@@ -174,3 +174,9 @@ A suíte possui 238 testes. `tests/realHandReviewPatterns.test.ts` adiciona 13 t
 ## V0.19 — hipóteses para investigar
 
 A suíte possui 255 testes. Os 17 testes de `tests/realHandInvestigations.test.ts` cobrem thresholds, `automatic`, suportes excluídos, deduplicação por `handReviewId`, fatores simultâneos, teto/recência/desempate determinístico das evidências, deleção, legado, ausência de hipótese por street, pureza, isolamento pedagógico, ausência de associação a Skill e copy cautelosa. Executar com `npm test`; typecheck e build continuam obrigatórios.
+
+## V0.20 — observação prospectiva
+
+A suíte possui 282 testes. Os 27 testes de `tests/prospectiveRealHandInvestigation.test.ts` cobrem criação e validação do schema, storage defensivo e unicidade, baseline congelada/inconsistente, fronteira temporal, edição antiga, deduplicação, espera, fechamento imutável em cinco, ordenação determinística, todos os resultados de fatores normais e de `automatic`, legado, encerramento/reset isolados, copy e ausência de dependência do motor pedagógico. Executar com `npm test`; `npm run typecheck`, `npm run build` e `git diff --check` continuam obrigatórios.
+
+A correção append-only adiciona regressões para A–E imutáveis diante de F, exclusão de A sem reposição, contagem preservada, edição de fator/sustentação sem efeito retroativo, round-trip do storage, sync parcial ordenado/deduplicado, baseline excluída, idempotência após cinco e detalhe ausente sem alteração da observação.

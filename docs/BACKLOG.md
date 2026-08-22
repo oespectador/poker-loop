@@ -199,3 +199,16 @@ Ficam fora: análise estratégica, agregações, hipóteses, associação ao tre
 - até três mãos recentes relacionadas, abertas pela infraestrutura existente e sem cópia de storage;
 - pouca evidência apresentada sem hipótese inventada; street nunca gera candidato;
 - nenhuma ponte para Skill, treino, diagnóstico ou scheduler.
+
+## Concluído na V0.20 — Verificação Prospectiva
+
+- uma hipótese pode ser acompanhada por vez, com substituição explícita e sem fila;
+- baseline exata congelada e separada por `startedAt` das primeiras cinco novas revisões;
+- resultados factuais para espera, repetição com/sem sustentação baixa/incerta, uma ocorrência, ausência e baseline indisponível;
+- snapshots legados válidos participam por `handReviewId` e `createdAt`, sem matching aproximado;
+- janela de cinco documentada como hipótese operacional, sem conexão ao motor pedagógico.
+
+### Integridade append-only da V0.20 concluída
+
+- `prospectiveReviews` congela as cinco observações e seus fatos no ingresso;
+- edições/exclusões não reabrem vaga, e revisões posteriores nunca substituem a janela fechada.
