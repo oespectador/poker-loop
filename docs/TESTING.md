@@ -183,4 +183,6 @@ A correção append-only adiciona regressões para A–E imutáveis diante de F,
 
 ## V0.21 — histórico de investigações
 
-A suíte possui 302 testes. `tests/realHandInvestigationHistory.test.ts` cobre schema e chave separados, storage vazio/corrompido e validação item a item, cópia profunda de baseline/janela, conclusões `completed`/`stopped`/`inconclusive`, idempotência por ID, coexistência e ordem determinística, resumo independente de snapshots, mãos excluídas sem reposição ou redução histórica, limpeza isolada da investigação ativa, preservação pelo reset e ausência de dependência do motor pedagógico ou copy diagnóstica/comparativa.
+A suíte possui 309 testes. `tests/realHandInvestigationHistory.test.ts` cobre schema e chave separados, storage vazio/corrompido e validação item a item, cópia profunda de baseline/janela, conclusões `completed`/`stopped`/`inconclusive`, idempotência por ID, coexistência e ordem determinística, resumo independente de snapshots, mãos excluídas sem reposição ou redução histórica, limpeza isolada da investigação ativa, preservação pelo reset e ausência de dependência do motor pedagógico ou copy diagnóstica/comparativa.
+
+A correção do bloqueador de substituição adiciona regressões para classificação centralizada: janela 5/5 vira `completed` tanto por conclusão direta quanto ao iniciar outra investigação; 3/5 vira `stopped`; `inconclusive` mantém precedência; a nova investigação é criada e o episódio anterior permanece único.

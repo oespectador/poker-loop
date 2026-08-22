@@ -576,4 +576,9 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Imutabilidade:** baseline e `prospectiveReviews` recebem cópia profunda no arquivamento; resumos usam somente o episódio e detalhes de mãos usam exclusivamente IDs ainda existentes, sem reposição.
 - **UI:** `/hands` conserva o resultado 5/5 até a ação **Concluir acompanhamento** e lista episódios por `endedAt` decrescente com desempate por ID.
 - **Escopo preservado:** histórico não mapeia `ReasoningFactor` para Skill e não participa de `Attempt`, diagnóstico, scheduler, sessão ou `learningLoop`.
-- **Validação:** 302 testes, typecheck, build e `git diff --check` previstos para a entrega.
+- **Validação:** 309 testes, typecheck, build e `git diff --check` executados na entrega.
+
+### Correção do bloqueador de classificação na substituição
+
+- `completionForProspectiveResult()` centraliza a precedência `inconclusive` → janela 5/5 `completed` → janela parcial `stopped`.
+- Conclusão manual e substituição explícita agora chamam a mesma regra; iniciar outro acompanhamento nunca rebaixa uma janela completa para `stopped`.

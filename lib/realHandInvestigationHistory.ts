@@ -5,6 +5,7 @@ import {
   isActiveRealHandInvestigation,
   type ActiveRealHandInvestigation,
   type ProspectiveObservedReview,
+  type ProspectiveInvestigationResult,
 } from "./prospectiveRealHandInvestigation";
 import type { ReasoningFactor } from "./types";
 
@@ -34,6 +35,13 @@ export interface RealHandInvestigationEpisodeSummary {
 }
 
 const completions = new Set<RealHandInvestigationCompletion>(["completed", "stopped", "inconclusive"]);
+
+/** Keeps every explicit closing path on the same factual classification rule. */
+export function completionForProspectiveResult(result: ProspectiveInvestigationResult): RealHandInvestigationCompletion {
+  if (result.status === "inconclusive") return "inconclusive";
+  if (result.reviewedCount === PROSPECTIVE_WINDOW_SIZE) return "completed";
+  return "stopped";
+}
 
 export function isStoredRealHandInvestigationEpisode(value: unknown): value is StoredRealHandInvestigationEpisode {
   if (!value || typeof value !== "object") return false;

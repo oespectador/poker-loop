@@ -15,7 +15,7 @@ import { summarizeRealHandReviewPatterns } from "@/lib/realHandReviewPatterns";
 import { deriveRealHandInvestigations } from "@/lib/realHandInvestigations";
 import { reasoningFactorLabels } from "@/lib/realHandReasoning";
 import { createActiveRealHandInvestigation, deriveProspectiveInvestigation, readActiveRealHandInvestigation, syncProspectiveInvestigation, writeActiveRealHandInvestigation, type ActiveRealHandInvestigation } from "@/lib/prospectiveRealHandInvestigation";
-import { archiveRealHandInvestigation, readRealHandInvestigationHistory, summarizeRealHandInvestigationEpisode, type StoredRealHandInvestigationEpisode } from "@/lib/realHandInvestigationHistory";
+import { archiveRealHandInvestigation, completionForProspectiveResult, readRealHandInvestigationHistory, summarizeRealHandInvestigationEpisode, type StoredRealHandInvestigationEpisode } from "@/lib/realHandInvestigationHistory";
 
 const emptyForm: RealHandReviewInput = { rawHandText: "", doubt: "", rangeRead: "", objective: "", targetsAndSizeResponse: "" };
 const cardLabel = (card: string) => card.replace("h", "♥").replace("d", "♦").replace("c", "♣").replace("s", "♠");
@@ -70,14 +70,13 @@ export default function HandsPage() {
   function follow(candidate: (typeof investigations)[number]) {
     if (activeInvestigation && activeInvestigation.factor !== candidate.factor && !window.confirm(`Você já está acompanhando ${reasoningFactorLabels[activeInvestigation.factor]}. Encerrar esse acompanhamento e começar ${candidate.factorLabel}?`)) return;
     if (activeInvestigation?.factor === candidate.factor) return;
-    if (activeInvestigation) setHistory(archiveRealHandInvestigation(activeInvestigation, prospectiveResult?.status === "inconclusive" ? "inconclusive" : "stopped"));
+    if (activeInvestigation && prospectiveResult) setHistory(archiveRealHandInvestigation(activeInvestigation, completionForProspectiveResult(prospectiveResult)));
     const next = createActiveRealHandInvestigation(candidate);
     writeActiveRealHandInvestigation(next); setActiveInvestigation(next); setShowObservedHands(false);
   }
   function endFollowing() {
     if (!activeInvestigation || !prospectiveResult) return;
-    const completion = prospectiveResult.status === "inconclusive" ? "inconclusive" : prospectiveResult.reviewedCount === 5 ? "completed" : "stopped";
-    setHistory(archiveRealHandInvestigation(activeInvestigation, completion)); setActiveInvestigation(null); setShowObservedHands(false);
+    setHistory(archiveRealHandInvestigation(activeInvestigation, completionForProspectiveResult(prospectiveResult))); setActiveInvestigation(null); setShowObservedHands(false);
   }
   function refreshSnapshots() {
     const snapshots = readReasoningSnapshots(); setReasoningSnapshots(snapshots);
