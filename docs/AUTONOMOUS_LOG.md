@@ -540,3 +540,13 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Validação:** 238 testes automatizados; typecheck, build e auditoria de diff executados nesta entrega.
 - **Riscos conhecidos:** o threshold é regra de apresentação conservadora, não limiar validado; a clareza da seção ainda requer validação humana.
 - **Decisões humanas pendentes:** nenhuma para o escopo especificado.
+
+
+## 2026-08-22 — V0.19 Hipóteses para Investigar a partir das Revisões Reais
+
+- **Hipótese:** repetição no autorrelato, combinada com sustentação percebida baixa/incerta, pode indicar um tema que vale investigar sem afirmar dificuldade ou correção estratégica.
+- **Implementação:** módulo puro deduplica por `handReviewId`; fatores normais exigem 3 revisões e 2 marcações `low`/`unclear`, enquanto `automatic` exige 3 revisões. A UI compacta mostra os candidatos e abre até três mãos existentes pela identidade original.
+- **Evidências:** seleção por `createdAt` decrescente e desempate por ID, sem resultado financeiro. Registros legados qualificam e só localizam uma mão pelo `handReviewId` exato.
+- **Escopo preservado:** hipóteses não são persistidas, não usam street como candidato, não mapeiam fatores para Skill e não alteram `Attempt`, `SkillState`, diagnóstico, treino, scheduler ou `learningLoop`.
+- **Validação:** 255 testes automatizados, typecheck, build e auditoria de diff previstos para esta entrega.
+- **Decisões humanas pendentes:** qualquer ponte futura entre hipótese e motor pedagógico exige verificação e decisão explícitas.

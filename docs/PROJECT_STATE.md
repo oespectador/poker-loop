@@ -1,4 +1,4 @@
-# Project State — baseline V0.18
+# Project State — baseline V0.19
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,7 @@ Stack:
 
 ## Versão atual
 
-**V0.18 — Padrões nas Revisões de Mãos Reais**
+**V0.19 — Hipóteses para Investigar a partir das Revisões Reais**
 
 `/hands` agora resume longitudinalmente os `RealHandReasoningSnapshot` como autorrelato: total de decisões, fatores, sustentação percebida e streets. Até três observações factuais ficam visíveis somente a partir de três ocorrências. Frequência de fator não significa leak, erro, domínio ou evidência pedagógica. Snapshots legados sem `sourceHandId` participam sem matching ou migração.
 
@@ -262,3 +262,8 @@ Mãos GG/PokerCraft salvas podem reconstruir uma ação voluntária do Herói se
 ## V0.18 — padrões de autorrelato em mãos reais
 
 A suíte possui 238 testes. Os 13 testes do resumo puro cobrem vazio, pouca evidência, threshold inclusivo de três snapshots, fatores múltiplos, `automatic`, sustentação, streets, legado, teto e ordem das observações, copy sem porcentagens, pureza, deleção por nova entrada e isolamento pedagógico.
+
+
+## V0.19 — hipóteses cautelosas do autorrelato
+
+`/hands` deriva hipóteses dos snapshots atuais, deduplicadas por `handReviewId`. Fatores normais exigem três revisões distintas e ao menos duas decisões com sustentação percebida `low` ou `unclear`; `automatic` exige somente três revisões. Até três mãos relacionadas são escolhidas por recência, deterministicamente e sem resultado financeiro. Snapshots legados qualificam e só abrem uma `RealHandReview` por identidade exata. Street não qualifica hipótese. A camada não persiste estado e não toca `Attempt`, `SkillState`, diagnóstico, scheduler ou treino.

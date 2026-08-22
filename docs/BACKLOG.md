@@ -190,3 +190,12 @@ Limitação deliberada: arquivos diferentes parcialmente sobrepostos não são d
 - fluxo compacto em `/hands`, mantendo a reflexão profunda e históricos não reconhecidos válidos.
 
 Ficam fora: análise estratégica, agregações, hipóteses, associação ao treino, IA/solver e UI em Progresso.
+
+
+## Concluído na V0.19 — Hipóteses para Investigar
+
+- candidatos puros por fator, deduplicados por `handReviewId` e inteiramente derivados;
+- threshold de 3 revisões + 2 decisões `low`/`unclear`, exceto `automatic`, que exige apenas 3 revisões;
+- até três mãos recentes relacionadas, abertas pela infraestrutura existente e sem cópia de storage;
+- pouca evidência apresentada sem hipótese inventada; street nunca gera candidato;
+- nenhuma ponte para Skill, treino, diagnóstico ou scheduler.
