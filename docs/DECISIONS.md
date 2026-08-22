@@ -90,3 +90,9 @@ Estas decisões foram tomadas durante exploração e testes. Agentes autônomos 
 **Uma investigação prospectiva encerrada torna-se um episódio histórico imutável. O episódio preserva o autorrelato observado naquele ciclo e não é reinterpretado a partir do estado atual das mãos ou snapshots.**
 
 V0.18 é descrição retrospectiva; V0.19 é hipótese de investigação; V0.20 é observação prospectiva; V0.21 é memória de episódios concluídos/encerrados. Histórico de investigação não é histórico pedagógico. Episódios são append-only, não são comparados automaticamente e não alimentam treino, diagnóstico ou Skills.
+
+## Frozen Decision — ponte voluntária para treino (V0.22)
+
+**A ponte entre uma investigação de mãos reais e o treino é voluntária. O Poker Loop não mapeia `ReasoningFactor` para `Skill`. O foco usado na sessão é uma escolha explícita do jogador e o episódio histórico continua fora da evidência pedagógica.**
+
+A ponte aparece somente em episódios `completed`, não em acompanhamentos ativos, `stopped` ou `inconclusive`. Ela reutiliza `/session?focus=<Skill>` sem scheduler especial, não persiste relação episódio → sessão e não modifica os schemas de episódio, `Attempt` ou sessão ativa. Abrir treino a partir de um episódio não demonstra que o treino foi concluído, relevante ou eficaz.

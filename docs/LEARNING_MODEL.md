@@ -231,3 +231,9 @@ A evidência prospectiva entra em uma lista append-only. No ingresso são congel
 ## V0.21 — memória de investigações encerradas
 
 V0.18 descreve retrospectivamente o autorrelato; V0.19 formula uma hipótese cautelosa; V0.20 observa prospectivamente uma janela congelada; V0.21 preserva ciclos concluídos ou encerrados. Uma investigação prospectiva encerrada torna-se um episódio histórico imutável. O episódio preserva o autorrelato observado naquele ciclo e não é reinterpretado a partir do estado atual das mãos ou snapshots. Histórico de investigação não é histórico pedagógico e não produz comparação entre ciclos.
+
+## V0.22 — ponte voluntária entre investigação e treino
+
+V0.18 descreve retrospectivamente o autorrelato; V0.19 formula uma hipótese; V0.20 observa prospectivamente; V0.21 guarda memória histórica; V0.22 permite uma navegação voluntária para o treino existente. Somente um episódio `completed` oferece a ponte, e o jogador escolhe explicitamente uma das Skills atuais sem sugestão, ordenação ou pré-seleção derivada do `ReasoningFactor` ou das contagens do episódio.
+
+A navegação usa apenas `/session?focus=<Skill>`. O episódio continua fora da evidência pedagógica e permanece imutável: abrir o treino não demonstra que ele foi concluído, relevante ou eficaz, nem cria proveniência entre episódio e sessão.

@@ -264,6 +264,11 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 .investigation-card { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
 .investigation-card p { margin: 8px 0 12px; color: #c5d2db; }
 .investigation-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.training-bridge { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.training-bridge h3 { margin: 0; }
+.training-skill-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 14px 0; }
+.training-skill-option { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); cursor: pointer; font-weight: 700; }
+.training-skill-option.selected { border-color: var(--cyan); background: rgba(94, 231, 244, .1); }
 .active-investigation { margin: -28px 0 48px; border-color: var(--accent); }
 .investigation-progress { display: block; margin: 18px 0 8px; font-size: 1.1rem; }
 .related-hands { display: grid; gap: 8px; margin-top: 12px; }

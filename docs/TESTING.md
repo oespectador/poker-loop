@@ -186,3 +186,7 @@ A correção append-only adiciona regressões para A–E imutáveis diante de F,
 A suíte possui 309 testes. `tests/realHandInvestigationHistory.test.ts` cobre schema e chave separados, storage vazio/corrompido e validação item a item, cópia profunda de baseline/janela, conclusões `completed`/`stopped`/`inconclusive`, idempotência por ID, coexistência e ordem determinística, resumo independente de snapshots, mãos excluídas sem reposição ou redução histórica, limpeza isolada da investigação ativa, preservação pelo reset e ausência de dependência do motor pedagógico ou copy diagnóstica/comparativa.
 
 A correção do bloqueador de substituição adiciona regressões para classificação centralizada: janela 5/5 vira `completed` tanto por conclusão direta quanto ao iniciar outra investigação; 3/5 vira `stopped`; `inconclusive` mantém precedência; a nova investigação é criada e o episódio anterior permanece único.
+
+## V0.22 — ponte voluntária para treino
+
+A suíte possui 315 testes. `tests/investigationTrainingBridge.test.ts` protege o estado inicial sem foco, o inventário completo e a ordem neutra de Skills, o destino exato `/session?focus=<Skill>`, a independência de fator e contagens e a imutabilidade do episódio depois da navegação. A cobertura também mantém os schemas e o motor existentes sem alteração; `npm test`, `npm run typecheck`, `npm run build` e `git diff --check` são obrigatórios.
