@@ -235,3 +235,11 @@ Ficam fora: análise estratégica, agregações, hipóteses, associação ao tre
 - unicidade por `sessionId` é idempotente para repetição exata e preserva o original em conflitos;
 - retomada preexistente não recebe origem e **Treinar mais** não herda a investigação;
 - cards contam somente sessões iniciadas; conclusão, resultado, causalidade e motor pedagógico continuam fora.
+
+## Concluído na V0.24 — Proveniência da Conclusão de uma Sessão
+
+- completion V1 mínimo e separado, único por `sessionId`;
+- fronteira operacional baseada na fila persistida, nunca em quantidade fixa de Attempts;
+- registro imediato na última decisão e reconciliação exata no reload;
+- histórico distingue sessões iniciadas de sessões que chegaram ao fim planejado;
+- sessões sem launch e **Treinar mais** permanecem fora desta proveniência.

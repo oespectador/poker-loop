@@ -1,0 +1,44 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { readFileSync } from "node:fs";
+import { createTrainingSession } from "../lib/activeTrainingSession";
+import { clearPrototypeProgress } from "../lib/storage";
+import { INVESTIGATION_TRAINING_COMPLETIONS_KEY, completionForFinishedLaunchedSession, findInvestigationTrainingCompletionBySessionId, isInvestigationTrainingCompletion, isTrainingSessionOperationallyComplete, listInvestigationTrainingCompletionsForEpisode, parseInvestigationTrainingCompletions, readInvestigationTrainingCompletions, registerInvestigationTrainingCompletion } from "../lib/investigationTrainingCompletions";
+import type { InvestigationTrainingLaunch } from "../lib/investigationTrainingLaunches";
+import type { ActiveTrainingSession, Attempt, Skill } from "../lib/types";
+
+const launchedAt = "2026-08-22T12:00:00.000Z";
+const completedAt = "2026-08-22T12:10:00.000Z";
+function session(id = "session-1", skill: Skill = "sizing", delta = 0): ActiveTrainingSession {
+  const active = createTrainingSession([], skill, id, launchedAt).active;
+  return { ...active, nextIndex: active.items.length + delta };
+}
+function launch(id = "session-1", skill: Skill = "sizing", episodeId = "episode-1"): InvestigationTrainingLaunch { return { version: 1, episodeId, sessionId: id, skill, launchedAt }; }
+function attempt(id = "session-1", timestamp = completedAt): Attempt { return { id: "a", exerciseId: "range-actions-01", sessionId: id, primarySkill: "sizing", answerId: "x", correct: true, support: "independent", timestamp }; }
+function install(initial = new Map<string, string>()) {
+  const old = Object.getOwnPropertyDescriptor(globalThis, "window");
+  const localStorage = { getItem: (key: string) => initial.get(key) ?? null, setItem: (key: string, value: string) => { initial.set(key, value); }, removeItem: (key: string) => { initial.delete(key); } };
+  Object.defineProperty(globalThis, "window", { configurable: true, value: { localStorage } });
+  return { values: initial, cleanup: () => old ? Object.defineProperty(globalThis, "window", old) : Reflect.deleteProperty(globalThis, "window") };
+}
+
+test("storage ausente e JSON inválido produzem lista vazia", () => { assert.deepEqual(parseInvestigationTrainingCompletions(null), []); assert.deepEqual(parseInvestigationTrainingCompletions("{"), []); });
+test("parser ignora item inválido sem eliminar o válido", () => { const valid = { version: 1, sessionId: "s", completedAt }; assert.deepEqual(parseInvestigationTrainingCompletions(JSON.stringify([{ ...valid, version: 2 }, valid])), [valid]); });
+test("validação rejeita versão, sessionId e completedAt inválidos", () => { const valid = { version: 1, sessionId: "s", completedAt }; assert.equal(isInvestigationTrainingCompletion(valid), true); for (const patch of [{ version: 2 }, { sessionId: " " }, { completedAt: "invalid" }]) assert.equal(isInvestigationTrainingCompletion({ ...valid, ...patch }), false); });
+test("a fila persistida define a conclusão operacional", () => { const pending = session(); pending.nextIndex--; assert.equal(isTrainingSessionOperationallyComplete(pending), false); assert.equal(isTrainingSessionOperationallyComplete(session()), true); assert.equal(isTrainingSessionOperationallyComplete(session("s", "sizing", 1)), true); assert.equal(isTrainingSessionOperationallyComplete({ ...session(), items: [], nextIndex: 0 }), false); });
+test("sessão concluída sem launch não produz completion", () => assert.equal(completionForFinishedLaunchedSession(session(), undefined, [attempt()]), null));
+test("launch válido produz schema mínimo com identidade e horário factuais", () => { const completion = completionForFinishedLaunchedSession(session(), launch(), [attempt()]); assert.deepEqual(completion, { version: 1, sessionId: "session-1", completedAt }); assert.deepEqual(Object.keys(completion!).sort(), ["completedAt", "sessionId", "version"]); });
+test("Attempt não determina conclusão", () => { const pending = session(); pending.nextIndex--; assert.equal(completionForFinishedLaunchedSession(pending, launch(), Array.from({ length: 12 }, () => attempt())), null); });
+test("contratos exatos de sessionId e Skill são obrigatórios", () => { assert.equal(completionForFinishedLaunchedSession(session(), launch("other"), [attempt()]), null); assert.equal(completionForFinishedLaunchedSession(session(), launch("session-1", "range-reading"), [attempt()]), null); assert.equal(completionForFinishedLaunchedSession({ ...session(), focus: null }, launch(), [attempt()]), null); });
+test("timestamp confiável deve pertencer à sessão e não anteceder launch", () => { assert.equal(completionForFinishedLaunchedSession(session(), launch(), [attempt("other")]), null); assert.equal(completionForFinishedLaunchedSession(session(), launch(), [attempt("session-1", "2026-08-22T11:59:00Z")]), null); assert.equal(completionForFinishedLaunchedSession(session(), launch(), [attempt("session-1", "invalid")]), null); });
+test("timestamp mais recente da própria sessão data o evento", () => assert.equal(completionForFinishedLaunchedSession(session(), launch(), [attempt("session-1", "2026-08-22T12:05:00Z"), attempt()])?.completedAt, completedAt));
+test("registro repetido é idempotente e conflito preserva o primeiro", () => { const env = install(); const original = { version: 1 as const, sessionId: "session-1", completedAt }; assert.equal(registerInvestigationTrainingCompletion(original), "created"); assert.equal(registerInvestigationTrainingCompletion(original), "idempotent"); assert.equal(registerInvestigationTrainingCompletion({ ...original, completedAt: "2026-08-22T12:11:00Z" }), "conflict"); assert.deepEqual(readInvestigationTrainingCompletions(), [original]); env.cleanup(); });
+test("reload encontra a mesma conclusão sem duplicar", () => { const env = install(); const completion = completionForFinishedLaunchedSession(session(), launch(), [attempt()])!; registerInvestigationTrainingCompletion(completion); assert.deepEqual(findInvestigationTrainingCompletionBySessionId(readInvestigationTrainingCompletions(), "session-1"), completion); assert.equal(registerInvestigationTrainingCompletion(completion), "idempotent"); assert.equal(readInvestigationTrainingCompletions().length, 1); env.cleanup(); });
+test("sessão retomada conserva sessionId e pode concluir", () => { const resumed = session("original"); assert.equal(completionForFinishedLaunchedSession(resumed, launch("original"), [attempt("original")])?.sessionId, "original"); });
+test("sessão pré-existente e Treinar mais sem launch não recebem completion", () => { assert.equal(completionForFinishedLaunchedSession(session("preexisting"), undefined, [attempt("preexisting")]), null); assert.equal(completionForFinishedLaunchedSession(session("training-more"), undefined, [attempt("training-more")]), null); });
+test("join de episódio conta somente sessionIds exatos", () => { const launches = [launch("a"), launch("b"), launch("c", "sizing", "episode-2")]; const completions = [{ version: 1 as const, sessionId: "a", completedAt }, { version: 1 as const, sessionId: "unrelated", completedAt }]; assert.equal(listInvestigationTrainingCompletionsForEpisode(completions, launches, "episode-1").length, 1); });
+test("completion não copia métricas, episódio, Skill ou fatores", () => { const value = completionForFinishedLaunchedSession(session(), launch(), [attempt()])!; assert.doesNotMatch(JSON.stringify(value), /episodeId|skill|correctCount|errorCount|accuracy|ReasoningFactor/); });
+test("criação é pura e não modifica schemas protegidos", () => { const active = session(); const origin = launch(); const recordedAttempt = attempt(); const before = [active, origin, recordedAttempt].map((value) => JSON.stringify(value)); completionForFinishedLaunchedSession(active, origin, [recordedAttempt]); assert.deepEqual([active, origin, recordedAttempt].map((value) => JSON.stringify(value)), before); });
+test("reset pedagógico preserva completion", () => { const env = install(new Map([[INVESTIGATION_TRAINING_COMPLETIONS_KEY, "completions"], ["poker-loop-v1:attempts", "[]"]])); clearPrototypeProgress(); assert.equal(env.values.get(INVESTIGATION_TRAINING_COMPLETIONS_KEY), "completions"); env.cleanup(); });
+test("módulo não depende do motor nem mapeia ReasoningFactor para Skill", () => { const source = readFileSync("lib/investigationTrainingCompletions.ts", "utf8"); assert.doesNotMatch(source, /trainingEngine|diagnostics|learningLoop|ReasoningFactor/); });
+test("copy permanece factual e evita inferências de aprendizagem", () => { const sources = readFileSync("app/session/TrainingSession.tsx", "utf8") + readFileSync("app/hands/page.tsx", "utf8"); assert.match(sources, /chegou ao fim das decisões planejadas/); assert.doesNotMatch(sources, /hipótese corrigida|problema resolvido|treino eficaz|você melhorou|você aprendeu|dificuldade confirmada/i); });

@@ -604,3 +604,12 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Escopo preservado:** nenhuma conclusão, contagem de decisões, acerto/erro, eficácia, causalidade ou mapping `ReasoningFactor → Skill`; `StoredRealHandInvestigationEpisode`, `ActiveTrainingSession`, `Attempt` e motor pedagógico não mudaram.
 - **Validação:** 329 testes, typecheck, build e `git diff --check` previstos para esta entrega.
 - **Decisões humanas pendentes:** qualquer associação futura de conclusão ou efeito exige uma versão e decisão separadas.
+
+## 2026-08-22 — V0.24 Proveniência da Conclusão de uma Sessão
+
+- **Hipótese:** registrar separadamente o fim operacional da sessão torna a cadeia de proveniência factual sem converter conclusão em resultado de aprendizagem.
+- **Implementação:** storage `poker-loop-v1:investigation-training-completions`, schema mínimo `{ version: 1; sessionId: string; completedAt: string }`, parsing defensivo e unicidade por sessão.
+- **Fronteira:** somente `items.length > 0 && nextIndex >= items.length`; o Attempt mais recente da própria sessão fornece apenas o horário depois dessa verificação.
+- **Momento e recovery:** persiste ao registrar a última decisão; no reload, reconcilia somente launch/session/focus exatos, fila concluída e timestamp confiável. Retomada mantém o mesmo `sessionId`; **Treinar mais** não herda launch.
+- **Escopo preservado:** nenhuma métrica copiada; `InvestigationTrainingLaunch`, `StoredRealHandInvestigationEpisode`, `ActiveTrainingSession`, `Attempt`, `trainingEngine`, `diagnostics` e `learningLoop` não mudaram.
+- **Validação:** 349 testes, typecheck, build e `git diff --check` executados nesta entrega.

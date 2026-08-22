@@ -10,6 +10,7 @@ import { attemptSupport } from "@/lib/support";
 import { reprioritizeAfterError, skillLabels } from "@/lib/trainingEngine";
 import type { ActiveTrainingSession, Attempt, Exercise, Skill } from "@/lib/types";
 import { findInvestigationTrainingLaunchBySessionId, readInvestigationTrainingLaunches, registerLaunchForNewTrainingSession, type InvestigationTrainingLaunch } from "@/lib/investigationTrainingLaunches";
+import { completionForFinishedLaunchedSession, findInvestigationTrainingCompletionBySessionId, readInvestigationTrainingCompletions, registerInvestigationTrainingCompletion, type InvestigationTrainingCompletion } from "@/lib/investigationTrainingCompletions";
 
 function parseBoardLabel(label: string): string[] | null {
   const cards = label.trim().split(/\s+/);
@@ -34,6 +35,7 @@ export default function TrainingSession() {
   const [expanded, setExpanded] = useState(false);
   const [hintRevealed, setHintRevealed] = useState(false);
   const [provenance, setProvenance] = useState<InvestigationTrainingLaunch>();
+  const [operationalCompletion, setOperationalCompletion] = useState<InvestigationTrainingCompletion>();
   const activeSession = useRef<ActiveTrainingSession | null>(null);
 
   function newSessionId() {
@@ -52,6 +54,7 @@ export default function TrainingSession() {
     setHintRevealed(false);
     const launch = allowInvestigationOrigin ? registerLaunchForNewTrainingSession(investigationParam, created.active) : null;
     setProvenance(launch ?? undefined);
+    setOperationalCompletion(undefined);
   }
 
   useEffect(() => {
@@ -62,7 +65,13 @@ export default function TrainingSession() {
       setQueue(resumed.queue);
       setAttempts(resumed.attempts);
       setIndex(resumed.active.nextIndex);
-      setProvenance(findInvestigationTrainingLaunchBySessionId(readInvestigationTrainingLaunches(), resumed.active.sessionId));
+      const launch = findInvestigationTrainingLaunchBySessionId(readInvestigationTrainingLaunches(), resumed.active.sessionId);
+      setProvenance(launch);
+      const existing = findInvestigationTrainingCompletionBySessionId(readInvestigationTrainingCompletions(), resumed.active.sessionId);
+      const factualCandidate = completionForFinishedLaunchedSession(resumed.active, launch, history);
+      const completion = factualCandidate && existing && Date.parse(existing.completedAt) >= Date.parse(launch!.launchedAt) ? existing : factualCandidate;
+      if (!existing && completion) registerInvestigationTrainingCompletion(completion);
+      setOperationalCompletion(completion ?? undefined);
     } else {
       startNewSession(history, true);
     }
@@ -96,6 +105,11 @@ export default function TrainingSession() {
     const nextActive = updateActiveSession(activeSession.current!, nextQueue, index + 1);
     activeSession.current = nextActive;
     writeActiveTrainingSession(nextActive);
+    const completion = completionForFinishedLaunchedSession(nextActive, provenance, [...attempts, attempt]);
+    if (completion) {
+      const result = registerInvestigationTrainingCompletion(completion);
+      if (result === "created" || result === "idempotent") setOperationalCompletion(completion);
+    }
   }
 
   function next() {
@@ -127,6 +141,7 @@ export default function TrainingSession() {
         <div className="eyebrow">TREINO CONCLUÍDO</div>
         <h1>{attempts.length} decisões.</h1>
         <p className="lead">{correctCount} respostas corretas. O mais importante agora é o padrão que ficou registrado.</p>
+        {provenance && operationalCompletion && <p className="optional-note">Esta sessão, iniciada a partir de uma investigação de mãos reais, chegou ao fim das decisões planejadas. O foco foi escolhido por você.</p>}
 
         <div className="finish-grid">
           <article className="panel">

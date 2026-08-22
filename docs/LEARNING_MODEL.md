@@ -241,3 +241,7 @@ A navegação usa apenas `/session?focus=<Skill>`. O episódio continua fora da 
 ## V0.23 — proveniência factual do início
 
 V0.18 descreve retrospectivamente; V0.19 formula uma hipótese; V0.20 observa prospectivamente; V0.21 guarda memória histórica; V0.22 oferece uma ponte voluntária; V0.23 registra somente que uma **nova** sessão real nasceu dessa ponte e da Skill escolhida pelo jogador. O registro separado usa o `sessionId`, o `startedAt` e o `focus` da sessão criada. Não representa conclusão, aprendizagem, eficácia, diagnóstico ou causalidade. Retomar uma sessão preexistente não cria origem retroativa, e **Treinar mais** não herda a origem anterior.
+
+## V0.24 — conclusão operacional com proveniência
+
+O fim da fila persistida é um fato de fluxo, não evidência pedagógica. Launch e completion são eventos distintos: uma sessão lançada pode ainda não ter completion, e uma sessão sem launch nunca recebe completion de investigação. A cadeia factual é V0.18 descrição retrospectiva → V0.19 hipótese → V0.20 observação prospectiva → V0.21 memória histórica → V0.22 ponte voluntária → V0.23 sessão iniciada → V0.24 sessão operacionalmente concluída. Conclusão não significa aprendizagem, retenção, transferência, melhora, eficácia ou resolução.
