@@ -7,7 +7,7 @@ import type { HeroDecisionAnchor, RealHandReasoningSnapshot, RealHandReview, Rea
 import type { QuickReviewMode } from "@/lib/realHandReasoning";
 import { HandVisualization } from "@/app/components/HandVisualization";
 const supportLabels: Record<SelfRatedSupport,string>={low:"Baixa",medium:"Média",high:"Alta",unclear:"Não estava claro"};
-export function QuickReview({hand}:{hand:RealHandReview}) {
+export function QuickReview({hand,onSnapshotSaved}:{hand:RealHandReview;onSnapshotSaved?:()=>void}) {
  const parsed=useMemo(()=>parseGgHand(hand.rawHandText),[hand.rawHandText]); const anchors=useMemo(()=>parsed?extractHeroDecisionAnchors(parsed):[],[parsed]);
  const [snapshot,setSnapshot]=useState(()=>readReasoningSnapshots().find(x=>x.handReviewId===hand.id)); const [mode,setMode]=useState<QuickReviewMode>("idle");
  const matched=snapshot&&parsed ? matchSnapshotDecisionAnchor(parsed,snapshot) : undefined;
@@ -15,7 +15,7 @@ export function QuickReview({hand}:{hand:RealHandReview}) {
  const [editingExisting,setEditingExisting]=useState(false);
  const view=parsed&&anchor?buildHeroDecisionView(parsed,anchor):null;
  function begin(edit=false){setEditingExisting(edit);setAnchor(parsed ? initialQuickReviewAnchor(parsed,snapshot,edit) : undefined);setThought(edit?snapshot?.thought??"":"");setFactors(edit?snapshot?.factors??[]:[]);setSupport(edit?snapshot?.selfRatedSupport:undefined);setShowAll(edit);setMode("choose");}
- function save(){if(!anchor||!parsed)return;const next:RealHandReasoningSnapshot={id:snapshot?.id??crypto.randomUUID(),handReviewId:hand.id,createdAt:snapshot?.createdAt??new Date().toISOString(),sourceHandId:parsed.sourceHandId,sourceDecision:{street:anchor.street,sequenceIndex:anchor.sequenceIndex,action:anchor.action,amount:anchor.amount,toAmount:anchor.toAmount,allIn:anchor.allIn},thought:thought.trim()||undefined,factors:selectedFactors,selfRatedSupport:selectedFactors[0]==="automatic"?undefined:support};setSnapshot(saveReasoningSnapshot(next));setMode("idle");}
+ function save(){if(!anchor||!parsed)return;const next:RealHandReasoningSnapshot={id:snapshot?.id??crypto.randomUUID(),handReviewId:hand.id,createdAt:snapshot?.createdAt??new Date().toISOString(),sourceHandId:parsed.sourceHandId,sourceDecision:{street:anchor.street,sequenceIndex:anchor.sequenceIndex,action:anchor.action,amount:anchor.amount,toAmount:anchor.toAmount,allIn:anchor.allIn},thought:thought.trim()||undefined,factors:selectedFactors,selfRatedSupport:selectedFactors[0]==="automatic"?undefined:support};setSnapshot(saveReasoningSnapshot(next));onSnapshotSaved?.();setMode("idle");}
  if(!parsed)return <section className="quick-review unavailable">Revisão rápida automática não disponível para este histórico.</section>;
  const visual=quickReviewVisualDecision(mode,anchor); const handVisual=visual&&<HandVisualization hand={parsed} decision={visual.kind==="decision"?visual.anchor:undefined}/>;
  if(mode==="idle"&&snapshot&&!matched)return <section className="quick-review">{handVisual}<div className="eyebrow">REVISÃO RÁPIDA CONCLUÍDA</div><p>A revisão rápida foi registrada anteriormente, mas a decisão original não pôde ser reconstruída a partir do histórico atual.</p>{snapshot.thought&&<p><strong>O que você registrou:</strong><br/>{snapshot.thought}</p>}<button className="primary-cta compact" onClick={()=>begin(true)}>Escolher decisão</button></section>;

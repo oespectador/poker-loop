@@ -61,3 +61,9 @@ Estas decisões foram tomadas durante exploração e testes. Agentes autônomos 
 1. Uma mão salva possui no máximo um snapshot de autorrelato, em storage próprio; edição preserva sua identidade e criação.
 2. A reconstrução corta board e ações exatamente na decisão selecionada. Não calcula pot, stacks ou resultado e não analisa estratégia.
 3. `selfRatedSupport` é percepção relatada, não qualidade objetiva da evidência. `automatic` é exclusivo e remove esse campo.
+
+## V0.18 — padrões de autorrelato
+
+1. Padrões derivados de `RealHandReasoningSnapshot` descrevem o autorrelato do jogador e não entram no motor pedagógico sem uma etapa futura explícita de validação.
+2. Três snapshots são somente o limiar de visibilidade de uma observação factual; frequência não equivale a leak, erro, domínio ou evidência pedagógica.
+3. Snapshots legados sem `sourceHandId` participam do resumo sem matching aproximado ou migração de proveniência.

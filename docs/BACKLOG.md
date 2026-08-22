@@ -2,6 +2,14 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.18 — Padrões nas Revisões de Mãos Reais
+
+- resumo puro de total, fatores, sustentação percebida e streets;
+- até três observações factuais, visíveis a partir de três ocorrências e sem porcentagens;
+- `automatic` fora do denominador de sustentação e snapshots legados incluídos sem migração;
+- seção compacta exclusiva de `/hands`, sem análise ou recomendação estratégica;
+- nenhuma entrada em `Attempt`, `SkillState`, diagnóstico, scheduler ou loop pedagógico.
+
 ## Concluído na V0.15 — Ponte com Mãos Reais
 
 - fonte local e separada para mãos reais, com criação, reflexão, edição e exclusão;

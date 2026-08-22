@@ -1,4 +1,4 @@
-# Project State — baseline V0.17.1
+# Project State — baseline V0.18
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,13 @@ Stack:
 
 ## Versão atual
 
-**V0.17.1 — Visualização e Revisão Rápida por Opções**
+**V0.18 — Padrões nas Revisões de Mãos Reais**
+
+`/hands` agora resume longitudinalmente os `RealHandReasoningSnapshot` como autorrelato: total de decisões, fatores, sustentação percebida e streets. Até três observações factuais ficam visíveis somente a partir de três ocorrências. Frequência de fator não significa leak, erro, domínio ou evidência pedagógica. Snapshots legados sem `sourceHandId` participam sem matching ou migração.
+
+O resumo puro permanece fora de `Attempt`, diagnóstico, `SkillState`, recovery, retention, transfer, scheduler e sessão ativa. Storage, thresholds pedagógicos e a seção longitudinal de Progresso não mudaram.
+
+### Base preservada da V0.17.1
 
 A mão reconhecida agora é apresentada como cartas, board e ações separadas por
 street; o histórico bruto permanece recolhido como apoio. A revisão rápida usa
@@ -251,3 +257,8 @@ A rota `/hands` mantém `RealHandReview` em `poker-loop-v1:real-hands`, separado
 ## V0.17 — revisão rápida de uma decisão real
 
 Mãos GG/PokerCraft salvas podem reconstruir uma ação voluntária do Herói sem revelar board, ações ou desfecho posteriores. Um autorrelato opcional é persistido em `poker-loop-v1:reasoning-snapshots`, com unicidade por mão. Ele não integra o motor pedagógico; o reset de progresso o preserva e a exclusão explícita da mão remove seu snapshot.
+
+
+## V0.18 — padrões de autorrelato em mãos reais
+
+A suíte possui 238 testes. Os 13 testes do resumo puro cobrem vazio, pouca evidência, threshold inclusivo de três snapshots, fatores múltiplos, `automatic`, sustentação, streets, legado, teto e ordem das observações, copy sem porcentagens, pureza, deleção por nova entrada e isolamento pedagógico.
