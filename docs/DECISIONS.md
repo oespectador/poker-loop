@@ -82,3 +82,5 @@ Estas decisões foram tomadas durante exploração e testes. Agentes autônomos 
 2. Somente as primeiras cinco novas revisões distintas após `startedAt` formam a janela imutável; cinco é hipótese operacional do piloto, não threshold validado.
 3. Há no máximo um acompanhamento ativo, sem fila ou histórico permanente. Substituição e encerramento são escolhas explícitas do jogador.
 4. Ausência ou repetição do fator descreve apenas esta janela e não altera `Attempt`, `SkillState`, diagnóstico, scheduler ou treino.
+
+5. A janela prospectiva é append-only: fatos observados são congelados no ingresso. Exclusão/edição posterior não abre vaga nem altera contagens; depois de cinco, nenhuma revisão futura pode entrar.

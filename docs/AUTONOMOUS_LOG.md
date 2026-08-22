@@ -558,5 +558,13 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Persistência:** `poker-loop-v1:real-hand-investigation`, versão 1, sem conclusão textual ou histórico permanente. Substituição e encerramento são explícitos.
 - **Defesas:** baseline ausente/alterada produz estado neutro; revisão antiga editada não cruza `startedAt`; mãos posteriores à quinta não mudam a janela; legados válidos participam sem matching aproximado.
 - **Escopo preservado:** nenhum dado alimenta `Attempt`, `SkillState`, diagnóstico, candidate/recurring/recovery, scheduler, sessão ativa, `learningLoop` ou treino.
-- **Validação:** 276 testes automatizados, typecheck, build e auditoria de diff executados.
+- **Validação:** 282 testes automatizados, typecheck, build e auditoria de diff executados.
 - **Decisões humanas pendentes:** validar com jogadores se cinco revisões dão uma janela compreensível; o número é hipótese operacional, não threshold validado.
+
+### Correção do bloqueador append-only do PR #25
+
+- `prospectiveReviews` passou a congelar fatos observados no storage V1.
+- `syncProspectiveInvestigation()` acrescenta candidatos elegíveis até cinco sem remover, substituir ou editar entradas anteriores.
+- A derivação deixou de reconstruir a janela a partir dos snapshots atuais; exclusões e edições posteriores não mudam contagens nem permitem entrada da sexta revisão.
+- `/hands` sincroniza no carregamento e após salvar Quick Review, persistindo somente quando há acréscimo.
+- Validação final: 282 testes; typecheck, build e `git diff --check`.

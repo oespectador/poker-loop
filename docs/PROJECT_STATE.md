@@ -273,3 +273,7 @@ A suíte possui 238 testes. Os 13 testes do resumo puro cobrem vazio, pouca evid
 V0.18 descreve retrospectivamente o autorrelato; V0.19 deriva do passado uma hipótese cautelosa; V0.20 permite acompanhar uma delas em dados posteriores. Ao iniciar, a evidência de origem fica congelada e uma fronteira `startedAt` separa a baseline das primeiras cinco novas revisões distintas. Essa janela de cinco é uma hipótese operacional do piloto, não threshold validado, confiança ou teste estatístico. O resultado continua descritivo e não avalia estratégia.
 
 Existe no máximo um acompanhamento em `poker-loop-v1:real-hand-investigation`. Ele pode ser substituído ou encerrado deliberadamente sem apagar mãos ou snapshots. A derivação pura não alimenta `Attempt`, `SkillState`, diagnóstico, scheduler, sessão ativa ou treino.
+
+### Correção de integridade da janela V0.20
+
+O schema V1 também persiste `prospectiveReviews`: até cinco observações append-only com `snapshotId`, `handReviewId`, `createdAt`, presença congelada do fator e sustentação percebida aplicável. A derivação usa somente esses fatos congelados. Exclusão ou edição posterior não reduz, substitui nem reclassifica a janela; mãos removidas apenas deixam de oferecer detalhe.

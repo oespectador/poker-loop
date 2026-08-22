@@ -1,9 +1,17 @@
 import { reasoningFactorLabels } from "./realHandReasoning";
-import type { ReasoningFactor, StoredRealHandReasoningSnapshot } from "./types";
+import type { ReasoningFactor, SelfRatedSupport, StoredRealHandReasoningSnapshot } from "./types";
 import type { RealHandInvestigationCandidate } from "./realHandInvestigations";
 
 export const REAL_HAND_INVESTIGATION_KEY = "poker-loop-v1:real-hand-investigation";
 export const PROSPECTIVE_WINDOW_SIZE = 5;
+
+export interface ProspectiveObservedReview {
+  snapshotId: string;
+  handReviewId: string;
+  createdAt: string;
+  factorPresent: boolean;
+  selfRatedSupport?: SelfRatedSupport;
+}
 
 export interface ActiveRealHandInvestigation {
   version: 1;
@@ -14,6 +22,7 @@ export interface ActiveRealHandInvestigation {
   baselineHandReviewIds: string[];
   baselineReviewCount: number;
   baselineLowOrUnclearCount?: number;
+  prospectiveReviews: ProspectiveObservedReview[];
 }
 
 export type ProspectiveInvestigationStatus =
@@ -36,6 +45,7 @@ export interface ProspectiveInvestigationResult {
 
 const factors = new Set<ReasoningFactor>(["size", "board", "previous-actions", "configuration", "player-read", "automatic", "other"]);
 const lowOrUnclear = new Set(["low", "unclear"]);
+const supports = new Set<SelfRatedSupport>(["low", "medium", "high", "unclear"]);
 const validStrings = (value: unknown) => Array.isArray(value) && value.length > 0 && value.every((item) => typeof item === "string" && Boolean(item.trim())) && new Set(value).size === value.length;
 
 export function isActiveRealHandInvestigation(value: unknown): value is ActiveRealHandInvestigation {
@@ -46,7 +56,19 @@ export function isActiveRealHandInvestigation(value: unknown): value is ActiveRe
     validStrings(item.baselineSnapshotIds) && validStrings(item.baselineHandReviewIds) &&
     item.baselineSnapshotIds instanceof Array && item.baselineHandReviewIds instanceof Array &&
     item.baselineSnapshotIds.length === item.baselineHandReviewIds.length && item.baselineReviewCount === item.baselineSnapshotIds.length &&
-    (item.baselineLowOrUnclearCount === undefined || (item.factor !== "automatic" && Number.isInteger(item.baselineLowOrUnclearCount) && (item.baselineLowOrUnclearCount as number) >= 0 && (item.baselineLowOrUnclearCount as number) <= item.baselineReviewCount));
+    (item.baselineLowOrUnclearCount === undefined || (item.factor !== "automatic" && Number.isInteger(item.baselineLowOrUnclearCount) && (item.baselineLowOrUnclearCount as number) >= 0 && (item.baselineLowOrUnclearCount as number) <= item.baselineReviewCount)) &&
+    Array.isArray(item.prospectiveReviews) && item.prospectiveReviews.length <= PROSPECTIVE_WINDOW_SIZE &&
+    new Set(item.prospectiveReviews.map((review) => (review as Record<string, unknown>)?.handReviewId)).size === item.prospectiveReviews.length &&
+    item.prospectiveReviews.every((value) => {
+      if (!value || typeof value !== "object") return false;
+      const review = value as Record<string, unknown>;
+      return typeof review.snapshotId === "string" && Boolean(review.snapshotId.trim()) &&
+        typeof review.handReviewId === "string" && Boolean(review.handReviewId.trim()) &&
+        !(item.baselineHandReviewIds as unknown[]).includes(review.handReviewId) &&
+        typeof review.createdAt === "string" && Number.isFinite(Date.parse(review.createdAt)) && Date.parse(review.createdAt) > Date.parse(item.startedAt as string) &&
+        typeof review.factorPresent === "boolean" &&
+        (review.selfRatedSupport === undefined || (item.factor !== "automatic" && supports.has(review.selfRatedSupport as SelfRatedSupport)));
+    });
 }
 
 /** Freezes the exact V0.19 evidence at the moment the player starts following it. */
@@ -60,6 +82,7 @@ export function createActiveRealHandInvestigation(
     baselineSnapshotIds: [...candidate.snapshotIds], baselineHandReviewIds: [...candidate.handReviewIds],
     baselineReviewCount: candidate.reviewCount,
     ...(candidate.lowOrUnclearCount === undefined ? {} : { baselineLowOrUnclearCount: candidate.lowOrUnclearCount }),
+    prospectiveReviews: [],
   };
   if (!isActiveRealHandInvestigation(investigation)) throw new Error("Acompanhamento inválido.");
   return investigation;
@@ -98,6 +121,29 @@ function chronological(a: StoredRealHandReasoningSnapshot, b: StoredRealHandReas
   return Date.parse(a.createdAt) - Date.parse(b.createdAt) || a.id.localeCompare(b.id);
 }
 
+/** Appends eligible observations and freezes their facts; existing entries are never rewritten. */
+export function syncProspectiveInvestigation(
+  investigation: ActiveRealHandInvestigation,
+  snapshots: readonly StoredRealHandReasoningSnapshot[],
+): ActiveRealHandInvestigation {
+  if (investigation.prospectiveReviews.length >= PROSPECTIVE_WINDOW_SIZE || !baselineIsAvailable(investigation, snapshots)) return investigation;
+  const seenHands = new Set([...investigation.baselineHandReviewIds, ...investigation.prospectiveReviews.map(({ handReviewId }) => handReviewId)]);
+  const additions: ProspectiveObservedReview[] = [];
+  for (const snapshot of [...snapshots].sort(chronological)) {
+    if (investigation.prospectiveReviews.length + additions.length >= PROSPECTIVE_WINDOW_SIZE) break;
+    if (Date.parse(snapshot.createdAt) <= Date.parse(investigation.startedAt) || seenHands.has(snapshot.handReviewId)) continue;
+    seenHands.add(snapshot.handReviewId);
+    additions.push({
+      snapshotId: snapshot.id,
+      handReviewId: snapshot.handReviewId,
+      createdAt: snapshot.createdAt,
+      factorPresent: snapshot.factors.includes(investigation.factor),
+      ...(investigation.factor === "automatic" || snapshot.selfRatedSupport === undefined ? {} : { selfRatedSupport: snapshot.selfRatedSupport }),
+    });
+  }
+  return additions.length ? { ...investigation, prospectiveReviews: [...investigation.prospectiveReviews, ...additions] } : investigation;
+}
+
 /** Observes self-reports after an explicit temporal boundary; it never reads storage. */
 export function deriveProspectiveInvestigation(
   investigation: ActiveRealHandInvestigation | null,
@@ -106,14 +152,9 @@ export function deriveProspectiveInvestigation(
   if (!investigation) return null;
   if (!baselineIsAvailable(investigation, snapshots)) return { status: "inconclusive", reviewedCount: 0, factorCount: 0, observedSnapshotIds: [], observedHandReviewIds: [], text: "Algumas revisões que originaram este acompanhamento não estão mais disponíveis." };
 
-  const baselineHands = new Set(investigation.baselineHandReviewIds);
-  const distinct = new Map<string, StoredRealHandReasoningSnapshot>();
-  for (const snapshot of [...snapshots].sort(chronological)) {
-    if (Date.parse(snapshot.createdAt) > Date.parse(investigation.startedAt) && !baselineHands.has(snapshot.handReviewId) && !distinct.has(snapshot.handReviewId)) distinct.set(snapshot.handReviewId, snapshot);
-  }
-  const window = [...distinct.values()].slice(0, PROSPECTIVE_WINDOW_SIZE);
-  const occurrences = window.filter((snapshot) => snapshot.factors.includes(investigation.factor));
-  const common = { reviewedCount: window.length, factorCount: occurrences.length, observedSnapshotIds: window.map(({ id }) => id), observedHandReviewIds: window.map(({ handReviewId }) => handReviewId) };
+  const window = investigation.prospectiveReviews;
+  const occurrences = window.filter(({ factorPresent }) => factorPresent);
+  const common = { reviewedCount: window.length, factorCount: occurrences.length, observedSnapshotIds: window.map(({ snapshotId }) => snapshotId), observedHandReviewIds: window.map(({ handReviewId }) => handReviewId) };
   const label = reasoningFactorLabels[investigation.factor];
   if (window.length < PROSPECTIVE_WINDOW_SIZE) return { ...common, status: "waiting", text: `${window.length} de 5 novas decisões revisadas. ${label} apareceu em ${occurrences.length} ${occurrences.length === 1 ? "delas" : "delas"}.` };
   if (investigation.factor === "automatic") {

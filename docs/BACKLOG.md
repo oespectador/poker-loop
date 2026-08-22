@@ -207,3 +207,8 @@ Ficam fora: análise estratégica, agregações, hipóteses, associação ao tre
 - resultados factuais para espera, repetição com/sem sustentação baixa/incerta, uma ocorrência, ausência e baseline indisponível;
 - snapshots legados válidos participam por `handReviewId` e `createdAt`, sem matching aproximado;
 - janela de cinco documentada como hipótese operacional, sem conexão ao motor pedagógico.
+
+### Integridade append-only da V0.20 concluída
+
+- `prospectiveReviews` congela as cinco observações e seus fatos no ingresso;
+- edições/exclusões não reabrem vaga, e revisões posteriores nunca substituem a janela fechada.
