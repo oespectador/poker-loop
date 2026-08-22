@@ -12,6 +12,7 @@ import { QuickReview } from "./QuickReview";
 import { deleteReasoningSnapshotForHand, readReasoningSnapshots } from "@/lib/reasoningSnapshotStorage";
 import { ParsedHandVisualization } from "../components/HandVisualization";
 import { summarizeRealHandReviewPatterns } from "@/lib/realHandReviewPatterns";
+import { deriveRealHandInvestigations } from "@/lib/realHandInvestigations";
 
 const emptyForm: RealHandReviewInput = { rawHandText: "", doubt: "", rangeRead: "", objective: "", targetsAndSizeResponse: "" };
 const cardLabel = (card: string) => card.replace("h", "♥").replace("d", "♦").replace("c", "♣").replace("s", "♠");
@@ -24,8 +25,10 @@ export default function HandsPage() {
   const [editingId, setEditingId] = useState<string>(); const [form, setForm] = useState<RealHandReviewInput>(emptyForm); const [message, setMessage] = useState("");
   const [importMessage, setImportMessage] = useState(""); const [importSummary, setImportSummary] = useState<{ recognized: number; ignored: number; selected: number }>();
   const [reasoningSnapshots, setReasoningSnapshots] = useState<StoredRealHandReasoningSnapshot[]>([]);
+  const [openInvestigation, setOpenInvestigation] = useState<string>();
   useEffect(() => { setHands(readRealHands()); setSuggestions(readHandSuggestions()); setReasoningSnapshots(readReasoningSnapshots()); }, []);
   const reviewPatterns = summarizeRealHandReviewPatterns(reasoningSnapshots);
+  const investigations = deriveRealHandInvestigations(reasoningSnapshots);
   const selected = hands.find(({ id }) => id === selectedId); const selectedSuggestion = suggestions.find(({ id }) => id === selectedSuggestionId);
   function openDetail(kind: "saved" | "suggestion", id: string) { const next = selectHandDetail(kind, id); setSelectedId(next.selectedId); setSelectedSuggestionId(next.selectedSuggestionId); }
   function change<K extends keyof RealHandReviewInput>(key: K, value: RealHandReviewInput[K]) { setForm((current) => ({ ...current, [key]: value })); }
@@ -55,6 +58,12 @@ export default function HandsPage() {
     <section className="page-heading"><div className="eyebrow">MÃOS REAIS</div><h1>Do volume à próxima situação para considerar.</h1><p className="lead">Importações e mãos salvas são contexto para você. Elas não viram diagnóstico nem alteram seu progresso.</p></section>
 
     <section className="panel review-patterns" aria-labelledby="review-patterns-title"><div className="eyebrow">SUAS REVISÕES</div><h2 id="review-patterns-title">O que tem aparecido nas suas decisões</h2><p>Isso resume apenas o que você marcou durante as revisões. Não é uma avaliação de certo ou errado.</p><strong className="reviewed-count">{reviewPatterns.reviewedHands} {reviewPatterns.reviewedHands === 1 ? "decisão revisada" : "decisões revisadas"}</strong>{reviewPatterns.observations.length > 0 ? <ul className="review-observations">{reviewPatterns.observations.map((observation) => <li key={`${observation.kind}:${observation.text}`}>{observation.text}</li>)}</ul> : <p className="review-patterns-empty">{reviewPatterns.hasEnoughReviewsForObservations ? "Entre as revisões registradas, nenhum fator apareceu em pelo menos três decisões." : "Continue revisando mãos. Ainda há poucas revisões para destacar algo que tenha aparecido repetidamente."}</p>}</section>
+
+    <section className="panel investigations" aria-labelledby="investigations-title"><div className="eyebrow">PARA INVESTIGAR</div><h2 id="investigations-title">Pontos que apareceram em várias revisões</h2><p>Essas são hipóteses baseadas no que você mesmo marcou nas suas mãos. Elas não indicam que uma decisão estava certa ou errada.</p>{investigations.length ? <div className="investigation-list">{investigations.map((candidate) => {
+      const relatedHands = candidate.handReviewIds.map((id) => hands.find((hand) => hand.id === id)).filter((hand): hand is RealHandReview => Boolean(hand)).slice(0, 3);
+      const isOpen = openInvestigation === candidate.factor;
+      return <article className="investigation-card" key={candidate.factor}><div className="eyebrow">{candidate.factorLabel.toUpperCase()}</div><p>{candidate.text}</p>{relatedHands.length > 0 && <><button className="text-button" type="button" aria-expanded={isOpen} onClick={() => setOpenInvestigation(isOpen ? undefined : candidate.factor)}>Ver mãos relacionadas</button>{isOpen && <div className="related-hands">{relatedHands.map((hand) => <button type="button" className="hand-list-item" key={hand.id} onClick={() => openDetail("saved", hand.id)}><strong>{hand.title || "Mão registrada"}</strong><span>{new Date(hand.createdAt).toLocaleDateString("pt-BR")}{hand.street ? ` · ${realHandStreetLabels[hand.street]}` : ""}</span></button>)}</div>}</>}</article>;
+    })}</div> : <p className="investigations-empty">Ainda não apareceu nenhum ponto com evidência suficiente no seu autorrelato para destacar como hipótese de investigação.</p>}</section>
 
     <section className="panel import-panel"><div><div className="eyebrow">IMPORTAR SESSÃO GG/POKERCRAFT</div><h2>Separe até cinco situações, sem criar uma fila de mãos.</h2><p>Seu arquivo .txt é processado localmente neste navegador e não é enviado a um servidor.</p></div><label className={`primary-cta file-cta ${suggestions.length ? "disabled" : ""}`}>Escolher arquivo<input type="file" accept=".txt,text/plain" disabled={Boolean(suggestions.length)} onChange={(event) => { void importFile(event.target.files?.[0]); event.target.value = ""; }} /></label></section>
     {suggestions.length > 0 && <p className="form-message">Você ainda tem situações desta sessão para considerar. Salve ou descarte essas sugestões antes de importar outra sessão.</p>}

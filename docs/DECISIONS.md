@@ -67,3 +67,11 @@ Estas decisões foram tomadas durante exploração e testes. Agentes autônomos 
 1. Padrões derivados de `RealHandReasoningSnapshot` descrevem o autorrelato do jogador e não entram no motor pedagógico sem uma etapa futura explícita de validação.
 2. Três snapshots são somente o limiar de visibilidade de uma observação factual; frequência não equivale a leak, erro, domínio ou evidência pedagógica.
 3. Snapshots legados sem `sourceHandId` participam do resumo sem matching aproximado ou migração de proveniência.
+
+
+## V0.19 — hipóteses de investigação
+
+1. **Frozen Decision:** uma hipótese derivada de mãos reais indica apenas que um padrão do autorrelato merece investigação. Ela não é evidência de erro e não pode alterar o motor pedagógico sem uma etapa explícita de verificação.
+2. A unidade de evidência é `handReviewId` distinto. Fatores normais exigem três revisões e `low`/`unclear` em duas; `automatic` exige três revisões e não recebe sustentação implícita.
+3. Evidências representativas são as três revisões mais recentes, com desempate determinístico, nunca ordenadas por resultado financeiro. Legados qualificam, mas o detalhe só é localizado por `handReviewId` exato.
+4. V0.18 descreve; V0.19 propõe investigar; nenhuma diagnostica ou associa `ReasoningFactor` a Skill.

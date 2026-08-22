@@ -259,6 +259,12 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 .review-observations { display: grid; gap: 10px; margin: 18px 0 0; padding: 0; list-style: none; }
 .review-observations li { padding: 12px 14px; border-left: 3px solid var(--cyan); border-radius: 0 10px 10px 0; background: rgba(94,231,244,.05); color: #c5d2db; }
 .review-patterns .review-patterns-empty { margin-top: 16px; max-width: 680px; }
+.investigations { margin: -28px 0 48px; }
+.investigation-list { display: grid; gap: 12px; margin-top: 22px; }
+.investigation-card { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.investigation-card p { margin: 8px 0 12px; color: #c5d2db; }
+.related-hands { display: grid; gap: 8px; margin-top: 12px; }
+.investigations-empty { max-width: 700px; margin-top: 18px; color: var(--muted); }
 
 .hand-visual { display: grid; gap: 20px; margin: 20px 0; border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--bg); }
 .hand-visual-header { display: flex; justify-content: space-between; align-items: start; gap: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }

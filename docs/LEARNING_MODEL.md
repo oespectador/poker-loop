@@ -216,3 +216,8 @@ Uma revisão rápida reconstrói apenas as informações disponíveis até uma a
 ## V0.18 — resumo longitudinal do autorrelato
 
 Contagens de fatores, sustentação percebida e streets descrevem apenas o que o jogador marcou. Um fator pode ficar visível após aparecer em três snapshots, mas frequência não é leak, erro, domínio nem evidência pedagógica. `automatic` não recebe sustentação implícita e fica fora desse denominador. O resumo não alimenta `Attempt`, `SkillState`, diagnóstico, scheduler ou o loop pedagógico.
+
+
+## V0.19 — hipótese cautelosa para investigar
+
+V0.18 é descrição factual longitudinal; V0.19 transforma repetição suficiente somente em uma hipótese de investigação. Nenhuma das duas é diagnóstico pedagógico. Para fatores normais, três mãos distintas e pelo menos duas decisões com sustentação percebida `low`/`unclear` qualificam a hipótese; `automatic` exige apenas três mãos distintas. A sustentação continua pertencendo à decisão inteira, não ao fator. Não existe mapeamento automático entre `ReasoningFactor` e Skill, nem efeito sobre treino, evidência ou scheduler.
