@@ -212,3 +212,7 @@ O parser produz estruturas temporárias e a triagem reduz a sessão a no máximo
 ## V0.17 — autorrelato em uma decisão real
 
 Uma revisão rápida reconstrói apenas as informações disponíveis até uma ação escolhida do Herói e salva um `RealHandReasoningSnapshot`. O campo `selfRatedSupport` descreve quanto o próprio jogador achava que sua leitura estava sustentada naquele momento; não mede a sustentação real. Snapshot é material do jogador, separado de `Attempt`, diagnóstico, Skills, scheduler, recovery, retention e transfer.
+
+## V0.18 — resumo longitudinal do autorrelato
+
+Contagens de fatores, sustentação percebida e streets descrevem apenas o que o jogador marcou. Um fator pode ficar visível após aparecer em três snapshots, mas frequência não é leak, erro, domínio nem evidência pedagógica. `automatic` não recebe sustentação implícita e fica fora desse denominador. O resumo não alimenta `Attempt`, `SkillState`, diagnóstico, scheduler ou o loop pedagógico.

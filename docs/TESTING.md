@@ -165,3 +165,7 @@ decisão, a troca de anchor, o corte de streets/ações futuras e a propriedade
 protegendo snapshots antigos, observação opcional, limite de dois fatores,
 matching exato, storage separado e isolamento de `Attempt`, `SkillState` e do
 scheduler.
+
+## V0.18 — padrões nas revisões de mãos reais
+
+A suíte possui 238 testes. `tests/realHandReviewPatterns.test.ts` adiciona 13 testes para vazio, pouca evidência, fatores em duas ou exatamente três revisões, marcações múltiplas, `automatic`, denominador de sustentação, agregado `low` + `unclear`, streets, legado, teto e desempate, copy sem porcentagens e pureza. Também cobre deleção pela entrada atualizada e isolamento de `Attempt`, `SkillState`, diagnóstico, scheduler e `learningLoop`; a cobertura V0.17 mantém a garantia de que o reset pedagógico preserva snapshots.

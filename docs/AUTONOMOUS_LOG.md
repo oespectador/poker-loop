@@ -528,3 +528,15 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Escopo preservado:** parser, triagem, matching, snapshot storage, `Attempt`,
   `SkillState`, scheduler, diagnóstico e motor pedagógico não mudaram.
 - **Validação:** 225 testes, typecheck, build e `git diff --check`.
+
+## 2026-08-21 — V0.18 Padrões nas Revisões de Mãos Reais
+
+- **Hipótese:** contagens factuais ajudam o jogador a reconhecer o que marcou sem promover o autorrelato a diagnóstico ou evidência de aprendizagem.
+- **Implementação:** modelo puro resume total, fatores, sustentação e streets; `/hands` mostra o total e até três observações. O threshold de três snapshots controla somente visibilidade.
+- **Sustentação:** `automatic` continua sem suporte e fora do denominador; somente `low` + `unclear` compõem a observação agregada factual.
+- **Compatibilidade:** snapshots legados sem `sourceHandId` participam sem matching aproximado, mudança de storage ou migração.
+- **Escopo preservado:** frequência não significa leak, erro, domínio ou evidência pedagógica. Nenhum dado alimenta `Attempt`, `SkillState`, diagnóstico, candidate/recurring/recovery, retention/transfer, scheduler, sessão ativa ou `learningLoop`.
+- **Arquivos:** novo modelo e testes, UI/CSS de `/hands` e os seis documentos de handoff exigidos.
+- **Validação:** 238 testes automatizados; typecheck, build e auditoria de diff executados nesta entrega.
+- **Riscos conhecidos:** o threshold é regra de apresentação conservadora, não limiar validado; a clareza da seção ainda requer validação humana.
+- **Decisões humanas pendentes:** nenhuma para o escopo especificado.
