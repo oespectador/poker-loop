@@ -9,6 +9,7 @@ import { appendAttempts, clearActiveTrainingSession, readActiveTrainingSession, 
 import { attemptSupport } from "@/lib/support";
 import { reprioritizeAfterError, skillLabels } from "@/lib/trainingEngine";
 import type { ActiveTrainingSession, Attempt, Exercise, Skill } from "@/lib/types";
+import { findInvestigationTrainingLaunchBySessionId, readInvestigationTrainingLaunches, registerLaunchForNewTrainingSession, type InvestigationTrainingLaunch } from "@/lib/investigationTrainingLaunches";
 
 function parseBoardLabel(label: string): string[] | null {
   const cards = label.trim().split(/\s+/);
@@ -24,6 +25,7 @@ export default function TrainingSession() {
   const params = useSearchParams();
   const focusParam = params.get("focus");
   const focus = isSkill(focusParam) ? focusParam : undefined;
+  const investigationParam = params.get("investigation");
   const [queue, setQueue] = useState<Exercise[]>([]);
   const [ready, setReady] = useState(false);
   const [index, setIndex] = useState(0);
@@ -31,13 +33,14 @@ export default function TrainingSession() {
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [expanded, setExpanded] = useState(false);
   const [hintRevealed, setHintRevealed] = useState(false);
+  const [provenance, setProvenance] = useState<InvestigationTrainingLaunch>();
   const activeSession = useRef<ActiveTrainingSession | null>(null);
 
   function newSessionId() {
     return `session-${Date.now()}-${crypto.randomUUID()}`;
   }
 
-  function startNewSession(history: Attempt[]) {
+  function startNewSession(history: Attempt[], allowInvestigationOrigin = false) {
     const created = createTrainingSession(history, focus, newSessionId());
     activeSession.current = created.active;
     writeActiveTrainingSession(created.active);
@@ -47,6 +50,8 @@ export default function TrainingSession() {
     setSelected(null);
     setExpanded(false);
     setHintRevealed(false);
+    const launch = allowInvestigationOrigin ? registerLaunchForNewTrainingSession(investigationParam, created.active) : null;
+    setProvenance(launch ?? undefined);
   }
 
   useEffect(() => {
@@ -57,8 +62,9 @@ export default function TrainingSession() {
       setQueue(resumed.queue);
       setAttempts(resumed.attempts);
       setIndex(resumed.active.nextIndex);
+      setProvenance(findInvestigationTrainingLaunchBySessionId(readInvestigationTrainingLaunches(), resumed.active.sessionId));
     } else {
-      startNewSession(history);
+      startNewSession(history, true);
     }
     setReady(true);
   }, [focus]);
@@ -154,6 +160,8 @@ export default function TrainingSession() {
         <span>{index + 1} / {queue.length}</span>
         <Link href="/" className="session-exit">Sair</Link>
       </header>
+
+      {provenance && index === 0 && <p className="optional-note">Esta sessão foi iniciada a partir de uma investigação de mãos reais. O foco {skillLabels[provenance.skill]} foi escolhido por você.</p>}
 
       <section className="exercise-card">
         {exercise.title && <div className="exercise-kicker">{exercise.title}</div>}

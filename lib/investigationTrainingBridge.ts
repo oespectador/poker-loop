@@ -14,6 +14,6 @@ export function canExploreInvestigationInTraining(completion: RealHandInvestigat
   return completion === "completed";
 }
 
-export function investigationTrainingLink(skill?: Skill): string | undefined {
-  return skill ? `/session?focus=${skill}` : undefined;
+export function investigationTrainingLink(episodeId: string, skill?: Skill): string | undefined {
+  return skill && episodeId ? `/session?focus=${skill}&investigation=${encodeURIComponent(episodeId)}` : undefined;
 }

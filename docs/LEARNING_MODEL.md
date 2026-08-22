@@ -237,3 +237,7 @@ V0.18 descreve retrospectivamente o autorrelato; V0.19 formula uma hipótese cau
 V0.18 descreve retrospectivamente o autorrelato; V0.19 formula uma hipótese; V0.20 observa prospectivamente; V0.21 guarda memória histórica; V0.22 permite uma navegação voluntária para o treino existente. Somente um episódio `completed` oferece a ponte, e o jogador escolhe explicitamente uma das Skills atuais sem sugestão, ordenação ou pré-seleção derivada do `ReasoningFactor` ou das contagens do episódio.
 
 A navegação usa apenas `/session?focus=<Skill>`. O episódio continua fora da evidência pedagógica e permanece imutável: abrir o treino não demonstra que ele foi concluído, relevante ou eficaz, nem cria proveniência entre episódio e sessão.
+
+## V0.23 — proveniência factual do início
+
+V0.18 descreve retrospectivamente; V0.19 formula uma hipótese; V0.20 observa prospectivamente; V0.21 guarda memória histórica; V0.22 oferece uma ponte voluntária; V0.23 registra somente que uma **nova** sessão real nasceu dessa ponte e da Skill escolhida pelo jogador. O registro separado usa o `sessionId`, o `startedAt` e o `focus` da sessão criada. Não representa conclusão, aprendizagem, eficácia, diagnóstico ou causalidade. Retomar uma sessão preexistente não cria origem retroativa, e **Treinar mais** não herda a origem anterior.

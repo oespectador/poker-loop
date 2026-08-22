@@ -26,15 +26,15 @@ test("somente episódios completed são elegíveis", () => {
 });
 
 test("a ponte começa sem foco e não produz destino sem escolha", () => {
-  assert.equal(investigationTrainingLink(), undefined);
+  assert.equal(investigationTrainingLink("episode"), undefined);
 });
 
 test("todas as Skills atuais aparecem na ordem neutra dos labels humanos", () => {
   assert.deepEqual(investigationTrainingSkillOptions, Object.entries(realHandSkillLabels).map(([skill, label]) => ({ skill, label })));
 });
 
-test("cada escolha usa exatamente o fluxo normal /session?focus=<Skill>", () => {
-  for (const { skill } of investigationTrainingSkillOptions) assert.equal(investigationTrainingLink(skill), `/session?focus=${skill}`);
+test("cada escolha transporta Skill e episódio para o fluxo normal", () => {
+  for (const { skill } of investigationTrainingSkillOptions) assert.equal(investigationTrainingLink("episode", skill), `/session?focus=${skill}&investigation=episode`);
 });
 
 test("fator e contagens diferentes não alteram opções nem selecionam foco", () => {
@@ -44,7 +44,7 @@ test("fator e contagens diferentes não alteram opções nem selecionam foco", (
   const expected = investigationTrainingSkillOptions.map(({ skill }) => skill);
   for (const episode of snapshots) {
     assert.deepEqual(investigationTrainingSkillOptions.map(({ skill }) => skill), expected);
-    assert.equal(investigationTrainingLink(), undefined);
+    assert.equal(investigationTrainingLink(episode.id), undefined);
     assert.equal(episode.completion, "completed");
   }
 });
@@ -52,6 +52,6 @@ test("fator e contagens diferentes não alteram opções nem selecionam foco", (
 test("usar a ponte não modifica o episódio histórico", () => {
   const episode = createRealHandInvestigationEpisode(active("size"), "completed");
   const before = JSON.stringify(episode);
-  assert.equal(investigationTrainingLink("sizing" satisfies Skill), "/session?focus=sizing");
+  assert.equal(investigationTrainingLink(episode.id, "sizing" satisfies Skill), `/session?focus=sizing&investigation=${episode.id}`);
   assert.equal(JSON.stringify(episode), before);
 });
