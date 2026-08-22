@@ -43,6 +43,15 @@ export function summarizeFrozenObservationWindow(
   };
 }
 
+/** Derives the factual end of a frozen window without relying on array position. */
+export function latestFrozenObservationAt(observations: readonly ProspectiveObservedReview[]): string | undefined {
+  return observations.reduce<string | undefined>((latest, observation) => {
+    const observedAt = Date.parse(observation.createdAt);
+    if (!Number.isFinite(observedAt)) return latest;
+    return latest === undefined || observedAt > Date.parse(latest) ? observation.createdAt : latest;
+  }, undefined);
+}
+
 export function buildRealHandWindowComparison(
   episode: StoredRealHandInvestigationEpisode,
   followUp: PostTrainingRealHandFollowUp,
@@ -54,6 +63,10 @@ export function buildRealHandWindowComparison(
   if (followUp.episodeId !== episode.id || followUp.factor !== episode.factor) return null;
   if (!launch || !isInvestigationTrainingLaunch(launch) || launch.sessionId !== followUp.sessionId || launch.episodeId !== episode.id) return null;
   if (!completion || !isInvestigationTrainingCompletion(completion) || completion.sessionId !== launch.sessionId) return null;
+  const originalCompletedAt = latestFrozenObservationAt(episode.prospectiveReviews);
+  if (!originalCompletedAt) return null;
+  const boundaries = [originalCompletedAt, episode.endedAt, launch.launchedAt, completion.completedAt, followUp.startedAt, followUp.windowCompletedAt];
+  if (boundaries.some((boundary, index) => index > 0 && Date.parse(boundary) < Date.parse(boundaries[index - 1]))) return null;
   return {
     episodeId: episode.id,
     followUpId: followUp.id,
@@ -62,7 +75,7 @@ export function buildRealHandWindowComparison(
     skill: launch.skill,
     original: summarizeFrozenObservationWindow(episode.prospectiveReviews, episode.factor),
     posterior: summarizeFrozenObservationWindow(followUp.observations, followUp.factor),
-    originalCompletedAt: episode.endedAt,
+    originalCompletedAt,
     posteriorCompletedAt: followUp.windowCompletedAt,
   };
 }

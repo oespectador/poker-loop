@@ -205,4 +205,4 @@ A suíte possui 375 testes. Os 26 testes de `tests/postTrainingRealHandFollowUps
 
 ## V0.26 — comparação descritiva entre janelas
 
-A suíte possui 401 testes. Os 26 testes de `tests/realHandWindowComparisons.test.ts` cobrem cadeia exata e todas as rupturas de elegibilidade, contagens congeladas, sustentação ausente, `automatic`, independência entre Skill e `ReasoningFactor`, ausência de campos interpretativos/storage/dependências pedagógicas, independência e ordenação de múltiplos follow-ups e copy/UI neutras. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+A suíte possui 407 testes. Os 32 testes de `tests/realHandWindowComparisons.test.ts` cobrem cadeia exata e todas as rupturas de elegibilidade, conclusão original derivada do maior `createdAt` congelado, fronteiras temporais inconsistentes e igualdade aceita, contagens congeladas, sustentação ausente, `automatic`, independência entre Skill e `ReasoningFactor`, ausência de campos interpretativos/storage/dependências pedagógicas, independência e ordenação de múltiplos follow-ups e copy/UI neutras. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
