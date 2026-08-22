@@ -96,3 +96,9 @@ V0.18 é descrição retrospectiva; V0.19 é hipótese de investigação; V0.20 
 **A ponte entre uma investigação de mãos reais e o treino é voluntária. O Poker Loop não mapeia `ReasoningFactor` para `Skill`. O foco usado na sessão é uma escolha explícita do jogador e o episódio histórico continua fora da evidência pedagógica.**
 
 A ponte aparece somente em episódios `completed`, não em acompanhamentos ativos, `stopped` ou `inconclusive`. Ela reutiliza `/session?focus=<Skill>` sem scheduler especial, não persiste relação episódio → sessão e não modifica os schemas de episódio, `Attempt` ou sessão ativa. Abrir treino a partir de um episódio não demonstra que o treino foi concluído, relevante ou eficaz.
+
+## Frozen Decision — proveniência de início da sessão (V0.23)
+
+**Uma provenance V0.23 registra somente que uma nova sessão foi criada a partir de um episódio `completed` e de uma Skill escolhida explicitamente pelo jogador. Ela não registra conclusão, aprendizagem, eficácia ou relação causal.**
+
+V0.18 é descrição retrospectiva; V0.19 é hipótese; V0.20 é observação prospectiva; V0.21 é memória histórica; V0.22 é ponte voluntária; V0.23 é proveniência factual do início de uma nova sessão. Retomar uma sessão preexistente não cria retrospectivamente uma origem de investigação. **Treinar mais** não herda automaticamente a origem da sessão anterior. O `sessionId` possui no máximo uma origem, preservada diante de conflito; episódio, `ActiveTrainingSession` e `Attempt` permanecem inalterados.

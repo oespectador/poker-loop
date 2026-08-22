@@ -289,3 +289,7 @@ Existe no máximo um acompanhamento em `poker-loop-v1:real-hand-investigation`. 
 ### Correção de integridade da janela V0.20
 
 O schema V1 também persiste `prospectiveReviews`: até cinco observações append-only com `snapshotId`, `handReviewId`, `createdAt`, presença congelada do fator e sustentação percebida aplicável. A derivação usa somente esses fatos congelados. Exclusão ou edição posterior não reduz, substitui nem reclassifica a janela; mãos removidas apenas deixam de oferecer detalhe.
+
+## V0.23 — Proveniência Voluntária do Início de uma Sessão
+
+A ponte de episódios `completed` agora leva `focus` escolhido e `investigation` exato até `/session`. Somente quando não há sessão compatível para retomar e `createTrainingSession` cria uma nova sessão, o app valida o episódio no histórico e registra `{ version: 1, episodeId, sessionId, skill, launchedAt }` em `poker-loop-v1:investigation-training-launches`; `launchedAt` é o `startedAt` real. A chave é separada, defensiva e única por `sessionId`. Reload é idempotente, retomada preexistente não recebe origem e **Treinar mais** não herda o parâmetro. A UI mostra uma nota mínima na sessão originada e a quantidade factual de sessões iniciadas no card do episódio. Não há conclusão, resultado, eficácia, alteração pedagógica ou mapping `ReasoningFactor → Skill`.

@@ -190,3 +190,7 @@ A correção do bloqueador de substituição adiciona regressões para classific
 ## V0.22 — ponte voluntária para treino
 
 A suíte possui 315 testes. `tests/investigationTrainingBridge.test.ts` protege o estado inicial sem foco, o inventário completo e a ordem neutra de Skills, o destino exato `/session?focus=<Skill>`, a independência de fator e contagens e a imutabilidade do episódio depois da navegação. A cobertura também mantém os schemas e o motor existentes sem alteração; `npm test`, `npm run typecheck`, `npm run build` e `git diff --check` são obrigatórios.
+
+## V0.23 — proveniência de início
+
+A suíte possui 329 testes. `tests/investigationTrainingLaunches.test.ts` cobre storage vazio/corrompido, validação item a item, Skill e timestamps, origem exata `completed`, identidade e tempo reais da sessão, unicidade/idempotência/conflito por `sessionId`, múltiplas sessões por episódio, lookup, contagem, reload, reset isolado, schema mínimo, imutabilidade e ausência de dependências pedagógicas ou mapping de fator. `tests/investigationTrainingBridge.test.ts` protege o link com `focus` escolhido e `investigation` exato. A integração em `TrainingSession` registra somente após criação; retomada e **Treinar mais** não chamam a autorização de origem. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.

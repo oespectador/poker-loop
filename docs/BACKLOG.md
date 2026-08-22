@@ -227,3 +227,11 @@ Ficam fora: análise estratégica, agregações, hipóteses, associação ao tre
 - nenhum `ReasoningFactor`, `factorCount` ou `lowOrUnclearCount` ordena, filtra, destaca ou sugere uma Skill;
 - a navegação reutiliza exatamente `/session?focus=<Skill>` e a política normal de sessão ativa;
 - nenhum storage, schema, vínculo episódio → sessão ou mudança no motor pedagógico foi criado.
+
+## Concluído na V0.23 — Proveniência Voluntária do Início
+
+- storage V1 separado registra somente episódio, sessão real, Skill escolhida e instante real do início;
+- origem exige episódio histórico exato `completed`, focus válido e criação efetiva de uma nova sessão;
+- unicidade por `sessionId` é idempotente para repetição exata e preserva o original em conflitos;
+- retomada preexistente não recebe origem e **Treinar mais** não herda a investigação;
+- cards contam somente sessões iniciadas; conclusão, resultado, causalidade e motor pedagógico continuam fora.

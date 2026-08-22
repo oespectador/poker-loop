@@ -593,3 +593,14 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Interpretação:** abrir o treino não demonstra conclusão, relevância ou eficácia; a sessão permanece pedagogicamente idêntica a uma sessão manual com o mesmo foco.
 - **Validação:** 315 testes automatizados, typecheck, build e `git diff --check` previstos para esta entrega.
 - **Decisões humanas pendentes:** qualquer proveniência episódio → sessão ou comparação de efeito exige decisão futura explícita.
+
+## 2026-08-22 — V0.23 Proveniência Voluntária do Início de uma Sessão
+
+- **Hipótese:** registrar o fato mínimo de origem torna a ponte auditável sem promover navegação a evidência pedagógica.
+- **Implementação:** storage separado `poker-loop-v1:investigation-training-launches` com schema exato `{ version: 1; episodeId: string; sessionId: string; skill: Skill; launchedAt: string }`; validação defensiva, ordenação estável e unicidade por `sessionId`.
+- **Momento:** o launch nasce somente depois de `createTrainingSession`, usando `sessionId`, `focus` e `startedAt` do objeto novo, e somente após localizar exatamente um episódio histórico `completed`.
+- **Retomada e continuidade:** sessão compatível preexistente não recebe origem retroativa; reload encontra a origem já gravada; **Treinar mais** cria sessão normal sem herdar `investigation`.
+- **Reset:** um launch pode sobreviver ao reset de Attempts; isso continua significando somente que uma sessão foi iniciada naquele momento. Attempts ou existência futura da sessão não reinterpretam esse fato.
+- **Escopo preservado:** nenhuma conclusão, contagem de decisões, acerto/erro, eficácia, causalidade ou mapping `ReasoningFactor → Skill`; `StoredRealHandInvestigationEpisode`, `ActiveTrainingSession`, `Attempt` e motor pedagógico não mudaram.
+- **Validação:** 329 testes, typecheck, build e `git diff --check` previstos para esta entrega.
+- **Decisões humanas pendentes:** qualquer associação futura de conclusão ou efeito exige uma versão e decisão separadas.
