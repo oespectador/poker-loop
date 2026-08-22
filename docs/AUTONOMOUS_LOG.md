@@ -621,3 +621,9 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 Implementado storage V1 separado, validação defensiva, criação por cadeia exata, baseline de revisões existentes, sync append-only, fechamento factual na quinta observação e resumo descritivo. `/hands` permite escolher uma das sessões concluídas, inicia somente após confirmação, sincroniza em reload/Quick Review, mostra acompanhamento ativo e contagem histórica. V0.20 e V0.25 não podem iniciar simultaneamente. Não foram alterados `Attempt`, `SkillState`, scheduler, sessão ativa ou motor pedagógico. Comparação pré/pós e interpretação de eficácia permanecem deliberadamente fora do escopo e exigem futura decisão humana/metodológica.
 
 **Auditoria final:** o parser passou a rejeitar observações persistidas fora da ordem factual `createdAt + snapshotId`; a suíte protege também a imutabilidade referencial de janelas concluídas e a ordenação determinística do histórico. Validação prevista: 375 testes, typecheck, build e `git diff --check`.
+
+## 2026-08-22 — V0.26 Comparação Descritiva entre Janelas
+
+**Hipótese de trabalho:** duas janelas congeladas podem ficar legíveis lado a lado sem transformar cinco autorrelatos em métrica de desempenho nem atribuir a diferença à sessão escolhida.
+
+Implementado um modelo derivado puro com validação defensiva da cadeia completa, resumos factuais de presença e sustentação registrada e ordenação independente de follow-ups. O histórico em `/hands` oferece expansão compacta com dois blocos visualmente equivalentes, disclosure metodológico e Skill somente como proveniência. Legado sem sustentação fica fora do denominador; `automatic` mostra apenas presença. Nenhuma chave de storage ou schema existente foi alterado, e nenhuma leitura de mãos/snapshots atuais ou integração com o motor pedagógico foi criada.

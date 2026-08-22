@@ -114,3 +114,9 @@ Launch e completion são dois eventos distintos. Uma sessão pode possuir launch
 **Um acompanhamento pós-treino observa prospectivamente o mesmo ReasoningFactor do episódio original em novas revisões de mãos reais. A Skill escolhida no treino não determina o fator observado, e a nova janela não é comparada automaticamente com a anterior.**
 
 A V0.25 produz observação posterior, não evidência causal de eficácia. Uma comparação entre a janela anterior e a posterior exige decisão metodológica própria e não faz parte da V0.25. `startedAt` é o clique explícito; `completion.completedAt` é apenas proveniência. A janela de cinco é uma hipótese operacional do piloto.
+
+## Frozen Decision — V0.26
+
+A V0.26 pode colocar lado a lado a janela prospectiva original e uma janela prospectiva posterior concluída quando ambas observam o mesmo `ReasoningFactor` e possuem proveniência exata. A comparação é descritiva: não calcula delta, porcentagem, direção, eficácia ou causalidade.
+
+A Skill é somente a proveniência do foco escolhido na sessão entre as janelas. Legado sem sustentação não recebe valor presumido; `automatic` não recebe métricas de sustentação. Cada follow-up é comparado apenas com o episódio original. Dois conjuntos autorrelatados de cinco decisões não constituem, por si sós, evidência de eficácia do treinamento.

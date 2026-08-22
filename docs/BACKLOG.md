@@ -251,3 +251,11 @@ Ficam fora: análise estratégica, agregações, hipóteses, associação ao tre
 - baseline e primeiras cinco novas revisões são congeladas append-only em storage separado;
 - V0.20 e V0.25 têm exclusividade de observação ativa;
 - resumo e histórico são factuais, sem comparação pré/pós, eficácia ou mudança no motor pedagógico.
+
+## Concluído na V0.26 — Comparação Descritiva entre Janelas de Mãos Reais
+
+- join puro e defensivo da cadeia exata episódio → follow-up → launch → completion;
+- fatos congelados original e posterior mostrados em blocos neutros, com denominadores de sustentação registrada;
+- `automatic` compara somente presença e a Skill aparece somente como foco escolhido;
+- cada follow-up gera sua própria comparação com o original, sem agregação longitudinal;
+- nenhum storage, schema protegido, delta, porcentagem, direção, causalidade ou alteração pedagógica.
