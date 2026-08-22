@@ -305,3 +305,7 @@ A ponte de episódios `completed` agora leva `focus` escolhido e `investigation`
 ## V0.25 — Acompanhamento Pós-Treino em Mãos Reais
 
 A cadeia exata episódio `completed` → launch → completion agora pode originar, por escolha explícita da sessão e novo clique de início, uma janela append-only de cinco Quick Reviews. O storage separado congela baseline, fatos observados e conclusão factual na quinta revisão. Apenas uma observação prospectiva (V0.20 ou V0.25) pode estar ativa. Histórico, reset e motor pedagógico permanecem separados; não há comparação pré/pós nem inferência de eficácia.
+
+## V0.26 — Comparação Descritiva entre Janelas de Mãos Reais
+
+Uma camada pura e derivada agora une exclusivamente episódio `completed` 5/5, follow-up concluído 5/5 do mesmo fator, launch da mesma sessão e episódio, e completion da mesma sessão. `/hands` pode expandir cada comparação elegível em dois blocos neutros com contagem de presença e, exceto para `automatic`, sustentação registrada baixa/incerta. Cada follow-up permanece uma comparação independente com o original, ordenada pela conclusão posterior e ID. A data de conclusão de cada janela corresponde à entrada factual da quinta observação; `episode.endedAt` representa o arquivamento do episódio e não substitui a conclusão da janela original. A comparação só aparece quando `janela original → episódio → sessão → follow-up` também é uma sequência temporal consistente. Não há storage, migração, delta, porcentagem, direção, interpretação causal ou entrada no motor pedagógico.
