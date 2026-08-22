@@ -301,3 +301,7 @@ O schema V1 também persiste `prospectiveReviews`: até cinco observações appe
 ## V0.23 — Proveniência Voluntária do Início de uma Sessão
 
 A ponte de episódios `completed` agora leva `focus` escolhido e `investigation` exato até `/session`. Somente quando não há sessão compatível para retomar e `createTrainingSession` cria uma nova sessão, o app valida o episódio no histórico e registra `{ version: 1, episodeId, sessionId, skill, launchedAt }` em `poker-loop-v1:investigation-training-launches`; `launchedAt` é o `startedAt` real. A chave é separada, defensiva e única por `sessionId`. Reload é idempotente, retomada preexistente não recebe origem e **Treinar mais** não herda o parâmetro. A UI mostra uma nota mínima na sessão originada e a quantidade factual de sessões iniciadas no card do episódio. Não há conclusão, resultado, eficácia, alteração pedagógica ou mapping `ReasoningFactor → Skill`.
+
+## V0.25 — Acompanhamento Pós-Treino em Mãos Reais
+
+A cadeia exata episódio `completed` → launch → completion agora pode originar, por escolha explícita da sessão e novo clique de início, uma janela append-only de cinco Quick Reviews. O storage separado congela baseline, fatos observados e conclusão factual na quinta revisão. Apenas uma observação prospectiva (V0.20 ou V0.25) pode estar ativa. Histórico, reset e motor pedagógico permanecem separados; não há comparação pré/pós nem inferência de eficácia.

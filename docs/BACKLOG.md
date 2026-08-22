@@ -243,3 +243,11 @@ Ficam fora: análise estratégica, agregações, hipóteses, associação ao tre
 - registro imediato na última decisão e reconciliação exata no reload;
 - histórico distingue sessões iniciadas de sessões que chegaram ao fim planejado;
 - sessões sem launch e **Treinar mais** permanecem fora desta proveniência.
+
+## Concluído na V0.25 — Acompanhamento Pós-Treino em Mãos Reais
+
+- sessão concluída é escolhida explicitamente dentro da cadeia exata de proveniência;
+- o fator vem exclusivamente do episódio, sem mapping com Skill;
+- baseline e primeiras cinco novas revisões são congeladas append-only em storage separado;
+- V0.20 e V0.25 têm exclusividade de observação ativa;
+- resumo e histórico são factuais, sem comparação pré/pós, eficácia ou mudança no motor pedagógico.

@@ -613,3 +613,9 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - **Momento e recovery:** persiste ao registrar a última decisão; no reload, reconcilia somente launch/session/focus exatos, fila concluída e timestamp confiável. Retomada mantém o mesmo `sessionId`; **Treinar mais** não herda launch.
 - **Escopo preservado:** nenhuma métrica copiada; `InvestigationTrainingLaunch`, `StoredRealHandInvestigationEpisode`, `ActiveTrainingSession`, `Attempt`, `trainingEngine`, `diagnostics` e `learningLoop` não mudaram.
 - **Validação:** 349 testes, typecheck, build e `git diff --check` executados nesta entrega.
+
+## 2026-08-22 — V0.25 Acompanhamento Pós-Treino
+
+**Hipótese trabalhada:** uma janela prospectiva iniciada explicitamente após uma sessão concluída pode preservar proveniência e registrar cinco novos autorrelatos sem sugerir comparação ou causalidade.
+
+Implementado storage V1 separado, validação defensiva, criação por cadeia exata, baseline de revisões existentes, sync append-only, fechamento factual na quinta observação e resumo descritivo. `/hands` permite escolher uma das sessões concluídas, inicia somente após confirmação, sincroniza em reload/Quick Review, mostra acompanhamento ativo e contagem histórica. V0.20 e V0.25 não podem iniciar simultaneamente. Não foram alterados `Attempt`, `SkillState`, scheduler, sessão ativa ou motor pedagógico. Comparação pré/pós e interpretação de eficácia permanecem deliberadamente fora do escopo e exigem futura decisão humana/metodológica.
