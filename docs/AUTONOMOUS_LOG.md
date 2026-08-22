@@ -568,3 +568,17 @@ A suíte passou com 71 testes. Typecheck, build e `git diff --check` foram execu
 - A derivação deixou de reconstruir a janela a partir dos snapshots atuais; exclusões e edições posteriores não mudam contagens nem permitem entrada da sexta revisão.
 - `/hands` sincroniza no carregamento e após salvar Quick Review, persistindo somente quando há acréscimo.
 - Validação final: 282 testes; typecheck, build e `git diff --check`.
+
+## 2026-08-22 — V0.21 Histórico de Investigações de Mãos Reais
+
+- **Hipótese:** preservar ciclos encerrados como fatos congelados permite memória longitudinal sem transformar autorrelato em evidência pedagógica.
+- **Implementação:** episódios V1 append-only usam a chave separada `poker-loop-v1:real-hand-investigation-history`; conclusão, encerramento antecipado e baseline inconclusiva são arquivados como `completed`, `stopped` e `inconclusive`.
+- **Imutabilidade:** baseline e `prospectiveReviews` recebem cópia profunda no arquivamento; resumos usam somente o episódio e detalhes de mãos usam exclusivamente IDs ainda existentes, sem reposição.
+- **UI:** `/hands` conserva o resultado 5/5 até a ação **Concluir acompanhamento** e lista episódios por `endedAt` decrescente com desempate por ID.
+- **Escopo preservado:** histórico não mapeia `ReasoningFactor` para Skill e não participa de `Attempt`, diagnóstico, scheduler, sessão ou `learningLoop`.
+- **Validação:** 309 testes, typecheck, build e `git diff --check` executados na entrega.
+
+### Correção do bloqueador de classificação na substituição
+
+- `completionForProspectiveResult()` centraliza a precedência `inconclusive` → janela 5/5 `completed` → janela parcial `stopped`.
+- Conclusão manual e substituição explícita agora chamam a mesma regra; iniciar outro acompanhamento nunca rebaixa uma janela completa para `stopped`.

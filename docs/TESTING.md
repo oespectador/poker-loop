@@ -180,3 +180,9 @@ A suíte possui 255 testes. Os 17 testes de `tests/realHandInvestigations.test.t
 A suíte possui 282 testes. Os 27 testes de `tests/prospectiveRealHandInvestigation.test.ts` cobrem criação e validação do schema, storage defensivo e unicidade, baseline congelada/inconsistente, fronteira temporal, edição antiga, deduplicação, espera, fechamento imutável em cinco, ordenação determinística, todos os resultados de fatores normais e de `automatic`, legado, encerramento/reset isolados, copy e ausência de dependência do motor pedagógico. Executar com `npm test`; `npm run typecheck`, `npm run build` e `git diff --check` continuam obrigatórios.
 
 A correção append-only adiciona regressões para A–E imutáveis diante de F, exclusão de A sem reposição, contagem preservada, edição de fator/sustentação sem efeito retroativo, round-trip do storage, sync parcial ordenado/deduplicado, baseline excluída, idempotência após cinco e detalhe ausente sem alteração da observação.
+
+## V0.21 — histórico de investigações
+
+A suíte possui 309 testes. `tests/realHandInvestigationHistory.test.ts` cobre schema e chave separados, storage vazio/corrompido e validação item a item, cópia profunda de baseline/janela, conclusões `completed`/`stopped`/`inconclusive`, idempotência por ID, coexistência e ordem determinística, resumo independente de snapshots, mãos excluídas sem reposição ou redução histórica, limpeza isolada da investigação ativa, preservação pelo reset e ausência de dependência do motor pedagógico ou copy diagnóstica/comparativa.
+
+A correção do bloqueador de substituição adiciona regressões para classificação centralizada: janela 5/5 vira `completed` tanto por conclusão direta quanto ao iniciar outra investigação; 3/5 vira `stopped`; `inconclusive` mantém precedência; a nova investigação é criada e o episódio anterior permanece único.

@@ -212,3 +212,10 @@ Ficam fora: análise estratégica, agregações, hipóteses, associação ao tre
 
 - `prospectiveReviews` congela as cinco observações e seus fatos no ingresso;
 - edições/exclusões não reabrem vaga, e revisões posteriores nunca substituem a janela fechada.
+
+## Concluído na V0.21 — Histórico de Investigações de Mãos Reais
+
+- episódios encerrados ficam em storage V1 separado, imutável e append-only;
+- `completed`, `stopped` e `inconclusive` preservam factual e exatamente baseline e janela observada;
+- `/hands` lista os ciclos recentes e abre somente mãos ainda existentes, sem alterar contagens ou substituir exclusões;
+- ficam fora comparação entre ciclos, tendências, scores, diagnóstico e qualquer conexão ao motor pedagógico.

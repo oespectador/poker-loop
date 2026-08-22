@@ -84,3 +84,9 @@ Estas decisões foram tomadas durante exploração e testes. Agentes autônomos 
 4. Ausência ou repetição do fator descreve apenas esta janela e não altera `Attempt`, `SkillState`, diagnóstico, scheduler ou treino.
 
 5. A janela prospectiva é append-only: fatos observados são congelados no ingresso. Exclusão/edição posterior não abre vaga nem altera contagens; depois de cinco, nenhuma revisão futura pode entrar.
+
+## Frozen Decision — episódios históricos de investigação (V0.21)
+
+**Uma investigação prospectiva encerrada torna-se um episódio histórico imutável. O episódio preserva o autorrelato observado naquele ciclo e não é reinterpretado a partir do estado atual das mãos ou snapshots.**
+
+V0.18 é descrição retrospectiva; V0.19 é hipótese de investigação; V0.20 é observação prospectiva; V0.21 é memória de episódios concluídos/encerrados. Histórico de investigação não é histórico pedagógico. Episódios são append-only, não são comparados automaticamente e não alimentam treino, diagnóstico ou Skills.

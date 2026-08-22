@@ -14,7 +14,8 @@ import { ParsedHandVisualization } from "../components/HandVisualization";
 import { summarizeRealHandReviewPatterns } from "@/lib/realHandReviewPatterns";
 import { deriveRealHandInvestigations } from "@/lib/realHandInvestigations";
 import { reasoningFactorLabels } from "@/lib/realHandReasoning";
-import { clearActiveRealHandInvestigation, createActiveRealHandInvestigation, deriveProspectiveInvestigation, readActiveRealHandInvestigation, syncProspectiveInvestigation, writeActiveRealHandInvestigation, type ActiveRealHandInvestigation } from "@/lib/prospectiveRealHandInvestigation";
+import { createActiveRealHandInvestigation, deriveProspectiveInvestigation, readActiveRealHandInvestigation, syncProspectiveInvestigation, writeActiveRealHandInvestigation, type ActiveRealHandInvestigation } from "@/lib/prospectiveRealHandInvestigation";
+import { archiveRealHandInvestigation, completionForProspectiveResult, readRealHandInvestigationHistory, summarizeRealHandInvestigationEpisode, type StoredRealHandInvestigationEpisode } from "@/lib/realHandInvestigationHistory";
 
 const emptyForm: RealHandReviewInput = { rawHandText: "", doubt: "", rangeRead: "", objective: "", targetsAndSizeResponse: "" };
 const cardLabel = (card: string) => card.replace("h", "♥").replace("d", "♦").replace("c", "♣").replace("s", "♠");
@@ -30,11 +31,13 @@ export default function HandsPage() {
   const [openInvestigation, setOpenInvestigation] = useState<string>();
   const [activeInvestigation, setActiveInvestigation] = useState<ActiveRealHandInvestigation | null>(null);
   const [showObservedHands, setShowObservedHands] = useState(false);
+  const [history, setHistory] = useState<StoredRealHandInvestigationEpisode[]>([]);
+  const [openEpisodeId, setOpenEpisodeId] = useState<string>();
   useEffect(() => {
     const snapshots = readReasoningSnapshots(); const storedInvestigation = readActiveRealHandInvestigation();
     const syncedInvestigation = storedInvestigation ? syncProspectiveInvestigation(storedInvestigation, snapshots) : null;
     if (storedInvestigation && syncedInvestigation && syncedInvestigation !== storedInvestigation) writeActiveRealHandInvestigation(syncedInvestigation, true);
-    setHands(readRealHands()); setSuggestions(readHandSuggestions()); setReasoningSnapshots(snapshots); setActiveInvestigation(syncedInvestigation);
+    setHands(readRealHands()); setSuggestions(readHandSuggestions()); setReasoningSnapshots(snapshots); setActiveInvestigation(syncedInvestigation); setHistory(readRealHandInvestigationHistory());
   }, []);
   const reviewPatterns = summarizeRealHandReviewPatterns(reasoningSnapshots);
   const investigations = deriveRealHandInvestigations(reasoningSnapshots);
@@ -67,10 +70,14 @@ export default function HandsPage() {
   function follow(candidate: (typeof investigations)[number]) {
     if (activeInvestigation && activeInvestigation.factor !== candidate.factor && !window.confirm(`Você já está acompanhando ${reasoningFactorLabels[activeInvestigation.factor]}. Encerrar esse acompanhamento e começar ${candidate.factorLabel}?`)) return;
     if (activeInvestigation?.factor === candidate.factor) return;
+    if (activeInvestigation && prospectiveResult) setHistory(archiveRealHandInvestigation(activeInvestigation, completionForProspectiveResult(prospectiveResult)));
     const next = createActiveRealHandInvestigation(candidate);
-    writeActiveRealHandInvestigation(next, Boolean(activeInvestigation)); setActiveInvestigation(next); setShowObservedHands(false);
+    writeActiveRealHandInvestigation(next); setActiveInvestigation(next); setShowObservedHands(false);
   }
-  function endFollowing() { clearActiveRealHandInvestigation(); setActiveInvestigation(null); setShowObservedHands(false); }
+  function endFollowing() {
+    if (!activeInvestigation || !prospectiveResult) return;
+    setHistory(archiveRealHandInvestigation(activeInvestigation, completionForProspectiveResult(prospectiveResult))); setActiveInvestigation(null); setShowObservedHands(false);
+  }
   function refreshSnapshots() {
     const snapshots = readReasoningSnapshots(); setReasoningSnapshots(snapshots);
     if (!activeInvestigation) return;
@@ -88,7 +95,13 @@ export default function HandsPage() {
       return <article className="investigation-card" key={candidate.factor}><div className="eyebrow">{candidate.factorLabel.toUpperCase()}</div><p>{candidate.text}</p><div className="investigation-actions"><button className="primary-cta compact" type="button" disabled={activeInvestigation?.factor === candidate.factor} onClick={() => follow(candidate)}>{activeInvestigation?.factor === candidate.factor ? "Acompanhamento ativo" : "Acompanhar nas próximas mãos"}</button>{relatedHands.length > 0 && <><button className="text-button" type="button" aria-expanded={isOpen} onClick={() => setOpenInvestigation(isOpen ? undefined : candidate.factor)}>Ver mãos relacionadas</button>{isOpen && <div className="related-hands">{relatedHands.map((hand) => <button type="button" className="hand-list-item" key={hand.id} onClick={() => openDetail("saved", hand.id)}><strong>{hand.title || "Mão registrada"}</strong><span>{new Date(hand.createdAt).toLocaleDateString("pt-BR")}{hand.street ? ` · ${realHandStreetLabels[hand.street]}` : ""}</span></button>)}</div>}</>}</div></article>;
     })}</div> : <p className="investigations-empty">Ainda não apareceu nenhum ponto com evidência suficiente no seu autorrelato para destacar como hipótese de investigação.</p>}</section>
 
-    {activeInvestigation && prospectiveResult && <section className="panel active-investigation" aria-labelledby="active-investigation-title"><div className="eyebrow">ACOMPANHAMENTO ATIVO</div><h2 id="active-investigation-title">{reasoningFactorLabels[activeInvestigation.factor]}</h2><p>Vamos observar apenas as próximas decisões que você revisar. As mãos que criaram esta hipótese não entram novamente na contagem.</p><strong className="investigation-progress">{prospectiveResult.reviewedCount} de 5 novas decisões</strong><p>{prospectiveResult.text}</p><div className="investigation-actions">{prospectiveResult.observedHandReviewIds.some((id) => hands.some((hand) => hand.id === id)) && <button className="text-button" type="button" aria-expanded={showObservedHands} onClick={() => setShowObservedHands(!showObservedHands)}>Ver novas mãos observadas</button>}<button className="text-button danger-text" type="button" onClick={endFollowing}>Encerrar acompanhamento</button></div>{showObservedHands && <div className="related-hands">{prospectiveResult.observedHandReviewIds.map((id) => hands.find((hand) => hand.id === id)).filter((hand): hand is RealHandReview => Boolean(hand)).map((hand) => <button type="button" className="hand-list-item" key={hand.id} onClick={() => openDetail("saved", hand.id)}><strong>{hand.title || "Mão registrada"}</strong><span>{new Date(hand.createdAt).toLocaleDateString("pt-BR")}{hand.street ? ` · ${realHandStreetLabels[hand.street]}` : ""}</span></button>)}</div>}</section>}
+    {activeInvestigation && prospectiveResult && <section className="panel active-investigation" aria-labelledby="active-investigation-title"><div className="eyebrow">ACOMPANHAMENTO ATIVO</div><h2 id="active-investigation-title">{reasoningFactorLabels[activeInvestigation.factor]}</h2><p>Vamos observar apenas as próximas decisões que você revisar. As mãos que criaram esta hipótese não entram novamente na contagem.</p><strong className="investigation-progress">{prospectiveResult.reviewedCount} de 5 novas decisões</strong><p>{prospectiveResult.text}</p><div className="investigation-actions">{prospectiveResult.observedHandReviewIds.some((id) => hands.some((hand) => hand.id === id)) && <button className="text-button" type="button" aria-expanded={showObservedHands} onClick={() => setShowObservedHands(!showObservedHands)}>Ver novas mãos observadas</button>}<button className={prospectiveResult.reviewedCount === 5 && prospectiveResult.status !== "inconclusive" ? "primary-cta compact" : "text-button danger-text"} type="button" onClick={endFollowing}>{prospectiveResult.reviewedCount === 5 && prospectiveResult.status !== "inconclusive" ? "Concluir acompanhamento" : "Encerrar acompanhamento"}</button></div>{showObservedHands && <div className="related-hands">{prospectiveResult.observedHandReviewIds.map((id) => hands.find((hand) => hand.id === id)).filter((hand): hand is RealHandReview => Boolean(hand)).map((hand) => <button type="button" className="hand-list-item" key={hand.id} onClick={() => openDetail("saved", hand.id)}><strong>{hand.title || "Mão registrada"}</strong><span>{new Date(hand.createdAt).toLocaleDateString("pt-BR")}{hand.street ? ` · ${realHandStreetLabels[hand.street]}` : ""}</span></button>)}</div>}</section>}
+
+    <section className="panel investigation-history" aria-labelledby="investigation-history-title"><div className="eyebrow">HISTÓRICO DE INVESTIGAÇÕES</div><h2 id="investigation-history-title">O que você já acompanhou</h2>{history.length ? <div className="investigation-list">{history.map((episode) => {
+      const summary = summarizeRealHandInvestigationEpisode(episode); const availableHands = episode.prospectiveReviews.map(({ handReviewId }) => hands.find(({ id }) => id === handReviewId)).filter((hand): hand is RealHandReview => Boolean(hand)); const isOpen = openEpisodeId === episode.id;
+      const stateLabel = episode.completion === "completed" ? "Concluído" : episode.completion === "stopped" ? "Encerrado antes do fim" : "Inconclusivo";
+      return <article className="investigation-card" key={episode.id}><div className="eyebrow">{reasoningFactorLabels[episode.factor].toUpperCase()}</div><strong>{stateLabel} · {new Date(episode.endedAt).toLocaleDateString("pt-BR")}</strong><p>{summary.text}</p>{availableHands.length > 0 && <div className="investigation-actions"><button className="text-button" type="button" aria-expanded={isOpen} onClick={() => setOpenEpisodeId(isOpen ? undefined : episode.id)}>Ver mãos observadas</button>{isOpen && <div className="related-hands">{availableHands.map((hand) => <button type="button" className="hand-list-item" key={hand.id} onClick={() => openDetail("saved", hand.id)}><strong>{hand.title || "Mão registrada"}</strong><span>{new Date(hand.createdAt).toLocaleDateString("pt-BR")}{hand.street ? ` · ${realHandStreetLabels[hand.street]}` : ""}</span></button>)}</div>}</div>}</article>;
+    })}</div> : <p>Nenhum acompanhamento encerrado ainda.</p>}</section>
 
     <section className="panel import-panel"><div><div className="eyebrow">IMPORTAR SESSÃO GG/POKERCRAFT</div><h2>Separe até cinco situações, sem criar uma fila de mãos.</h2><p>Seu arquivo .txt é processado localmente neste navegador e não é enviado a um servidor.</p></div><label className={`primary-cta file-cta ${suggestions.length ? "disabled" : ""}`}>Escolher arquivo<input type="file" accept=".txt,text/plain" disabled={Boolean(suggestions.length)} onChange={(event) => { void importFile(event.target.files?.[0]); event.target.value = ""; }} /></label></section>
     {suggestions.length > 0 && <p className="form-message">Você ainda tem situações desta sessão para considerar. Salve ou descarte essas sugestões antes de importar outra sessão.</p>}
