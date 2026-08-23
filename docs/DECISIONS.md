@@ -138,3 +138,9 @@ Feedback específico da alternativa errada tem prioridade sobre feedback genéri
 **A V0.29 transforma o feedback do fechamento em uma oportunidade opcional de recuperação ativa: o jogador tenta lembrar a ideia antes de revelar o feedback autoral. Revelar, escrever ou pular essa interação não produz `Attempt` nem qualquer evidência de aprendizagem.**
 
 A reflexão escrita é efêmera e não é persistida. O feedback continua sendo exatamente o conteúdo autoral selecionado pela V0.28. Recuperação ativa na interface não é a mesma coisa que `recovery` no modelo longitudinal.
+
+## Frozen Decision — V0.30
+
+**A importação GG/PokerCraft continua apresentando no máximo cinco situações inicialmente, mas esse limite passa a representar apenas o primeiro lote de uma exploração progressiva. O jogador pode pedir voluntariamente mais situações do mesmo lote, sem que quantidade, resultado financeiro ou seleção estrutural sejam interpretados como erro ou evidência pedagógica.**
+
+**O batch persiste somente um pool limitado de candidatas estruturais para permitir exploração progressiva e reload; ele não representa todas as mãos como problemas.** O teto de 50 candidatas e o teto de 15 sugestões pendentes são limites operacionais reversíveis do piloto, não thresholds científicos.

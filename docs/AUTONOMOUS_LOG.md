@@ -653,3 +653,11 @@ A UI substituiu **VAMOS REFORÇAR** por um registro factual e adicionou o recap 
 Criado `SessionRecapReview`, que recebe, sem reordenar, os até três itens factuais já selecionados pela V0.28. Cada item mantém no state React local seu reveal e uma reflexão opcional de até 180 caracteres. O feedback exibido após o clique é exatamente `item.feedback`; fatos de erro e acerto posterior continuam visíveis e não controlam o reveal. O estado desaparece ao sair, sem storage, API, analytics ou `Attempt`.
 
 `SessionRecap`, seleção, ordenação e motor longitudinal permaneceram inalterados. Não houve mudança em `diagnostics`, `trainingEngine`, scheduler, recovery, retention, transfer ou proveniência de mãos reais. **Validação prevista:** 471 testes, typecheck, build e `git diff --check`. **Decisões humanas pendentes:** validar se o convite e o campo opcional ajudam sem acrescentar atrito ao fechamento.
+
+## 2026-08-23 — V0.30 Exploração Progressiva de uma Importação GG/PokerCraft
+
+**Hipótese de trabalho:** os cinco destaques estruturais iniciais podem funcionar como entrada compacta, enquanto pedidos voluntários de +5/+10 permitem explorar o mesmo arquivo sem reimportação ou inferência estratégica.
+
+A seleção passou a percorrer rodadas na ordem fixa das cinco categorias, com deduplicação global e pool de até 50 candidatas. O primeiro resultado de cada categoria continua usando os mesmos comparadores e a regressão compara explicitamente os cinco primeiros com `selectHandReviewSuggestions`. O batch V1 em `poker-loop-v1:gg-active-import-batch` persiste fingerprint, contagens factuais, candidatas completas e IDs já mostrados. Sugestões pendentes agora têm teto explícito de 15.
+
+`/hands` recupera o batch no reload, mostra contagens factuais, oferece +5/+10 somente com espaço e exige encerramento explícito antes de trocar um lote ainda explorável. Salvar ou descartar não remove o ID surfaced. Encerrar remove somente o batch: mãos, snapshots, fingerprint e progresso permanecem intactos. Filtros por categoria, bluff/value, EV, resultado financeiro, diagnóstico e todo o motor pedagógico ficaram fora. **Validação:** 491 testes, typecheck, build e `git diff --check`. **Validação humana pendente:** confirmar que a densidade visual de até 15 cards continua manejável no piloto.

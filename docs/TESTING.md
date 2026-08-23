@@ -218,3 +218,7 @@ A suíte possui 451 testes. `tests/sessionRecap.test.ts` cobre vazio, prioridade
 ## V0.29 — revisão ativa no fechamento
 
 A suíte possui 471 testes. Os 20 testes de `tests/sessionRecapReview.test.ts` protegem feedback inicialmente oculto, reveal exato e independente, reflexão opcional limitada a 180 caracteres, ausência de persistência/API/`Attempt`, fatos de acerto posterior, vazio sem controles artificiais, limite e ordem dos três cards, contagem restante, copy conservadora e associações acessíveis. Também verificam que o componente não importa diagnóstico, `trainingEngine` ou domínios de mãos reais e que `SessionRecap` não recebe estado de UI. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
+## V0.30 — exploração progressiva GG/PokerCraft
+
+A suíte possui 491 testes. Os 20 testes de `tests/activeGgImportBatch.test.ts`, somados às regressões de `tests/ggHandImport.test.ts`, cobrem equivalência dos cinco primeiros, rodadas, categorias esgotadas, limites e unicidade do pool, independência de resultado, schema/fingerprint/timestamps, storage ausente ou corrompido, +5/+10, teto de 15, pedidos parciais, consumo definitivo, reload, esgotamento, encerramento isolado, quota e ausência de dependências pedagógicas. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
