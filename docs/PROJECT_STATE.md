@@ -1,4 +1,4 @@
-# Project State — V0.28
+# Project State — V0.29
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,13 @@ Stack:
 
 ## Versão atual
 
-**V0.28 — Fechamento Didático da Sessão**
+**V0.29 — Revisão Ativa no Fechamento da Sessão**
+
+## V0.29 — Revisão Ativa no Fechamento da Sessão
+
+Os até três itens factuais selecionados pela V0.28 agora começam com o feedback autoral oculto. Cada card convida o jogador a tentar lembrar a ideia central, oferece uma reflexão opcional de até 180 caracteres e revela exatamente o feedback já escolhido pelo recap. Reveal e texto são estados React independentes por item e desaparecem ao sair da tela.
+
+Essa interação é estudo local, não avaliação. Escrever, revelar ou pular não cria `Attempt`, não persiste dados e não alimenta diagnóstico, scheduler, `SkillState`, recovery, retention ou transfer. Recuperação ativa na interface não é o `recovery` do modelo longitudinal. Sessões sem erro continuam sem pergunta artificial.
 
 ## V0.28 — Fechamento Didático da Sessão
 

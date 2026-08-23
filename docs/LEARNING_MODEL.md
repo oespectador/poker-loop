@@ -263,3 +263,9 @@ A sequência factual passa a ser `descrição retrospectiva (V0.18) → hipótes
 O recap imediato recupera somente erros realmente cometidos na sessão concluída e o feedback autoral já existente. Identidades iguais podem ser agrupadas para reduzir carga visual; a explicação exibida vem da alternativa errada mais recente e prefere `feedback.misconception[answerId]` a `feedback.short`.
 
 Um acerto posterior da mesma identidade, independentemente do suporte, é apenas um evento posterior dentro da sessão. O recap derivado não cria nova evidência, não diagnostica padrões e não qualifica recovery, retenção, transferência ou aprendizagem.
+
+## V0.29 — recuperação ativa no fechamento
+
+Antes de reler cada feedback selecionado pela V0.28, o jogador pode tentar recuperar mentalmente a ideia central e, opcionalmente, escrever uma frase curta. O feedback continua sendo exatamente o conteúdo autoral selecionado pela V0.28; somente sua apresentação começa recolhida.
+
+Essa recuperação ativa na interface não é `recovery` no modelo longitudinal. Revelar, escrever ou pular não avalia a lembrança, não cria `Attempt` nem qualquer evidência de aprendizagem. A reflexão escrita é efêmera, fica somente no estado React da tela final e não é persistida.

@@ -119,12 +119,14 @@ test("ordena sem acerto posterior, depois por recência e finalmente por id", ()
 });
 
 test("copy da UI limita três cards, informa restantes e mantém disclosure conservador", () => {
-  const source = readFileSync("app/session/TrainingSession.tsx", "utf8");
-  assert.match(source, /recap\.items\.slice\(0, 3\)/);
-  assert.match(source, /Outros \{remainingRecapItems\} raciocínios/);
-  assert.match(source, /Padrões recorrentes, retenção e transferência são avaliados separadamente/);
-  assert.match(source, /Nenhum erro foi registrado nesta sessão/);
-  assert.doesNotMatch(source, /VAMOS REFORÇAR|leak|fraqueza|dominou|mastery|recuperou|corrigiu definitivamente|aprendeu/i);
+  const sessionSource = readFileSync("app/session/TrainingSession.tsx", "utf8");
+  const reviewSource = readFileSync("app/session/SessionRecapReview.tsx", "utf8");
+  assert.match(sessionSource, /recap\.items\.slice\(0, 3\)/);
+  assert.match(sessionSource, /remainingCount=\{remainingRecapItems\}/);
+  assert.match(reviewSource, /Outros \{remainingCount\} raciocínios/);
+  assert.match(reviewSource, /Padrões recorrentes, retenção e transferência são avaliados separadamente/);
+  assert.match(reviewSource, /Nenhum erro foi registrado nesta sessão/);
+  assert.doesNotMatch(reviewSource, /VAMOS REFORÇAR|leak|fraqueza|dominou|mastery|recuperou|corrigiu definitivamente|aprendeu/i);
 });
 
 test("módulo puro não importa domínios proibidos nem storage", () => {

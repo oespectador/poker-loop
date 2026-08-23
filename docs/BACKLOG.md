@@ -2,6 +2,14 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.29 — Revisão Ativa no Fechamento da Sessão
+
+- feedback dos até três itens V0.28 começa oculto atrás de um convite breve para lembrar;
+- reflexão opcional de até 180 caracteres e reveal são controlados local e independentemente por item;
+- texto, reveal e saída sem reveal não persistem, não criam `Attempt` e não produzem evidência;
+- feedback autoral, fatos, seleção e ordem da V0.28 permanecem inalterados;
+- nenhuma mudança em diagnóstico, `trainingEngine`, scheduler, recovery, retention, transfer ou mãos reais.
+
 ## Concluído na V0.28 — Fechamento Didático da Sessão
 
 - recap puro e derivado dos erros da sessão, sem storage ou schema novo;
