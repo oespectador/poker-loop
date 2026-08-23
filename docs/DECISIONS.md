@@ -150,3 +150,9 @@ A reflexão escrita é efêmera e não é persistida. O feedback continua sendo 
 **A V0.31 permite explorar um lote GG/PokerCraft por características estruturais derivadas das candidatas já preservadas pela V0.30. Uma mesma mão pode pertencer a várias categorias. Os filtros não classificam erro, resultado ou intenção estratégica e não alteram evidência pedagógica.**
 
 **`HandReviewSuggestion.reason` representa a razão pela qual a candidata entrou no pool; ele não é uma descrição exaustiva das características da mão.** Tags, contagens e filtro selecionado permanecem derivados e não são persistidos.
+
+## Frozen Decision — V0.32
+
+**A V0.32 organiza a página Mãos por intenção do jogador — Explorar, Revisar e Acompanhar — sem alterar seleção, revisão, investigação ou evidência. A seção ativa é apenas estado de interface e não constitui dado pedagógico.**
+
+**Reduzir carga visual tem prioridade sobre expor simultaneamente todas as capacidades construídas.** A área inicial é derivada uma única vez dos estados já existentes; trocas posteriores são escolha do jogador ou navegação contextual explícita.

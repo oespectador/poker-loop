@@ -1,4 +1,4 @@
-# Project State — V0.29
+# Project State — V0.32
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,13 @@ Stack:
 
 ## Versão atual
 
-**V0.29 — Revisão Ativa no Fechamento da Sessão**
+**V0.32 — Mãos Organizadas pela Intenção do Jogador**
+
+## V0.32 — Mãos Organizadas pela Intenção do Jogador
+
+`/hands` agora mostra uma área principal por vez: **Explorar** reúne importação, lote, expansão, filtros e sugestões; **Revisar** reúne mãos salvas, Quick Review e registro manual; **Acompanhar** reúne padrões, investigações, follow-ups, histórico e comparações. A navegação é uma tablist acessível, efêmera e controlada somente por React.
+
+A inicialização prioriza investigação ou follow-up ativo, depois sugestões pendentes ou lote com candidatas restantes e, sem estado acionável, revisão. Essa escolha ocorre uma vez no carregamento. Salvar uma sugestão ou abrir uma mão relacionada navega explicitamente para Revisar e seleciona a mão, sem mudar qualquer contrato de seleção, snapshot, evidência ou storage.
 
 ## V0.29 — Revisão Ativa no Fechamento da Sessão
 

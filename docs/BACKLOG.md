@@ -2,6 +2,13 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.32 — Mãos Organizadas pela Intenção do Jogador
+
+- `/hands` apresenta somente Explorar, Revisar ou Acompanhar por vez, preservando todas as capacidades existentes;
+- helper puro escolhe inicialmente acompanhamento ativo, depois exploração acionável e, por fim, revisão;
+- salvar sugestão e abrir mão relacionada levam explicitamente à mão selecionada em Revisar;
+- tabs acessíveis e empty states reduzem carga visual sem URL, storage, schema ou mudança pedagógica.
+
 ## Concluído na V0.31 — Explorar Situações Específicas no Lote GG/PokerCraft
 
 - seis filtros estruturais observáveis são derivados do histórico bruto das candidatas do pool V0.30;

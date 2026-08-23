@@ -214,6 +214,16 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 }
 
 /* V0.15 — registro separado de mãos reais. */
+.hands-workspace-nav { margin: -12px 0 28px; }
+.hands-workspace-nav [role="tablist"] { display: inline-flex; gap: 5px; padding: 5px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg-soft); }
+.hands-workspace-nav [role="tab"] { display: grid; gap: 2px; min-width: 112px; border: 0; border-radius: 10px; padding: 10px 16px; background: transparent; color: var(--muted); cursor: pointer; font: inherit; font-weight: 800; }
+.hands-workspace-nav [role="tab"] small { font-size: 11px; font-weight: 600; }
+.hands-workspace-nav [role="tab"][aria-selected="true"] { background: rgba(94,231,244,.12); color: var(--text); }
+.hands-workspace-nav [role="tab"]:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.hands-workspace { display: grid; gap: 24px; outline: none; }
+.hands-workspace[hidden] { display: none; }
+.workspace-empty { margin: 0; color: var(--muted); }
+@media (max-width: 560px) { .hands-workspace-nav [role="tablist"] { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; } .hands-workspace-nav [role="tab"] { min-width: 0; padding-inline: 8px; } }
 .hands-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 24px; align-items: start; }
 .hand-form { display: grid; gap: 19px; margin-top: 20px; }
 .hand-form label { display: grid; gap: 7px; font-size: 14px; font-weight: 800; }
