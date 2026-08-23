@@ -210,3 +210,7 @@ A suíte possui 407 testes. Os 32 testes de `tests/realHandWindowComparisons.tes
 ## V0.27 — relação observada entre janelas
 
 A suíte possui 435 testes. Os 28 testes de `tests/realHandWindowRelations.test.ts` cobrem `fewer`/`same`/`more`, extremos 0/5 e 5/5, defesa de janelas 5/5, dependência exclusiva de `factorCount`, independência de sustentação e Skill, regra uniforme de `automatic`, copy com disclosure, linguagem e representação visual neutras, ausência de porcentagem/delta/storage/dependências pedagógicas e preservação da ordem de múltiplas comparações. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
+## V0.28 — fechamento didático da sessão
+
+A suíte possui 451 testes. `tests/sessionRecap.test.ts` cobre vazio, prioridade de misconception, fallback para feedback curto, agrupamento, identidades e labels humanas, recência, acerto posterior em todos os suportes, isolamento por sessão, IDs desconhecidos, os três purposes, ordenação determinística, limite visual, copy conservadora e ausência de storage/dependências proibidas. A suíte completa deve ser executada com `npm test`, seguida por `npm run typecheck`, `npm run build` e `git diff --check`.

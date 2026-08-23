@@ -148,6 +148,14 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 .finish-mark { color: var(--cyan); font-size: 58px; margin-bottom: 20px; }
 .finish-shell .finish-grid { width: 100%; margin: 22px 0 28px; }
 .finish-shell .primary-cta { min-width: 190px; }
+.session-recap { width: 100%; margin: 0 0 28px; }
+.session-recap > h2 { margin: 8px 0 16px; font-size: 22px; }
+.session-recap-list { display: grid; gap: 12px; }
+.session-recap-item { padding: 20px; border: 1px solid var(--line); border-radius: 15px; background: var(--panel); }
+.session-recap-item h3 { margin: 0 0 10px; font-size: 18px; }
+.session-recap-item p { margin: 0 0 8px; }
+.session-recap-item p:last-child { margin-bottom: 0; }
+.session-recap-disclosure { color: var(--muted); margin: 16px 0 0; font-size: 14px; }
 
 @media (max-width: 720px) {
   .topbar { width: min(100% - 24px, 1180px); min-height: auto; padding: 16px 0; flex-direction: column; align-items: stretch; }

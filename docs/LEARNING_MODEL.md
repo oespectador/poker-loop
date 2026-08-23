@@ -257,3 +257,9 @@ A sequência factual passa a ser `descrição retrospectiva (V0.18) → hipótes
 ## V0.27 — relação observada entre janelas
 
 A sequência factual passa a ser `descrição retrospectiva (V0.18) → hipótese (V0.19) → primeira observação prospectiva (V0.20) → memória histórica (V0.21) → ponte voluntária (V0.22) → sessão iniciada (V0.23) → sessão concluída (V0.24) → segunda observação prospectiva (V0.25) → janelas lado a lado (V0.26) → relação observada (V0.27)`. Sobre uma comparação V0.26 válida, a V0.27 compara somente quantas das cinco revisões de cada janela contêm o mesmo `ReasoningFactor`: `fewer`, `same` ou `more`. Sustentação e Skill não participam. `fewer` não significa melhora; `more` não significa piora; `same` não significa ausência de aprendizagem. A relação observada não demonstra efeito do treino.
+
+## V0.28 — fechamento didático da sessão
+
+O recap imediato recupera somente erros realmente cometidos na sessão concluída e o feedback autoral já existente. Identidades iguais podem ser agrupadas para reduzir carga visual; a explicação exibida vem da alternativa errada mais recente e prefere `feedback.misconception[answerId]` a `feedback.short`.
+
+Um acerto posterior da mesma identidade, independentemente do suporte, é apenas um evento posterior dentro da sessão. O recap derivado não cria nova evidência, não diagnostica padrões e não qualifica recovery, retenção, transferência ou aprendizagem.

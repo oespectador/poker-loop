@@ -2,6 +2,14 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.28 — Fechamento Didático da Sessão
+
+- recap puro e derivado dos erros da sessão, sem storage ou schema novo;
+- agrupamento por identidade de raciocínio e feedback autoral específico do erro mais recente;
+- acerto posterior apresentado somente como cronologia local, sem inferência longitudinal;
+- até três cards, contagem factual dos demais e disclosure de separação do motor;
+- `Attempt`, diagnóstico, scheduler, retention, transfer e `trainingEngine` inalterados.
+
 ## Concluído na V0.18 — Padrões nas Revisões de Mãos Reais
 
 - resumo puro de total, fatores, sustentação percebida e streets;

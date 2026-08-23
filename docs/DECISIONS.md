@@ -126,3 +126,9 @@ A Skill é somente a proveniência do foco escolhido na sessão entre as janelas
 A V0.27 pode descrever se o mesmo `ReasoningFactor` apareceu em menos, no mesmo número ou em mais revisões na janela posterior porque ambas as janelas comparadas possuem exatamente cinco observações. Essa relação é descritiva e não recebe valor positivo ou negativo.
 
 `fewer` não significa melhora. `more` não significa piora. `same` não significa ausência de aprendizagem. A relação observada não demonstra efeito do treino. Sustentação e Skill não participam da classificação, e cada follow-up continua independente.
+
+## Frozen Decision — V0.28
+
+O fechamento V0.28 resume somente erros ocorridos na sessão recém-concluída e reutiliza o feedback autoral dos exercícios. Um erro de sessão não é promovido a dificuldade recorrente, e um acerto posterior na mesma sessão não é promovido a recovery, retenção ou aprendizagem.
+
+Feedback específico da alternativa errada tem prioridade sobre feedback genérico. Erros da mesma identidade podem ser agrupados para reduzir carga visual. O fechamento da sessão é derivado e não cria nova evidência.
