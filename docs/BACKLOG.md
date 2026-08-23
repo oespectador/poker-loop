@@ -2,6 +2,13 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.31 — Explorar Situações Específicas no Lote GG/PokerCraft
+
+- seis filtros estruturais observáveis são derivados do histórico bruto das candidatas do pool V0.30;
+- uma mão pode pertencer a várias categorias, independentemente de `suggestion.reason`;
+- **Mostrar até 5** compartilha ordem, `surfacedSuggestionIds`, teto de 15 e transação com +5/+10;
+- filtro, tags e contagens são efêmeros; não há storage, schema, resultado financeiro, classificação estratégica ou mudança pedagógica.
+
 ## Concluído na V0.30 — Exploração Progressiva de uma Importação GG/PokerCraft
 
 - os cinco primeiros destaques permanecem equivalentes à triagem V0.16;

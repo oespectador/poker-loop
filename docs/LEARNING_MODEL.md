@@ -273,3 +273,7 @@ Essa recuperação ativa na interface não é `recovery` no modelo longitudinal.
 ## V0.30 — importação progressiva continua fora da evidência
 
 O batch GG/PokerCraft persiste somente um pool limitado de candidatas estruturais para permitir exploração progressiva e reload; ele não representa todas as mãos como problemas. Quantidade reconhecida, quantidade mostrada e candidatas restantes são fatos de interface, não `Attempt`, diagnóstico, Skill, erro, leak ou prioridade pedagógica. Salvar e descartar continuam sendo ações de organização do jogador, sem efeito no motor de aprendizagem.
+
+## V0.31 — exploração estrutural continua fora da evidência
+
+O jogador pode recortar voluntariamente o pool V0.30 por decisão no river, agressão enfrentada no river, showdown com cartas reveladas, alta exposição, pressão em várias streets ou linha longa. As categorias são derivadas novamente do histórico bruto preservado e podem se sobrepor; elas descrevem somente características observáveis, sem classificar resultado, intenção, erro ou valor estratégico. A escolha do filtro é estado local de interface e não altera evidência pedagógica.

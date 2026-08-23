@@ -329,3 +329,7 @@ Uma camada pura recebe exclusivamente cada `RealHandWindowComparison` V0.26, exi
 ## V0.30 — exploração progressiva da importação GG/PokerCraft
 
 A triagem inicial continua expondo no máximo cinco situações. A mesma ordenação estrutural agora produz, em rodadas pelas cinco categorias fixas, um pool determinístico limitado a 50 candidatas. Um único batch ativo persiste esse pool e os IDs já mostrados; o jogador pode acrescentar voluntariamente 5 ou 10 situações sem reler o arquivo, até o teto de 15 pendentes. Salvar ou descartar não devolve uma situação ao pool. Reload retoma o batch, e substituí-lo quando ainda restam candidatas exige encerramento explícito. Resultado financeiro, interpretação estratégica e motor pedagógico continuam fora.
+
+## V0.31 — exploração de situações específicas no lote GG/PokerCraft
+
+O lote ativo oferece seis filtros estruturais derivados do `rawHandText` das candidatas já limitadas pela V0.30: decisão no river, agressão enfrentada no river, showdown com cartas reveladas, alta exposição, pressão em várias streets e linha longa. Uma mão pode contar em várias categorias, mas deixa de estar disponível em todas assim que entra no fluxo. **Mostrar até 5** mantém a ordem do pool, o teto compartilhado de 15 e a mesma transação com rollback de +5/+10. Raw inválida recebe zero tags e continua disponível para exploração geral. Filtro escolhido, tags e contagens não são persistidos; schemas, storage e motor pedagógico não mudaram.

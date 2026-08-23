@@ -222,3 +222,7 @@ A suíte possui 471 testes. Os 20 testes de `tests/sessionRecapReview.test.ts` p
 ## V0.30 — exploração progressiva GG/PokerCraft
 
 A suíte possui 497 testes. Os testes de `tests/activeGgImportBatch.test.ts`, somados às regressões de `tests/ggHandImport.test.ts`, cobrem equivalência dos cinco primeiros, rodadas, categorias esgotadas, limites e unicidade do pool, independência de resultado, schema/fingerprint/timestamps, storage ausente ou corrompido, +5/+10, teto de 15, pedidos parciais, consumo definitivo, reload, esgotamento, encerramento isolado e ausência de dependências pedagógicas. O fake de `localStorage` também falha especificamente no primeiro, segundo ou terceiro `setItem` para verificar rollback exato de batch, pending e fingerprint, inclusive na importação inicial. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
+## V0.31 — exploração estrutural específica
+
+A suíte possui 516 testes. Os 19 testes de `tests/ggImportExploration.test.ts` cobrem as seis tags, sobreposição e independência de `suggestion.reason`, parse inválido, independência de resultado/vencedor, contagens somente não surfaced, ordem e limites da seleção, consumo compartilhado com +5/+10, imutabilidade, rollback, reload factual, estado React local e ausência de storage/classificação estratégica/dependências pedagógicas. As regressões anteriores preservam os cinco iniciais e a exploração geral. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
