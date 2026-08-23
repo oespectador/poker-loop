@@ -282,6 +282,9 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 .comparison-window time { color: var(--muted); font-size: 13px; }
 .comparison-window p { color: var(--text); }
 .comparison-session { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.comparison-relation { margin-top: 16px; padding: 15px; border: 1px solid var(--line); border-radius: 11px; background: var(--bg); }
+.comparison-relation strong { display: block; margin-top: 6px; line-height: 1.5; }
+.comparison-relation p { margin-bottom: 0; color: var(--muted); }
 @media (max-width: 620px) { .comparison-windows { grid-template-columns: 1fr; } }
 
 .hand-visual { display: grid; gap: 20px; margin: 20px 0; border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--bg); }

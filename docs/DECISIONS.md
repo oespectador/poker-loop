@@ -120,3 +120,9 @@ A V0.25 produz observação posterior, não evidência causal de eficácia. Uma 
 A V0.26 pode colocar lado a lado a janela prospectiva original e uma janela prospectiva posterior concluída quando ambas observam o mesmo `ReasoningFactor` e possuem proveniência exata. A comparação é descritiva: não calcula delta, porcentagem, direção, eficácia ou causalidade.
 
 A Skill é somente a proveniência do foco escolhido na sessão entre as janelas. A data de conclusão de cada janela corresponde à entrada factual da quinta observação; `episode.endedAt` representa o arquivamento do episódio e não é usado como substituto da conclusão da janela original. A apresentação exige ainda uma sequência temporal consistente entre janela original, episódio, sessão e follow-up. Legado sem sustentação não recebe valor presumido; `automatic` não recebe métricas de sustentação. Cada follow-up é comparado apenas com o episódio original. Dois conjuntos autorrelatados de cinco decisões não constituem, por si sós, evidência de eficácia do treinamento.
+
+## Frozen Decision — V0.27
+
+A V0.27 pode descrever se o mesmo `ReasoningFactor` apareceu em menos, no mesmo número ou em mais revisões na janela posterior porque ambas as janelas comparadas possuem exatamente cinco observações. Essa relação é descritiva e não recebe valor positivo ou negativo.
+
+`fewer` não significa melhora. `more` não significa piora. `same` não significa ausência de aprendizagem. A relação observada não demonstra efeito do treino. Sustentação e Skill não participam da classificação, e cada follow-up continua independente.
