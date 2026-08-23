@@ -1,5 +1,5 @@
 import { MAX_IMPORT_CANDIDATES } from "./handSuggestions";
-import { isHandReviewSuggestion, MAX_PENDING_HAND_SUGGESTIONS } from "./handSuggestionStorage";
+import { GG_IMPORTS_KEY, HAND_SUGGESTIONS_KEY, isHandReviewSuggestion, MAX_PENDING_HAND_SUGGESTIONS } from "./handSuggestionStorage";
 import type { HandReviewSuggestion } from "./types";
 
 export const ACTIVE_GG_IMPORT_BATCH_KEY = "poker-loop-v1:gg-active-import-batch";
@@ -41,6 +41,48 @@ export function readActiveGgImportBatch(): ActiveGgImportBatch | null {
 export function writeActiveGgImportBatch(batch: ActiveGgImportBatch): void {
   if (!isActiveGgImportBatch(batch)) throw new Error("Invalid active GG import batch");
   if (typeof window !== "undefined") window.localStorage.setItem(ACTIVE_GG_IMPORT_BATCH_KEY, JSON.stringify(batch));
+}
+
+interface PersistGgImportTransitionOptions { fingerprint?: string }
+
+function restoreStorageValue(storage: Storage, key: string, value: string | null): void {
+  if (value === null) storage.removeItem(key); else storage.setItem(key, value);
+}
+
+/** Commits batch, pending suggestions and optional fingerprint as one recoverable localStorage transition. */
+export function persistGgImportTransition(
+  previousBatch: ActiveGgImportBatch | null,
+  previousPending: HandReviewSuggestion[],
+  nextBatch: ActiveGgImportBatch,
+  nextPending: HandReviewSuggestion[],
+  options: PersistGgImportTransitionOptions = {},
+): void {
+  if (typeof window === "undefined") return;
+  if (!isActiveGgImportBatch(nextBatch) || nextPending.length > MAX_PENDING_HAND_SUGGESTIONS || !nextPending.every(isHandReviewSuggestion)) throw new Error("Invalid GG import transition");
+  const candidateIds = new Set(nextBatch.candidates.map(({ id }) => id)); const surfacedIds = new Set(nextBatch.surfacedSuggestionIds);
+  if (nextPending.some(({ id }) => !candidateIds.has(id) || !surfacedIds.has(id))) throw new Error("Inconsistent GG import transition");
+  const sameBatch = previousBatch?.fingerprint === nextBatch.fingerprint;
+  const previousSurfaced = new Set(sameBatch ? previousBatch.surfacedSuggestionIds : []); const pendingIds = new Set(nextPending.map(({ id }) => id));
+  if (nextBatch.surfacedSuggestionIds.some((id) => !previousSurfaced.has(id) && !pendingIds.has(id))) throw new Error("Surfaced suggestion was not persisted as pending");
+  const previousPendingIds = new Set(previousPending.map(({ id }) => id));
+  if (nextPending.some(({ id }) => !previousPendingIds.has(id) && !surfacedIds.has(id))) throw new Error("Pending suggestion was not marked surfaced");
+  if (options.fingerprint !== undefined && (options.fingerprint !== nextBatch.fingerprint || !/^[a-f0-9]{64}$/.test(options.fingerprint))) throw new Error("Invalid processed import fingerprint");
+
+  const storage = window.localStorage;
+  const keys = [ACTIVE_GG_IMPORT_BATCH_KEY, HAND_SUGGESTIONS_KEY, GG_IMPORTS_KEY] as const;
+  const before = new Map(keys.map((key) => [key, storage.getItem(key)]));
+  try {
+    storage.setItem(ACTIVE_GG_IMPORT_BATCH_KEY, JSON.stringify(nextBatch));
+    storage.setItem(HAND_SUGGESTIONS_KEY, JSON.stringify(nextPending));
+    if (options.fingerprint) {
+      let parsed: unknown; try { parsed = JSON.parse(before.get(GG_IMPORTS_KEY) ?? "[]"); } catch { parsed = []; }
+      const fingerprints = Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string" && /^[a-f0-9]{64}$/.test(item)) : [];
+      storage.setItem(GG_IMPORTS_KEY, JSON.stringify([...new Set([...fingerprints, options.fingerprint])]));
+    }
+  } catch (error) {
+    for (const key of [...keys].reverse()) { try { restoreStorageValue(storage, key, before.get(key) ?? null); } catch { /* best-effort rollback; preserve the original failure */ } }
+    throw error;
+  }
 }
 
 export function clearActiveGgImportBatch(): void {

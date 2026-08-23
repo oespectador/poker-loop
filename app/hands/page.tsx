@@ -5,8 +5,8 @@ import { FormEvent, useEffect, useState } from "react";
 import { AppShell } from "../components/AppShell";
 import { parseGgPokerCraftFile } from "@/lib/ggHandParser";
 import { MAX_IMPORT_CANDIDATES, selectHandDetail, selectHandReviewCandidatePool, suggestionToRealHandInput } from "@/lib/handSuggestions";
-import { clearHandSuggestions, hasProcessedImport, MAX_PENDING_HAND_SUGGESTIONS, readHandSuggestions, recordProcessedImport, removeHandSuggestion, writeHandSuggestions } from "@/lib/handSuggestionStorage";
-import { clearActiveGgImportBatch, hasRemainingImportCandidates, markImportCandidatesSurfaced, readActiveGgImportBatch, remainingImportCandidates, surfaceNextImportCandidates, writeActiveGgImportBatch, type ActiveGgImportBatch } from "@/lib/activeGgImportBatch";
+import { clearHandSuggestions, hasProcessedImport, MAX_PENDING_HAND_SUGGESTIONS, readHandSuggestions, removeHandSuggestion } from "@/lib/handSuggestionStorage";
+import { clearActiveGgImportBatch, hasRemainingImportCandidates, markImportCandidatesSurfaced, persistGgImportTransition, readActiveGgImportBatch, remainingImportCandidates, surfaceNextImportCandidates, type ActiveGgImportBatch } from "@/lib/activeGgImportBatch";
 import { createRealHand, deleteRealHand, readRealHands, realHandSkillLabels, realHandStreetLabels, saveRealHand, trainingLinkForHand, updateRealHand, validateRealHandInput } from "@/lib/realHands";
 import type { HandReviewSuggestion, RealHandReview, RealHandReviewInput, RealHandStreet, ReasoningFactor, Skill, StoredRealHandReasoningSnapshot } from "@/lib/types";
 import { QuickReview } from "./QuickReview";
@@ -82,13 +82,13 @@ export default function HandsPage() {
       const result = parseGgPokerCraftFile(text); const candidates = selectHandReviewCandidatePool(result.hands, { limit: MAX_IMPORT_CANDIDATES }); const next = candidates.slice(0, 5);
       const batch: ActiveGgImportBatch = { version: 1, fingerprint: hash, importedAt: new Date().toISOString(), recognizedHands: result.recognizedHands, ignoredHands: result.ignoredHands, candidates, surfacedSuggestionIds: [] };
       const surfacedBatch = markImportCandidatesSurfaced(batch, next);
-      writeActiveGgImportBatch(surfacedBatch); writeHandSuggestions(next); recordProcessedImport(hash); setSuggestions(next); setActiveImportBatch(surfacedBatch);
+      persistGgImportTransition(activeImportBatch, suggestions, surfacedBatch, next, { fingerprint: hash }); setSuggestions(next); setActiveImportBatch(surfacedBatch);
       if (!result.totalBlocks) setImportMessage("Nenhuma mão GG/PokerCraft reconhecível foi encontrada neste arquivo.");
     } catch { setImportMessage("Não foi possível processar e armazenar este lote neste navegador. Seus dados existentes não foram apagados."); }
   }
   function surfaceMore(count: 5 | 10) {
     if (!activeImportBatch) return;
-    try { const next = surfaceNextImportCandidates(activeImportBatch, count, suggestions); writeActiveGgImportBatch(next.batch); writeHandSuggestions(next.suggestions); setSuggestions(next.suggestions); setActiveImportBatch(next.batch); setImportMessage(next.added.length ? `${next.added.length} novas situações foram adicionadas.` : "Nenhuma outra situação pôde ser adicionada agora."); }
+    try { const next = surfaceNextImportCandidates(activeImportBatch, count, suggestions); persistGgImportTransition(activeImportBatch, suggestions, next.batch, next.suggestions); setSuggestions(next.suggestions); setActiveImportBatch(next.batch); setImportMessage(next.added.length ? `${next.added.length} novas situações foram adicionadas.` : "Nenhuma outra situação pôde ser adicionada agora."); }
     catch { setImportMessage("Não foi possível armazenar as novas situações. Seus dados existentes não foram apagados."); }
   }
   function endImportBatch() {
