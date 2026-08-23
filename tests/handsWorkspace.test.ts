@@ -11,9 +11,23 @@ const initial = { hasActiveInvestigation: false, hasActiveFollowUp: false, hasPe
 test("workspace possui exatamente as três áreas por intenção", () => {
   assert.deepEqual([...nav.matchAll(/id: "(explore|review|track)", label: "([^"]+)"/g)].map((match) => match[2]), ["Explorar", "Revisar", "Acompanhar"]);
 });
-test("uma única área principal é renderizada por vez", () => {
-  assert.equal((page.match(/workspaceSection === "(track|explore|review)" && <main/g) ?? []).length, 3);
-  assert.doesNotMatch(page, /hidden=.*hands-panel/);
+test("os três tabpanels permanecem montados com IDs estáveis e sem main aninhado", () => {
+  const panelIds = [...page.matchAll(/<section id="(hands-panel-(?:explore|review|track))"[^>]*role="tabpanel"/g)].map((match) => match[1]).sort();
+  assert.deepEqual(panelIds, ["hands-panel-explore", "hands-panel-review", "hands-panel-track"]);
+  assert.equal((page.match(/role="tabpanel"/g) ?? []).length, 3);
+  assert.doesNotMatch(page, /<main\s+id="hands-panel-/);
+  assert.doesNotMatch(page, /workspaceSection === "(?:track|explore|review)" &&/);
+});
+test("painéis inativos usam hidden e somente a seleção atual é apresentada", () => {
+  for (const section of ["explore", "review", "track"]) {
+    assert.match(page, new RegExp(`id="hands-panel-${section}"[^>]*hidden=\\{workspaceSection !== "${section}"\\}`));
+  }
+  assert.equal((page.match(/hidden=\{workspaceSection !== "(?:explore|review|track)"\}/g) ?? []).length, 3);
+});
+test("cada aria-controls das tabs corresponde a um painel sempre presente", () => {
+  const controlledIds = [...nav.matchAll(/aria-controls=\{`(hands-panel-\$\{section\.id\})`\}/g)].map((match) => match[1]);
+  assert.deepEqual(controlledIds, ["hands-panel-${section.id}"]);
+  for (const section of ["explore", "review", "track"]) assert.match(page, new RegExp(`id="hands-panel-${section}"`));
 });
 test("investigação ativa escolhe acompanhar", () => assert.equal(chooseInitialHandsWorkspaceSection({ ...initial, hasActiveInvestigation: true }), "track"));
 test("follow-up ativo escolhe acompanhar", () => assert.equal(chooseInitialHandsWorkspaceSection({ ...initial, hasActiveFollowUp: true }), "track"));
@@ -43,7 +57,7 @@ test("Acompanhar contém padrões, investigações e histórico", () => {
   assert.match(track, /SUAS REVISÕES/); assert.match(track, /PARA INVESTIGAR/); assert.match(track, /HISTÓRICO DE INVESTIGAÇÕES/);
 });
 test("navegação usa tabs acessíveis e teclado", () => {
-  assert.match(nav, /role="tablist"/); assert.match(nav, /role="tab"/); assert.match(nav, /aria-selected/); assert.match(nav, /aria-controls/); assert.match(nav, /ArrowLeft/); assert.match(nav, /ArrowRight/);
+  assert.match(nav, /role="tablist"/); assert.match(nav, /role="tab"/); assert.match(nav, /aria-selected/); assert.match(nav, /aria-controls/); assert.match(nav, /ArrowLeft/); assert.match(nav, /ArrowRight/); assert.match(nav, /Home/); assert.match(nav, /End/);
 });
 test("cada área contém seu empty state curto", () => {
   assert.match(page, /Importe uma sessão GG\/PokerCraft para separar situações que valem uma segunda olhada/);

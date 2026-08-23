@@ -13,11 +13,11 @@ Separar `/hands` em Explorar, Revisar e Acompanhar reduz a carga visual e torna 
 - reorganizada somente a renderização existente; salvar sugestão e abrir mão relacionada selecionam a mão em Revisar;
 - adicionados empty states e estilos locais alinhados à identidade atual;
 - confirmados sem alteração V0.30/V0.31, Quick Review, schemas, thresholds, proveniência, comparações, storage e motor pedagógico;
-- adicionados 18 testes, elevando a suíte de 516 para 534.
+- adicionados 20 testes, elevando a suíte de 516 para 536; a correção de revisão mantém os três `tabpanel` montados, usa `section` e esconde os inativos com `hidden`.
 
 ### Validação
 
-`npm test` (534 testes), `npm run typecheck`, `npm run build` e `git diff --check`.
+`npm test` (536 testes), `npm run typecheck`, `npm run build` e `git diff --check`.
 
 ## 2026-08-18 — Handoff inicial
 

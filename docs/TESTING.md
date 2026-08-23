@@ -17,7 +17,7 @@ O runner recebe o diretório compilado de testes, sem depender de expansão de g
 
 ## V0.32 — workspace de Mãos
 
-A suíte possui 534 testes. `tests/handsWorkspace.test.ts` acrescenta 18 verificações para as três áreas exatas, visibilidade exclusiva, prioridade completa do helper inicial, inicialização única, navegação contextual ao salvar ou abrir mãos relacionadas, conteúdo de cada área, tabs/teclado/ARIA, empty states, ausência de storage e preservação do uso transacional da importação. As regressões V0.30/V0.31 continuam protegendo pool, +5/+10, filtros, surfaced IDs e rollback; as suítes anteriores continuam protegendo Quick Review e todo o acompanhamento longitudinal.
+A suíte possui 536 testes. `tests/handsWorkspace.test.ts` contém 20 verificações para as três áreas exatas, três `tabpanel` sempre montados com IDs estáveis, ausência de `<main>` aninhado, visibilidade exclusiva por `hidden`, prioridade completa do helper inicial, inicialização única, navegação contextual ao salvar ou abrir mãos relacionadas, conteúdo de cada área, tabs/teclado/ARIA, empty states, ausência de storage e preservação do uso transacional da importação. As regressões V0.30/V0.31 continuam protegendo pool, +5/+10, filtros, surfaced IDs e rollback; as suítes anteriores continuam protegendo Quick Review e todo o acompanhamento longitudinal.
 
 Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
 
