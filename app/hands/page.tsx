@@ -23,6 +23,7 @@ import { listInvestigationTrainingCompletionsForEpisode, readInvestigationTraini
 import { createPostTrainingRealHandFollowUp, findActivePostTrainingRealHandFollowUp, listPostTrainingRealHandFollowUpsByEpisodeId, readPostTrainingRealHandFollowUps, summarizePostTrainingRealHandFollowUp, syncPostTrainingRealHandFollowUps, writePostTrainingRealHandFollowUps, type PostTrainingRealHandFollowUp } from "@/lib/postTrainingRealHandFollowUps";
 import { deriveRealHandWindowComparisons, type RealHandWindowComparison, type WindowObservationSummary } from "@/lib/realHandWindowComparisons";
 import { deriveRealHandWindowRelation, describeRealHandWindowRelation } from "@/lib/realHandWindowRelations";
+import { countRemainingCandidatesByFilter, GG_EXPLORATION_FILTERS, ggExplorationFilterLabels, surfaceImportCandidatesForFilter, type GgExplorationFilter } from "@/lib/ggImportExploration";
 
 const emptyForm: RealHandReviewInput = { rawHandText: "", doubt: "", rangeRead: "", objective: "", targetsAndSizeResponse: "" };
 const cardLabel = (card: string) => card.replace("h", "♥").replace("d", "♦").replace("c", "♣").replace("s", "♠");
@@ -46,6 +47,7 @@ export default function HandsPage() {
   const [selectedId, setSelectedId] = useState<string>(); const [selectedSuggestionId, setSelectedSuggestionId] = useState<string>();
   const [editingId, setEditingId] = useState<string>(); const [form, setForm] = useState<RealHandReviewInput>(emptyForm); const [message, setMessage] = useState("");
   const [importMessage, setImportMessage] = useState(""); const [activeImportBatch, setActiveImportBatch] = useState<ActiveGgImportBatch | null>(null);
+  const [showImportFilters, setShowImportFilters] = useState(false); const [selectedImportFilter, setSelectedImportFilter] = useState<GgExplorationFilter>();
   const [reasoningSnapshots, setReasoningSnapshots] = useState<StoredRealHandReasoningSnapshot[]>([]);
   const [openInvestigation, setOpenInvestigation] = useState<string>();
   const [activeInvestigation, setActiveInvestigation] = useState<ActiveRealHandInvestigation | null>(null);
@@ -89,6 +91,11 @@ export default function HandsPage() {
   function surfaceMore(count: 5 | 10) {
     if (!activeImportBatch) return;
     try { const next = surfaceNextImportCandidates(activeImportBatch, count, suggestions); persistGgImportTransition(activeImportBatch, suggestions, next.batch, next.suggestions); setSuggestions(next.suggestions); setActiveImportBatch(next.batch); setImportMessage(next.added.length ? `${next.added.length} novas situações foram adicionadas.` : "Nenhuma outra situação pôde ser adicionada agora."); }
+    catch { setImportMessage("Não foi possível armazenar as novas situações. Seus dados existentes não foram apagados."); }
+  }
+  function surfaceFiltered() {
+    if (!activeImportBatch || !selectedImportFilter) return;
+    try { const next = surfaceImportCandidatesForFilter(activeImportBatch, selectedImportFilter, 5, suggestions); persistGgImportTransition(activeImportBatch, suggestions, next.batch, next.suggestions); setSuggestions(next.suggestions); setActiveImportBatch(next.batch); setImportMessage(next.added.length ? `${next.added.length} situações deste tipo foram adicionadas.` : "Nenhuma situação deste tipo pôde ser adicionada agora."); }
     catch { setImportMessage("Não foi possível armazenar as novas situações. Seus dados existentes não foram apagados."); }
   }
   function endImportBatch() {
@@ -157,7 +164,9 @@ export default function HandsPage() {
     {importMessage && <p className="form-message" role="status">{importMessage}</p>}
     {activeImportBatch && <section className="import-summary" aria-live="polite"><div className="eyebrow">LOTE ATIVO</div><strong>{activeImportBatch.recognizedHands} mãos reconhecidas.</strong><span>{activeImportBatch.surfacedSuggestionIds.length} situações mostradas até agora.</span><span>{remainingImportCandidates(activeImportBatch).length} outras situações disponíveis neste lote.{activeImportBatch.ignoredHands ? ` ${activeImportBatch.ignoredHands} blocos foram ignorados com segurança.` : ""}</span><p>Essas situações foram separadas somente pela estrutura da mão. Isso não significa que houve erro nelas.</p>
       {hasRemainingImportCandidates(activeImportBatch) && suggestions.length < MAX_PENDING_HAND_SUGGESTIONS && <div className="suggestion-actions"><button className="text-button" type="button" onClick={() => surfaceMore(5)}>+ 5 situações</button><button className="text-button" type="button" onClick={() => surfaceMore(10)}>+ 10 situações</button></div>}
-      {hasRemainingImportCandidates(activeImportBatch) && suggestions.length >= MAX_PENDING_HAND_SUGGESTIONS && <p>Salve ou descarte algumas situações para continuar explorando este lote.</p>}
+      {hasRemainingImportCandidates(activeImportBatch) && <button className="text-button import-explore-toggle" type="button" aria-expanded={showImportFilters} onClick={() => setShowImportFilters((open) => !open)}>Explorar situações específicas</button>}
+      {showImportFilters && hasRemainingImportCandidates(activeImportBatch) && (() => { const counts = countRemainingCandidatesByFilter(activeImportBatch); const selectedCount = selectedImportFilter ? counts[selectedImportFilter] : 0; return <div className="import-filter-panel"><h3>Que tipo de situação você quer revisar?</h3><p>Esses filtros usam apenas características observáveis da mão. Eles não indicam que houve erro.</p><div className="import-filter-grid">{GG_EXPLORATION_FILTERS.map((filter) => <button type="button" key={filter} disabled={counts[filter] === 0} className={selectedImportFilter === filter ? "selected" : ""} aria-pressed={selectedImportFilter === filter} onClick={() => setSelectedImportFilter(filter)}><strong>{ggExplorationFilterLabels[filter]}</strong><span>{counts[filter]} disponíveis</span></button>)}</div>{selectedImportFilter && selectedCount > 0 && <div className="filtered-import-action"><p>{selectedCount} {selectedCount === 1 ? "situação deste tipo ainda está disponível." : "situações deste tipo ainda estão disponíveis."}</p><button className="primary-cta compact" type="button" disabled={suggestions.length >= MAX_PENDING_HAND_SUGGESTIONS} onClick={surfaceFiltered}>Mostrar até 5</button></div>}</div>; })()}
+      {hasRemainingImportCandidates(activeImportBatch) && suggestions.length >= MAX_PENDING_HAND_SUGGESTIONS && <p>Salve ou descarte algumas situações para continuar explorando.</p>}
       {!hasRemainingImportCandidates(activeImportBatch) && <p>Todas as situações separadas para este lote já foram mostradas.</p>}
       {!suggestions.length && hasRemainingImportCandidates(activeImportBatch) && <div className="suggestion-actions"><button className="text-button" type="button" onClick={() => setImportMessage("Use +5 ou +10 para continuar explorando este lote.")}>Continuar explorando este lote</button><button className="text-button danger-text" type="button" onClick={endImportBatch}>Encerrar lote e importar outro</button></div>}
     </section>}

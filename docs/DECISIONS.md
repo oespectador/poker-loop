@@ -144,3 +144,9 @@ A reflexão escrita é efêmera e não é persistida. O feedback continua sendo 
 **A importação GG/PokerCraft continua apresentando no máximo cinco situações inicialmente, mas esse limite passa a representar apenas o primeiro lote de uma exploração progressiva. O jogador pode pedir voluntariamente mais situações do mesmo lote, sem que quantidade, resultado financeiro ou seleção estrutural sejam interpretados como erro ou evidência pedagógica.**
 
 **O batch persiste somente um pool limitado de candidatas estruturais para permitir exploração progressiva e reload; ele não representa todas as mãos como problemas.** O teto de 50 candidatas e o teto de 15 sugestões pendentes são limites operacionais reversíveis do piloto, não thresholds científicos.
+
+## Frozen Decision — V0.31
+
+**A V0.31 permite explorar um lote GG/PokerCraft por características estruturais derivadas das candidatas já preservadas pela V0.30. Uma mesma mão pode pertencer a várias categorias. Os filtros não classificam erro, resultado ou intenção estratégica e não alteram evidência pedagógica.**
+
+**`HandReviewSuggestion.reason` representa a razão pela qual a candidata entrou no pool; ele não é uma descrição exaustiva das características da mão.** Tags, contagens e filtro selecionado permanecem derivados e não são persistidos.

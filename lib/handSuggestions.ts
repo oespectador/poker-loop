@@ -1,4 +1,5 @@
 import type { HandReviewSuggestion, HandReviewSuggestionReason, ParsedGgHand, RealHandReviewInput } from "./types";
+import { hasHeroShowdown, hasLongLine, hasMultiStreetPressure, hasRiverDecision, isHighCommitmentHand } from "./ggHandStructuralPredicates";
 
 const details: Record<HandReviewSuggestionReason, [string, string]> = {
   "high-commitment": ["ALTA EXPOSIÇÃO", "Esta foi uma das situações em que uma parcela maior do seu stack entrou no pot."],
@@ -40,11 +41,11 @@ function structuralCompare(a: ParsedGgHand, b: ParsedGgHand) {
 export function selectHandReviewCandidatePool(hands: ParsedGgHand[], options: { createdAt?: string; limit?: number } = {}): HandReviewSuggestion[] {
   const selected = new Set<string>(); const output: HandReviewSuggestion[] = []; const createdAt = options.createdAt ?? new Date().toISOString();
   const categories: Array<[HandReviewSuggestionReason, (hand: ParsedGgHand) => boolean, (a: ParsedGgHand, b: ParsedGgHand) => number]> = [
-    ["high-commitment", (h) => h.heroDecisionCount > 0 && (h.heroAllIn || (h.heroCommitmentRatio ?? 0) >= 0.25), (a, b) => (b.heroCommitmentRatio ?? -1) - (a.heroCommitmentRatio ?? -1) || structuralCompare(a, b)],
-    ["river-decision", (h) => h.heroDecisionStreets.includes("river"), (a, b) => postflopCount(b) - postflopCount(a) || b.heroFacedAggressionStreets.length - a.heroFacedAggressionStreets.length || b.heroDecisionCount - a.heroDecisionCount || structuralCompare(a, b)],
-    ["hero-showdown", (h) => h.heroShows, structuralCompare],
-    ["multi-street-pressure", (h) => h.heroFacedAggressionStreets.length >= 2, structuralCompare],
-    ["long-line", (h) => ["flop", "turn", "river"].every((street) => h.heroDecisionStreets.includes(street as never)), structuralCompare],
+    ["high-commitment", isHighCommitmentHand, (a, b) => (b.heroCommitmentRatio ?? -1) - (a.heroCommitmentRatio ?? -1) || structuralCompare(a, b)],
+    ["river-decision", hasRiverDecision, (a, b) => postflopCount(b) - postflopCount(a) || b.heroFacedAggressionStreets.length - a.heroFacedAggressionStreets.length || b.heroDecisionCount - a.heroDecisionCount || structuralCompare(a, b)],
+    ["hero-showdown", hasHeroShowdown, structuralCompare],
+    ["multi-street-pressure", hasMultiStreetPressure, structuralCompare],
+    ["long-line", hasLongLine, structuralCompare],
   ];
   const limit = Math.max(0, Math.min(options.limit ?? MAX_IMPORT_CANDIDATES, MAX_IMPORT_CANDIDATES));
   const ranked = categories.map(([reason, eligible, compare]) => [reason, hands.filter(eligible).sort(compare)] as const);

@@ -249,6 +249,16 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 .suggestion-card .eyebrow { margin: 8px 0 0; }
 .hero-cards { font-size: 25px; font-weight: 900; letter-spacing: .06em; }
 .suggestion-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 14px; }
+.import-explore-toggle { justify-self: start; margin-top: 10px; }
+.import-filter-panel { display: grid; gap: 10px; margin-top: 8px; padding-top: 14px; border-top: 1px solid var(--line); }
+.import-filter-panel h3 { margin: 0; }
+.import-filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 9px; }
+.import-filter-grid button { display: grid; gap: 4px; text-align: left; border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; background: var(--bg); color: var(--text); cursor: pointer; }
+.import-filter-grid button.selected { border-color: var(--cyan); background: rgba(94,231,244,.12); }
+.import-filter-grid button:disabled { cursor: not-allowed; opacity: .45; }
+.import-filter-grid span { color: var(--muted); }
+.filtered-import-action { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.filtered-import-action p { margin: 0; }
 .manual-entry summary { display: grid; gap: 7px; cursor: pointer; }
 .manual-entry summary::marker { color: var(--cyan); }
 .manual-entry[open] summary { padding-bottom: 20px; border-bottom: 1px solid var(--line); }
