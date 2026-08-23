@@ -11,6 +11,8 @@ import { reprioritizeAfterError, skillLabels } from "@/lib/trainingEngine";
 import type { ActiveTrainingSession, Attempt, Exercise, Skill } from "@/lib/types";
 import { findInvestigationTrainingLaunchBySessionId, readInvestigationTrainingLaunches, registerLaunchForNewTrainingSession, type InvestigationTrainingLaunch } from "@/lib/investigationTrainingLaunches";
 import { completionForFinishedLaunchedSession, findInvestigationTrainingCompletionBySessionId, readInvestigationTrainingCompletions, registerInvestigationTrainingCompletion, type InvestigationTrainingCompletion } from "@/lib/investigationTrainingCompletions";
+import { buildSessionRecap } from "@/lib/sessionRecap";
+import { allExercises } from "@/lib/exercises";
 
 function parseBoardLabel(label: string): string[] | null {
   const cards = label.trim().split(/\s+/);
@@ -134,7 +136,9 @@ export default function TrainingSession() {
 
   if (index >= queue.length) {
     const correctCount = attempts.filter((attempt) => attempt.correct).length;
-    const errorSkills = [...new Set(attempts.filter((attempt) => !attempt.correct).map((attempt) => attempt.primarySkill))];
+    const recap = buildSessionRecap(activeSession.current!.sessionId, attempts, allExercises);
+    const visibleRecapItems = recap.items.slice(0, 3);
+    const remainingRecapItems = recap.distinctReasoningItems - visibleRecapItems.length;
     return (
       <main className="session-shell finish-shell">
         <div className="finish-mark" aria-hidden="true">∞</div>
@@ -149,10 +153,36 @@ export default function TrainingSession() {
             <p>Leitura do board → ranges → sizing → decisão.</p>
           </article>
           <article className="panel">
-            <div className="eyebrow">VAMOS REFORÇAR</div>
-            <p>{errorSkills.length ? errorSkills.map((skill) => skillLabels[skill]).join(" · ") : "Nenhuma habilidade apresentou erro nesta sessão. A próxima etapa é verificar retenção e transferência."}</p>
+            <div className="eyebrow">REGISTRO DA SESSÃO</div>
+            <p>{recap.totalWrongAttempts ? `${recap.totalWrongAttempts} decisões tiveram erro nesta sessão.` : "Nenhum erro foi registrado nesta sessão."}</p>
           </article>
         </div>
+
+        <section className="session-recap" aria-labelledby="session-recap-title">
+          <div className="eyebrow">PARA LEVAR DESTA SESSÃO</div>
+          <h2 id="session-recap-title">Raciocínios das decisões que tiveram erro</h2>
+          {visibleRecapItems.length ? (
+            <div className="session-recap-list">
+              {visibleRecapItems.map((item) => (
+                <article className="session-recap-item" key={item.id}>
+                  <h3>{item.label}</h3>
+                  <p>{item.feedback}</p>
+                  <p className="optional-note">Esse raciocínio apareceu em {item.wrongCount} {item.wrongCount === 1 ? "decisão" : "decisões"} com erro nesta sessão.</p>
+                  <p className="optional-note">{item.laterCorrectInSession
+                    ? "Depois desse último erro, houve um acerto posterior nesse raciocínio ainda nesta sessão."
+                    : "Esse raciocínio não voltou a aparecer com acerto depois do último erro nesta sessão."}</p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <>
+              <p>Nenhum erro foi registrado nesta sessão.</p>
+              <p className="optional-note">Isso descreve apenas esta sessão; retenção e transferência continuam sendo verificadas separadamente.</p>
+            </>
+          )}
+          {remainingRecapItems > 0 && <p className="optional-note">Outros {remainingRecapItems} raciocínios também tiveram pelo menos um erro nesta sessão.</p>}
+          <p className="session-recap-disclosure">Este resumo usa apenas as decisões desta sessão. Padrões recorrentes, retenção e transferência são avaliados separadamente pelo Poker Loop.</p>
+        </section>
 
         <Link href="/" className="primary-cta" onClick={clearActiveTrainingSession}>Concluir</Link>
         <button type="button" className="quiet-link button-reset" onClick={() => {

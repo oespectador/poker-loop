@@ -637,3 +637,11 @@ Implementado um modelo derivado puro com validação defensiva da cadeia complet
 Implementada uma camada derivada pura que recebe somente `RealHandWindowComparison`, valida novamente 5/5 e compara exclusivamente `factorCount`: posterior menor é `fewer`, igual é `same` e maior é `more`. A ordem V0.26 é preservada e follow-ups não são agregados. A UI acrescenta um card neutro após os dois blocos, com disclosure explícito de que as duas janelas de autorrelato não permitem concluir melhora, piora ou efeito do treino.
 
 Sustentação, Skill, porcentagens, delta numérico, tendência, eficácia, storage, schemas e motor pedagógico permanecem fora. `automatic` segue a mesma regra de ocorrência e continua sem suporte. **Validação:** 435 testes, typecheck, build e `git diff --check`.
+
+## 2026-08-23 — V0.28 Fechamento Didático da Sessão
+
+**Hipótese de trabalho:** recuperar até três explicações autorais ligadas aos erros concretos da sessão torna o encerramento mais útil sem transformar evidência local em diagnóstico longitudinal.
+
+Implementado `SessionRecap` puro, derivado por `sessionId` de `Attempt[] + Exercise[]`. A identidade prefere `reasoningPattern`, depois `concept`; identidade sem label catalogada usa a Skill humana. Erros iguais são agrupados, e o feedback da alternativa do erro mais recente tem prioridade sobre o texto genérico. Um acerto posterior, em qualquer suporte, é descrito apenas como fato cronológico.
+
+A UI substituiu **VAMOS REFORÇAR** por um registro factual e adicionou o recap antes dos CTAs, limitado a três cards e com disclosure explícito. Nenhum storage/schema foi criado; `Attempt`, `diagnostics`, `trainingEngine`, scheduler, recovery, retention e transfer não foram alterados. Validação: 451 testes, typecheck, build e `git diff --check`.

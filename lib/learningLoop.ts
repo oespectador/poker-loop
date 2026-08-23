@@ -63,9 +63,17 @@ function identityId(source: DifficultyPatternSource, key: string): string {
 
 export function learningLoopLabel(source: DifficultyPatternSource, key: string): string {
   const id = identityId(source, key);
-  const label = identityLabels[id];
+  const label = learningLoopLabelIfKnown(source, key);
   if (!label) throw new Error(`Identidade de aprendizagem sem label de apresentação: ${id}`);
   return label;
+}
+
+/** Human presentation label when the diagnostic identity is part of the known library. */
+export function learningLoopLabelIfKnown(
+  source: DifficultyPatternSource,
+  key: string,
+): string | undefined {
+  return identityLabels[identityId(source, key)];
 }
 
 export function diagnosticIdentities(

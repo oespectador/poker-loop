@@ -1,4 +1,4 @@
-# Project State — V0.24
+# Project State — V0.28
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,13 @@ Stack:
 
 ## Versão atual
 
-**V0.24 — Proveniência da Conclusão de uma Sessão**
+**V0.28 — Fechamento Didático da Sessão**
+
+## V0.28 — Fechamento Didático da Sessão
+
+Ao concluir o treino, a sessão deriva um resumo compacto exclusivamente dos próprios `Attempt[]` e da biblioteca de `Exercise[]`. Erros são agrupados por `reasoningPattern`, com `concept` e depois a Skill humana como fallbacks; o feedback específico da alternativa errada mais recente tem prioridade sobre `feedback.short`. Até três raciocínios aparecem, primeiro os que não tiveram acerto posterior na sessão.
+
+O resumo não é persistido e não cria evidência. Um erro descreve somente uma decisão daquela sessão; um acerto posterior, em qualquer suporte, descreve somente a cronologia local. Diagnóstico recorrente, recovery, retention, transfer, scheduler, `Attempt` e `trainingEngine` permanecem inalterados.
 
 ## V0.24 — Proveniência da Conclusão de uma Sessão
 
