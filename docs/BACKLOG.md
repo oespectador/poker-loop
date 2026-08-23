@@ -2,6 +2,14 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.30 — Exploração Progressiva de uma Importação GG/PokerCraft
+
+- os cinco primeiros destaques permanecem equivalentes à triagem V0.16;
+- pool estrutural determinístico de até 50 candidatas, percorrido em rodadas pelas categorias fixas;
+- um batch ativo permite +5/+10, reload e consumo definitivo após exposição;
+- até 15 sugestões podem permanecer pendentes e um lote com candidatas restantes só é substituído após encerramento explícito;
+- filtros por categoria, resultado financeiro, interpretação estratégica e mudanças pedagógicas permanecem fora.
+
 ## Concluído na V0.29 — Revisão Ativa no Fechamento da Sessão
 
 - feedback dos até três itens V0.28 começa oculto atrás de um convite breve para lembrar;

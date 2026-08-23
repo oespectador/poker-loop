@@ -2,6 +2,7 @@ import type { HandReviewSuggestion } from "./types";
 
 export const HAND_SUGGESTIONS_KEY = "poker-loop-v1:hand-review-suggestions";
 export const GG_IMPORTS_KEY = "poker-loop-v1:gg-imports";
+export const MAX_PENDING_HAND_SUGGESTIONS = 15;
 const reasons = new Set(["high-commitment", "river-decision", "hero-showdown", "multi-street-pressure", "long-line"]);
 
 export function isHandReviewSuggestion(value: unknown): value is HandReviewSuggestion {
@@ -14,10 +15,10 @@ export function isHandReviewSuggestion(value: unknown): value is HandReviewSugge
 }
 export function readHandSuggestions(): HandReviewSuggestion[] {
   if (typeof window === "undefined") return [];
-  try { const parsed: unknown = JSON.parse(window.localStorage.getItem(HAND_SUGGESTIONS_KEY) ?? "[]"); return Array.isArray(parsed) ? parsed.filter(isHandReviewSuggestion).slice(0, 5) : []; } catch { return []; }
+  try { const parsed: unknown = JSON.parse(window.localStorage.getItem(HAND_SUGGESTIONS_KEY) ?? "[]"); return Array.isArray(parsed) ? parsed.filter(isHandReviewSuggestion).slice(0, MAX_PENDING_HAND_SUGGESTIONS) : []; } catch { return []; }
 }
 export function writeHandSuggestions(items: HandReviewSuggestion[]): void {
-  if (typeof window !== "undefined") window.localStorage.setItem(HAND_SUGGESTIONS_KEY, JSON.stringify(items.filter(isHandReviewSuggestion).slice(0, 5)));
+  if (typeof window !== "undefined") window.localStorage.setItem(HAND_SUGGESTIONS_KEY, JSON.stringify(items.filter(isHandReviewSuggestion).slice(0, MAX_PENDING_HAND_SUGGESTIONS)));
 }
 export function removeHandSuggestion(id: string): void { writeHandSuggestions(readHandSuggestions().filter((item) => item.id !== id)); }
 export function clearHandSuggestions(): void { if (typeof window !== "undefined") window.localStorage.removeItem(HAND_SUGGESTIONS_KEY); }

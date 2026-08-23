@@ -325,3 +325,7 @@ Uma camada pura e derivada agora une exclusivamente episódio `completed` 5/5, f
 ## V0.27 — Relação Observada entre Janelas
 
 Uma camada pura recebe exclusivamente cada `RealHandWindowComparison` V0.26, exige defensivamente janelas 5/5 e classifica a ocorrência do mesmo fator como `fewer`, `same` ou `more` pela comparação dos dois `factorCount`. A UI apresenta essa relação em estilo neutro, sem porcentagem ou delta. Sustentação, Skill e motor pedagógico permanecem fora; a relação não é persistida e não indica melhora, piora, aprendizagem ou efeito do treino.
+
+## V0.30 — exploração progressiva da importação GG/PokerCraft
+
+A triagem inicial continua expondo no máximo cinco situações. A mesma ordenação estrutural agora produz, em rodadas pelas cinco categorias fixas, um pool determinístico limitado a 50 candidatas. Um único batch ativo persiste esse pool e os IDs já mostrados; o jogador pode acrescentar voluntariamente 5 ou 10 situações sem reler o arquivo, até o teto de 15 pendentes. Salvar ou descartar não devolve uma situação ao pool. Reload retoma o batch, e substituí-lo quando ainda restam candidatas exige encerramento explícito. Resultado financeiro, interpretação estratégica e motor pedagógico continuam fora.

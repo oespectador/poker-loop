@@ -269,3 +269,7 @@ Um acerto posterior da mesma identidade, independentemente do suporte, é apenas
 Antes de reler cada feedback selecionado pela V0.28, o jogador pode tentar recuperar mentalmente a ideia central e, opcionalmente, escrever uma frase curta. O feedback continua sendo exatamente o conteúdo autoral selecionado pela V0.28; somente sua apresentação começa recolhida.
 
 Essa recuperação ativa na interface não é `recovery` no modelo longitudinal. Revelar, escrever ou pular não avalia a lembrança, não cria `Attempt` nem qualquer evidência de aprendizagem. A reflexão escrita é efêmera, fica somente no estado React da tela final e não é persistida.
+
+## V0.30 — importação progressiva continua fora da evidência
+
+O batch GG/PokerCraft persiste somente um pool limitado de candidatas estruturais para permitir exploração progressiva e reload; ele não representa todas as mãos como problemas. Quantidade reconhecida, quantidade mostrada e candidatas restantes são fatos de interface, não `Attempt`, diagnóstico, Skill, erro, leak ou prioridade pedagógica. Salvar e descartar continuam sendo ações de organização do jogador, sem efeito no motor de aprendizagem.
