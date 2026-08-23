@@ -260,3 +260,12 @@ Ficam fora: análise estratégica, agregações, hipóteses, associação ao tre
 - cada follow-up gera sua própria comparação com o original, sem agregação longitudinal;
 - conclusão de cada janela datada pela quinta observação congelada, sem confundir a janela original com o arquivamento do episódio;
 - nenhum storage, schema protegido, delta, porcentagem, direção, causalidade ou alteração pedagógica.
+
+## Concluído na V0.27 — Relação Observada entre Janelas
+
+- derivação pura recebe somente uma comparação V0.26 válida e exige defensivamente duas janelas 5/5;
+- `factorCount` posterior menor, igual ou maior produz respectivamente `fewer`, `same` ou `more`;
+- sustentação e Skill não participam da classificação, inclusive para `automatic`;
+- cada follow-up produz uma relação independente e preserva a ordem da V0.26;
+- UI e copy neutras não mostram porcentagem, delta, tendência, melhora/piora ou eficácia;
+- nenhuma persistência, schema ou integração com o motor pedagógico foi criada.

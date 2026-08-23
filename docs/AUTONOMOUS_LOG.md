@@ -629,3 +629,11 @@ Implementado storage V1 separado, validação defensiva, criação por cadeia ex
 Implementado um modelo derivado puro com validação defensiva da cadeia completa, resumos factuais de presença e sustentação registrada e ordenação independente de follow-ups. O histórico em `/hands` oferece expansão compacta com dois blocos visualmente equivalentes, disclosure metodológico e Skill somente como proveniência. Legado sem sustentação fica fora do denominador; `automatic` mostra apenas presença. Nenhuma chave de storage ou schema existente foi alterado, e nenhuma leitura de mãos/snapshots atuais ou integração com o motor pedagógico foi criada.
 
 **Correção de proveniência temporal:** `originalCompletedAt` passou a ser o maior `createdAt` entre as cinco observações congeladas, enquanto `episode.endedAt` permanece exclusivamente a data de arquivamento. O join agora rejeita qualquer inversão entre conclusão da janela original, arquivamento, launch, completion, início do follow-up e conclusão posterior, aceitando igualdade nas fronteiras. A regressão acrescenta seis testes e leva a suíte a 407 testes.
+
+## 2026-08-22 — V0.27 Relação Observada entre Janelas
+
+**Hipótese de trabalho:** como as duas janelas V0.26 válidas possuem exatamente cinco observações do mesmo fator, sua frequência pode ser descrita categoricamente sem atribuir valor ou efeito à diferença.
+
+Implementada uma camada derivada pura que recebe somente `RealHandWindowComparison`, valida novamente 5/5 e compara exclusivamente `factorCount`: posterior menor é `fewer`, igual é `same` e maior é `more`. A ordem V0.26 é preservada e follow-ups não são agregados. A UI acrescenta um card neutro após os dois blocos, com disclosure explícito de que as duas janelas de autorrelato não permitem concluir melhora, piora ou efeito do treino.
+
+Sustentação, Skill, porcentagens, delta numérico, tendência, eficácia, storage, schemas e motor pedagógico permanecem fora. `automatic` segue a mesma regra de ocorrência e continua sem suporte. **Validação:** 435 testes, typecheck, build e `git diff --check`.

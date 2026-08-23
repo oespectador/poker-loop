@@ -309,3 +309,7 @@ A cadeia exata episódio `completed` → launch → completion agora pode origin
 ## V0.26 — Comparação Descritiva entre Janelas de Mãos Reais
 
 Uma camada pura e derivada agora une exclusivamente episódio `completed` 5/5, follow-up concluído 5/5 do mesmo fator, launch da mesma sessão e episódio, e completion da mesma sessão. `/hands` pode expandir cada comparação elegível em dois blocos neutros com contagem de presença e, exceto para `automatic`, sustentação registrada baixa/incerta. Cada follow-up permanece uma comparação independente com o original, ordenada pela conclusão posterior e ID. A data de conclusão de cada janela corresponde à entrada factual da quinta observação; `episode.endedAt` representa o arquivamento do episódio e não substitui a conclusão da janela original. A comparação só aparece quando `janela original → episódio → sessão → follow-up` também é uma sequência temporal consistente. Não há storage, migração, delta, porcentagem, direção, interpretação causal ou entrada no motor pedagógico.
+
+## V0.27 — Relação Observada entre Janelas
+
+Uma camada pura recebe exclusivamente cada `RealHandWindowComparison` V0.26, exige defensivamente janelas 5/5 e classifica a ocorrência do mesmo fator como `fewer`, `same` ou `more` pela comparação dos dois `factorCount`. A UI apresenta essa relação em estilo neutro, sem porcentagem ou delta. Sustentação, Skill e motor pedagógico permanecem fora; a relação não é persistida e não indica melhora, piora, aprendizagem ou efeito do treino.
