@@ -1,5 +1,24 @@
 # Autonomous Log
 
+## 2026-08-23 — V0.32: Mãos por intenção
+
+### Hipótese
+
+Separar `/hands` em Explorar, Revisar e Acompanhar reduz a carga visual e torna a próxima ação legível sem alterar seleção, revisão ou evidência.
+
+### Alterações e auditoria de escopo
+
+- criada navegação acessível de três áreas, com estado React efêmero;
+- criada escolha inicial pura: investigação/follow-up ativo → Acompanhar; sugestão/batch restante → Explorar; caso contrário → Revisar;
+- reorganizada somente a renderização existente; salvar sugestão e abrir mão relacionada selecionam a mão em Revisar;
+- adicionados empty states e estilos locais alinhados à identidade atual;
+- confirmados sem alteração V0.30/V0.31, Quick Review, schemas, thresholds, proveniência, comparações, storage e motor pedagógico;
+- adicionados 18 testes, elevando a suíte de 516 para 534.
+
+### Validação
+
+`npm test` (534 testes), `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## 2026-08-18 — Handoff inicial
 
 ### Objetivo
