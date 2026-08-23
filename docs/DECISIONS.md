@@ -132,3 +132,9 @@ A V0.27 pode descrever se o mesmo `ReasoningFactor` apareceu em menos, no mesmo 
 O fechamento V0.28 resume somente erros ocorridos na sessão recém-concluída e reutiliza o feedback autoral dos exercícios. Um erro de sessão não é promovido a dificuldade recorrente, e um acerto posterior na mesma sessão não é promovido a recovery, retenção ou aprendizagem.
 
 Feedback específico da alternativa errada tem prioridade sobre feedback genérico. Erros da mesma identidade podem ser agrupados para reduzir carga visual. O fechamento da sessão é derivado e não cria nova evidência.
+
+## Frozen Decision — V0.29
+
+**A V0.29 transforma o feedback do fechamento em uma oportunidade opcional de recuperação ativa: o jogador tenta lembrar a ideia antes de revelar o feedback autoral. Revelar, escrever ou pular essa interação não produz `Attempt` nem qualquer evidência de aprendizagem.**
+
+A reflexão escrita é efêmera e não é persistida. O feedback continua sendo exatamente o conteúdo autoral selecionado pela V0.28. Recuperação ativa na interface não é a mesma coisa que `recovery` no modelo longitudinal.

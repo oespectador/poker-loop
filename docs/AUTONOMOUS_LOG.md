@@ -645,3 +645,11 @@ Sustentação, Skill, porcentagens, delta numérico, tendência, eficácia, stor
 Implementado `SessionRecap` puro, derivado por `sessionId` de `Attempt[] + Exercise[]`. A identidade prefere `reasoningPattern`, depois `concept`; identidade sem label catalogada usa a Skill humana. Erros iguais são agrupados, e o feedback da alternativa do erro mais recente tem prioridade sobre o texto genérico. Um acerto posterior, em qualquer suporte, é descrito apenas como fato cronológico.
 
 A UI substituiu **VAMOS REFORÇAR** por um registro factual e adicionou o recap antes dos CTAs, limitado a três cards e com disclosure explícito. Nenhum storage/schema foi criado; `Attempt`, `diagnostics`, `trainingEngine`, scheduler, recovery, retention e transfer não foram alterados. Validação: 451 testes, typecheck, build e `git diff --check`.
+
+## 2026-08-23 — V0.29 Revisão Ativa no Fechamento da Sessão
+
+**Hipótese de trabalho:** ocultar inicialmente a explicação e convidar uma tentativa breve de lembrar torna o fechamento uma oportunidade de estudo mais ativa sem converter a interação em evidência pedagógica.
+
+Criado `SessionRecapReview`, que recebe, sem reordenar, os até três itens factuais já selecionados pela V0.28. Cada item mantém no state React local seu reveal e uma reflexão opcional de até 180 caracteres. O feedback exibido após o clique é exatamente `item.feedback`; fatos de erro e acerto posterior continuam visíveis e não controlam o reveal. O estado desaparece ao sair, sem storage, API, analytics ou `Attempt`.
+
+`SessionRecap`, seleção, ordenação e motor longitudinal permaneceram inalterados. Não houve mudança em `diagnostics`, `trainingEngine`, scheduler, recovery, retention, transfer ou proveniência de mãos reais. **Validação prevista:** 471 testes, typecheck, build e `git diff --check`. **Decisões humanas pendentes:** validar se o convite e o campo opcional ajudam sem acrescentar atrito ao fechamento.

@@ -214,3 +214,7 @@ A suíte possui 435 testes. Os 28 testes de `tests/realHandWindowRelations.test.
 ## V0.28 — fechamento didático da sessão
 
 A suíte possui 451 testes. `tests/sessionRecap.test.ts` cobre vazio, prioridade de misconception, fallback para feedback curto, agrupamento, identidades e labels humanas, recência, acerto posterior em todos os suportes, isolamento por sessão, IDs desconhecidos, os três purposes, ordenação determinística, limite visual, copy conservadora e ausência de storage/dependências proibidas. A suíte completa deve ser executada com `npm test`, seguida por `npm run typecheck`, `npm run build` e `git diff --check`.
+
+## V0.29 — revisão ativa no fechamento
+
+A suíte possui 471 testes. Os 20 testes de `tests/sessionRecapReview.test.ts` protegem feedback inicialmente oculto, reveal exato e independente, reflexão opcional limitada a 180 caracteres, ausência de persistência/API/`Attempt`, fatos de acerto posterior, vazio sem controles artificiais, limite e ordem dos três cards, contagem restante, copy conservadora e associações acessíveis. Também verificam que o componente não importa diagnóstico, `trainingEngine` ou domínios de mãos reais e que `SessionRecap` não recebe estado de UI. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
