@@ -11,6 +11,7 @@ export const selfRatedSupportLabels: Record<SelfRatedSupport, string> = {
 const factorOrder: ReasoningFactor[] = ["size", "board", "previous-actions", "configuration", "player-read", "automatic", "other"];
 const supportOrder: SelfRatedSupport[] = ["low", "medium", "high", "unclear"];
 const streetOrder = ["preflop", "flop", "turn", "river"] as const;
+export const MIN_REVIEWS_FOR_PATTERN_SCAN = 3;
 
 export interface RealHandReviewObservation {
   kind: "factor" | "support";
@@ -27,6 +28,8 @@ export interface RealHandReviewPatternSummary {
   streetCounts: Record<(typeof streetOrder)[number], number>;
   observations: RealHandReviewObservation[];
   hasEnoughReviewsForObservations: boolean;
+  minimumReviewsForObservations: number;
+  reviewsUntilObservationsPossible: number;
 }
 
 /**
@@ -48,7 +51,7 @@ export function summarizeRealHandReviewPatterns(snapshots: readonly StoredRealHa
   const supportReviewedHands = supportOrder.reduce((total, support) => total + supportCounts[support], 0);
   const observations: Array<RealHandReviewObservation & { order: number }> = [];
 
-  if (reviewedHands >= 3) {
+  if (reviewedHands >= MIN_REVIEWS_FOR_PATTERN_SCAN) {
     factorOrder.forEach((factor, order) => {
       const count = factorCounts[factor];
       if (count < 3) return;
@@ -81,7 +84,9 @@ export function summarizeRealHandReviewPatterns(snapshots: readonly StoredRealHa
     supportReviewedHands,
     streetCounts,
     observations: observations.sort((a, b) => b.count - a.count || a.order - b.order).slice(0, 3).map(({ order: _order, ...observation }) => observation),
-    hasEnoughReviewsForObservations: reviewedHands >= 3,
+    hasEnoughReviewsForObservations: reviewedHands >= MIN_REVIEWS_FOR_PATTERN_SCAN,
+    minimumReviewsForObservations: MIN_REVIEWS_FOR_PATTERN_SCAN,
+    reviewsUntilObservationsPossible: Math.max(0, MIN_REVIEWS_FOR_PATTERN_SCAN - reviewedHands),
   };
 }
 

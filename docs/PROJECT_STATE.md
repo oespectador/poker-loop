@@ -1,4 +1,8 @@
-# Project State — V0.34
+# Project State — V0.35
+
+## V0.35 — revisão visual das situações importadas
+
+As sugestões pendentes em Explorar agora usam as cartas visuais existentes e um resumo compacto com data e motivo factual. Uma situação aberta cresce no próprio ponto da grade, ocupa a largura útil e reúne a visualização completa, o histórico bruto, a explicação e as ações. Somente uma expansão efêmera permanece aberta; salvar e descartar conservam os contratos V0.30–V0.34. Não há board no resumo, storage novo, análise estratégica ou mudança em Quick Review, Decision View e motor pedagógico.
 
 Atualizado para o handoff autônomo inicial.
 

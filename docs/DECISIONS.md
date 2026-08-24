@@ -1,5 +1,13 @@
 # Frozen Decisions — Poker Loop
 
+## Frozen Decision — V0.35
+
+**A V0.35 torna as situações importadas visualmente reconhecíveis e permite inspecioná-las inline. A expansão é apenas estado de interface; não altera seleção, evidência, armazenamento ou classificação da mão.**
+
+**Cards compactos priorizam reconhecimento e ação. Explicações detalhadas só aparecem sob demanda.**
+
+O resumo mostra somente cartas do Herói, data e `reasonLabel`; o board e `reasonMessage` aparecem após a abertura explícita. Salvar diretamente e descartar continuam disponíveis, enquanto **Revisar situação** é a ação visual principal. A inspeção completa não substitui nem altera a Decision View anti-hindsight usada depois que a mão é salva.
+
 Estas decisões foram tomadas durante exploração e testes. Agentes autônomos devem tratá-las como padrão até receberem instrução explícita para reabrir a decisão.
 
 ## Produto

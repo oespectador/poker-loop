@@ -1,5 +1,13 @@
 # Testing Protocol
 
+## Correção semântica do milestone V0.36
+
+A suíte possui 575 testes. A cobertura de `realHandReviewPatterns` verifica o marco em 0/3, 1/3, 2/3 e 3/3, casos com 4 e 10 revisões sem observação, limitação do `progress`, coerência do `aria-label` e apresentação separada do total real. Thresholds e demais contratos V0.36 permanecem cobertos pelas regressões existentes.
+
+## V0.35 — revisão visual das situações importadas
+
+A suíte possui 573 testes e cobre a troca/fechamento determinístico de uma única expansão e os contratos de composição do novo `HandSuggestionCard`: `PokerCard`, data, `reasonLabel`, ausência de `reasonMessage` e board no resumo, `aria-expanded`, ações diretas, `ParsedHandVisualization`, histórico bruto, motivo e ações na expansão, largura total da grade e ausência de storage ou dependências pedagógicas. As regressões existentes continuam protegendo promoção, descarte, surfaced, descarte total, os 14 filtros e a state machine V0.34, além de Home, Quick Review e Decision View. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## Estado atual
 
 A baseline possui scripts:

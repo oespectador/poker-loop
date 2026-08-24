@@ -11,7 +11,6 @@ import { createRealHand, deleteRealHand, readRealHands, realHandSkillLabels, rea
 import type { HandReviewSuggestion, RealHandReview, RealHandReviewInput, RealHandStreet, ReasoningFactor, Skill, StoredRealHandReasoningSnapshot } from "@/lib/types";
 import { QuickReview } from "./QuickReview";
 import { deleteReasoningSnapshotForHand, readReasoningSnapshots } from "@/lib/reasoningSnapshotStorage";
-import { ParsedHandVisualization } from "../components/HandVisualization";
 import { summarizeRealHandReviewPatterns } from "@/lib/realHandReviewPatterns";
 import { deriveRealHandInvestigations } from "@/lib/realHandInvestigations";
 import { reasoningFactorLabels } from "@/lib/realHandReasoning";
@@ -26,10 +25,10 @@ import { deriveRealHandWindowRelation, describeRealHandWindowRelation } from "@/
 import { countRemainingCandidatesByFilter, GG_RIVER_ACTION_FILTERS, GG_SITUATION_FILTERS, ggExplorationFilterLabels, surfaceImportCandidatesForFilter, type GgExplorationFilter } from "@/lib/ggImportExploration";
 import { chooseInitialHandsWorkspaceSection, type HandsWorkspaceSection } from "@/lib/handsWorkspace";
 import { HandsWorkspaceNav } from "./HandsWorkspaceNav";
+import { HandSuggestionCard } from "./HandSuggestionCard";
+import { toggleSuggestionExpansion } from "@/lib/suggestionExpansion";
 
 const emptyForm: RealHandReviewInput = { rawHandText: "", doubt: "", rangeRead: "", objective: "", targetsAndSizeResponse: "" };
-const cardLabel = (card: string) => card.replace("h", "♥").replace("d", "♦").replace("c", "♣").replace("s", "♠");
-const dateLabel = (value: string) => new Date(value).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 const observationText = (factor: ReasoningFactor, summary: WindowObservationSummary) => `${reasoningFactorLabels[factor]} apareceu em ${summary.factorCount} das ${summary.reviewedCount} revisões.`;
 const supportText = (summary: WindowObservationSummary) => `Sustentação Baixa ou Não estava claro: ${summary.lowOrUnclearCount} de ${summary.supportRecordedCount} ocorrências com sustentação registrada.`;
 async function fingerprint(text: string) { const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join(""); }
@@ -72,11 +71,12 @@ export default function HandsPage() {
     setWorkspaceSection(chooseInitialHandsWorkspaceSection({ hasActiveInvestigation: Boolean(syncedInvestigation), hasActiveFollowUp: Boolean(findActivePostTrainingRealHandFollowUp(syncedFollowUps)), hasPendingSuggestions: storedSuggestions.length > 0, hasRemainingImportCandidates: Boolean(storedBatch && hasRemainingImportCandidates(storedBatch)) }));
   }, []);
   const reviewPatterns = summarizeRealHandReviewPatterns(reasoningSnapshots);
+  const milestoneProgress = Math.min(reviewPatterns.reviewedHands, reviewPatterns.minimumReviewsForObservations);
   const investigations = deriveRealHandInvestigations(reasoningSnapshots);
   const prospectiveResult = deriveProspectiveInvestigation(activeInvestigation, reasoningSnapshots);
   const activeFollowUp = findActivePostTrainingRealHandFollowUp(followUps); const activeFollowUpSummary = activeFollowUp ? summarizePostTrainingRealHandFollowUp(activeFollowUp) : undefined;
   const comparisons = deriveRealHandWindowComparisons(history, followUps, trainingLaunches, trainingCompletions);
-  const selected = hands.find(({ id }) => id === selectedId); const selectedSuggestion = suggestions.find(({ id }) => id === selectedSuggestionId);
+  const selected = hands.find(({ id }) => id === selectedId);
   function openDetail(kind: "saved" | "suggestion", id: string) { const next = selectHandDetail(kind, id); setSelectedId(next.selectedId); setSelectedSuggestionId(next.selectedSuggestionId); if (kind === "saved") setWorkspaceSection("review"); }
   function change<K extends keyof RealHandReviewInput>(key: K, value: RealHandReviewInput[K]) { setForm((current) => ({ ...current, [key]: value })); }
   async function importFile(file?: File) {
@@ -151,7 +151,7 @@ export default function HandsPage() {
     <section id="hands-panel-track" className="hands-workspace" role="tabpanel" aria-labelledby="hands-tab-track" tabIndex={0} hidden={workspaceSection !== "track"}>
     {!reasoningSnapshots.length && !activeInvestigation && !activeFollowUp && !history.length && <p className="workspace-empty">Conforme você revisa mãos, padrões e acompanhamentos aparecem aqui.</p>}
 
-    <section className="panel review-patterns" aria-labelledby="review-patterns-title"><div className="eyebrow">SUAS REVISÕES</div><h2 id="review-patterns-title">O que tem aparecido nas suas decisões</h2><p>Isso resume apenas o que você marcou durante as revisões. Não é uma avaliação de certo ou errado.</p><strong className="reviewed-count">{reviewPatterns.reviewedHands} {reviewPatterns.reviewedHands === 1 ? "decisão revisada" : "decisões revisadas"}</strong>{reviewPatterns.observations.length > 0 ? <ul className="review-observations">{reviewPatterns.observations.map((observation) => <li key={`${observation.kind}:${observation.text}`}>{observation.text}</li>)}</ul> : <p className="review-patterns-empty">{reviewPatterns.hasEnoughReviewsForObservations ? "Entre as revisões registradas, nenhum fator apareceu em pelo menos três decisões." : "Continue revisando mãos. Ainda há poucas revisões para destacar algo que tenha aparecido repetidamente."}</p>}</section>
+    <section className="panel review-patterns" aria-labelledby="review-patterns-title"><div className="eyebrow">SUAS REVISÕES</div><h2 id="review-patterns-title">O que tem aparecido nas suas decisões</h2><p>Isso resume apenas o que você marcou durante as revisões. Não é uma avaliação de certo ou errado.</p><strong className="reviewed-count">{reviewPatterns.reviewedHands} {reviewPatterns.reviewedHands === 1 ? "decisão revisada no total" : "decisões revisadas no total"}</strong>{reviewPatterns.observations.length > 0 ? <ul className="review-observations">{reviewPatterns.observations.map((observation) => <li key={`${observation.kind}:${observation.text}`}>{observation.text}</li>)}</ul> : <div className="review-patterns-empty"><div className="eyebrow">LEITURA EM ANDAMENTO</div><progress value={milestoneProgress} max={reviewPatterns.minimumReviewsForObservations} aria-label={`Progresso para começar a procurar recorrências: ${milestoneProgress} de ${reviewPatterns.minimumReviewsForObservations} revisões`}/>{reviewPatterns.hasEnoughReviewsForObservations ? <><strong>Marco inicial concluído: {reviewPatterns.minimumReviewsForObservations} de {reviewPatterns.minimumReviewsForObservations} revisões.</strong><p>Já há revisões suficientes para procurar recorrências. Até agora, nenhum fator apareceu em pelo menos três decisões. Continue revisando normalmente.</p></> : <><strong>{milestoneProgress} de {reviewPatterns.minimumReviewsForObservations} revisões concluídas.</strong><p>Continue revisando mãos. Ainda há poucas revisões para destacar algo que tenha aparecido repetidamente.</p></>}</div>}</section>
 
     <section className="panel investigations" aria-labelledby="investigations-title"><div className="eyebrow">PARA INVESTIGAR</div><h2 id="investigations-title">Pontos que apareceram em várias revisões</h2><p>Essas são hipóteses baseadas no que você mesmo marcou nas suas mãos. Elas não indicam que uma decisão estava certa ou errada.</p>{investigations.length ? <div className="investigation-list">{investigations.map((candidate) => {
       const relatedHands = candidate.handReviewIds.map((id) => hands.find((hand) => hand.id === id)).filter((hand): hand is RealHandReview => Boolean(hand)).slice(0, 3);
@@ -186,11 +186,8 @@ export default function HandsPage() {
     </section>}
 
     <section className="section-block"><div className="suggestion-heading"><div><div className="eyebrow">SUGESTÕES DA SESSÃO</div><p className="lead">Situações expostas voluntariamente, escolhidas somente pela estrutura da mão.</p></div>{suggestions.length > 0 && <button className="text-button danger-text" type="button" onClick={discardAll}>Descartar todas as sugestões</button>}</div>
-      {!suggestions.length && <p className="lead">Nenhuma sugestão pendente.</p>}<div className="suggestion-grid">{suggestions.map((item) => <article className="panel suggestion-card" key={item.id}><div className="hero-cards">{item.heroCards.map(cardLabel).join(" ")}</div><span>{dateLabel(item.playedAt)}</span><div className="eyebrow">{item.reasonLabel}</div><p>{item.reasonMessage}</p><div className="suggestion-actions"><button className="text-button" onClick={() => openDetail("suggestion", item.id)}>Ver mão</button><button className="text-button danger-text" onClick={() => discard(item)}>Descartar</button><button className="primary-cta compact" onClick={() => promote(item)}>Salvar para revisão</button></div></article>)}</div>
+      {!suggestions.length && <p className="lead">Nenhuma sugestão pendente.</p>}<div className="suggestion-grid">{suggestions.map((item) => <HandSuggestionCard key={item.id} suggestion={item} expanded={selectedSuggestionId === item.id} onToggle={() => setSelectedSuggestionId((current) => toggleSuggestionExpansion(current, item.id))} onSave={() => promote(item)} onDiscard={() => discard(item)}/>)}</div>
     </section>
-
-    {selectedSuggestion && <article className="panel hand-detail"><div className="eyebrow">MÃO JOGADA</div><h2>{selectedSuggestion.heroCards.map(cardLabel).join(" ")} · {dateLabel(selectedSuggestion.playedAt)}</h2><ParsedHandVisualization rawHandText={selectedSuggestion.rawHandText}/><details className="raw-history"><summary>Ver histórico bruto</summary><pre className="raw-hand-text">{selectedSuggestion.rawHandText}</pre></details><div className="eyebrow reflection-heading">POR QUE ELA APARECEU AQUI?</div><h2>{selectedSuggestion.reasonLabel}</h2><p>{selectedSuggestion.reasonMessage}</p><p>Essa seleção considera apenas a estrutura da mão. Ela não indica que sua decisão foi correta ou incorreta.</p><div className="suggestion-actions"><button className="text-button danger-text" onClick={() => discard(selectedSuggestion)}>Descartar</button><button className="primary-cta compact" onClick={() => promote(selectedSuggestion)}>Salvar para revisão</button></div></article>}
-
     </section>
 
     <section id="hands-panel-review" className="hands-workspace" role="tabpanel" aria-labelledby="hands-tab-review" tabIndex={0} hidden={workspaceSection !== "review"}>

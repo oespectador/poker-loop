@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { reasoningFactorOrder, summarizeRealHandReviewPatterns } from "../lib/realHandReviewPatterns";
+import { MIN_REVIEWS_FOR_PATTERN_SCAN, reasoningFactorOrder, summarizeRealHandReviewPatterns } from "../lib/realHandReviewPatterns";
 import type { ReasoningFactor, SelfRatedSupport, StoredRealHandReasoningSnapshot } from "../lib/types";
 
 function snapshot(id: string, factors: ReasoningFactor[] = [], support?: SelfRatedSupport, street: "preflop" | "flop" | "turn" | "river" = "flop", legacy = false): StoredRealHandReasoningSnapshot {
@@ -22,6 +22,24 @@ test("zero snapshots produz contagens vazias e estado sem observações", () => 
 test("uma ou duas revisões não produzem observação recorrente", () => {
   assert.deepEqual(summarizeRealHandReviewPatterns([snapshot("1", ["size"])]).observations, []);
   assert.deepEqual(summarizeRealHandReviewPatterns([snapshot("1", ["size"]), snapshot("2", ["size"])]).observations, []);
+});
+
+test("milestone inicial mantém countdown 0/3, 1/3 e 2/3 e encerra em 3", () => {
+  assert.equal(MIN_REVIEWS_FOR_PATTERN_SCAN, 3);
+  for (const count of [0, 1, 2, 3, 4, 10]) {
+    const summary = summarizeRealHandReviewPatterns(Array.from({ length: count }, (_, index) => snapshot(String(index))));
+    assert.equal(summary.minimumReviewsForObservations, 3);
+    assert.equal(summary.reviewsUntilObservationsPossible, Math.max(0, 3 - count));
+    assert.equal(Math.min(summary.reviewedHands, summary.minimumReviewsForObservations), Math.min(count, 3));
+  }
+});
+
+test("UI limita value e aria-label do progress e apresenta total real separadamente", () => {
+  const source = readFileSync("app/hands/page.tsx", "utf8");
+  assert.match(source, /milestoneProgress = Math\.min\(reviewPatterns\.reviewedHands, reviewPatterns\.minimumReviewsForObservations\)/);
+  assert.match(source, /<progress value=\{milestoneProgress\} max=\{reviewPatterns\.minimumReviewsForObservations\} aria-label=\{`Progresso para começar a procurar recorrências: \$\{milestoneProgress\} de \$\{reviewPatterns\.minimumReviewsForObservations\} revisões`\}/);
+  assert.match(source, /reviewPatterns\.reviewedHands[\s\S]*?decisões revisadas no total/);
+  assert.doesNotMatch(source, /\{reviewPatterns\.reviewedHands\} de \{reviewPatterns\.minimumReviewsForObservations\}/);
 });
 
 test("fator em exatamente três snapshots pode aparecer, mas fator em dois não", () => {
