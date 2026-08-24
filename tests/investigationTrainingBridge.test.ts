@@ -1,57 +1,89 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
-import { canExploreInvestigationInTraining, investigationTrainingLink, investigationTrainingSkillOptions } from "../lib/investigationTrainingBridge";
+import { canExploreInvestigationInTraining, getInvestigationTrainingSuggestions, getOtherInvestigationTrainingSkillOptions, investigationTrainingLink, investigationTrainingSkillOptions } from "../lib/investigationTrainingBridge";
+import { createRealHandInvestigationEpisode, summarizeRealHandInvestigationEpisode } from "../lib/realHandInvestigationHistory";
 import { realHandSkillLabels } from "../lib/realHands";
-import { createRealHandInvestigationEpisode } from "../lib/realHandInvestigationHistory";
 import type { ActiveRealHandInvestigation } from "../lib/prospectiveRealHandInvestigation";
 import type { ReasoningFactor, Skill } from "../lib/types";
 
-function active(factor: ReasoningFactor, factorPresent = true): ActiveRealHandInvestigation {
-  return {
-    version: 1, id: `episode-${factor}`, factor, startedAt: "2026-08-22T00:00:00Z",
-    baselineSnapshotIds: ["a", "b", "c"], baselineHandReviewIds: ["ha", "hb", "hc"],
-    baselineReviewCount: 3, ...(factor === "automatic" ? {} : { baselineLowOrUnclearCount: 2 }),
+function completedWithoutRecurrence(factor: ReasoningFactor): ReturnType<typeof createRealHandInvestigationEpisode> {
+  const investigation: ActiveRealHandInvestigation = {
+    version: 1, id: `episode-zero-${factor}`, factor, startedAt: "2026-08-24T00:00:00.000Z",
+    baselineSnapshotIds: ["b1", "b2", "b3"], baselineHandReviewIds: ["h1", "h2", "h3"], baselineReviewCount: 3,
+    ...(factor === "automatic" ? {} : { baselineLowOrUnclearCount: 2 }),
     prospectiveReviews: Array.from({ length: 5 }, (_, index) => ({
-      snapshotId: `future-${index}`, handReviewId: `future-hand-${index}`,
-      createdAt: `2026-08-22T00:00:0${index + 1}Z`, factorPresent,
-      ...(factor === "automatic" || !factorPresent ? {} : { selfRatedSupport: "low" as const }),
+      snapshotId: `s${index}`, handReviewId: `new-h${index}`, createdAt: `2026-08-25T00:00:0${index}.000Z`, factorPresent: false,
     })),
   };
+  return createRealHandInvestigationEpisode(investigation, "completed");
 }
 
-test("somente episódios completed são elegíveis", () => {
-  assert.equal(canExploreInvestigationInTraining("completed"), true);
-  assert.equal(canExploreInvestigationInTraining("stopped"), false);
-  assert.equal(canExploreInvestigationInTraining("inconclusive"), false);
+const expected: Record<ReasoningFactor, readonly [Skill, "primary" | "secondary"][]> = {
+  size: [["sizing", "primary"], ["integrated-decision", "secondary"]],
+  board: [["board-reading", "primary"], ["integrated-decision", "secondary"]],
+  "previous-actions": [["range-reading", "primary"], ["integrated-decision", "secondary"]],
+  configuration: [["range-reading", "primary"], ["integrated-decision", "secondary"]],
+  "player-read": [["range-reading", "primary"], ["integrated-decision", "secondary"]],
+  automatic: [], other: [],
+};
+
+for (const [factor, mapping] of Object.entries(expected) as [ReasoningFactor, typeof expected[ReasoningFactor]][]) {
+  test(`${factor}: mapa editorial ordenado`, () => {
+    const suggestions = getInvestigationTrainingSuggestions(factor);
+    assert.deepEqual(suggestions.map(({ skill, priority }) => [skill, priority]), mapping);
+    assert.equal(new Set(suggestions.map(({ skill }) => skill)).size, suggestions.length);
+    assert.ok(suggestions.every(({ skill }) => investigationTrainingSkillOptions.some((option) => option.skill === skill)));
+  });
+}
+
+test("mapa é puro, determinístico e independente de episódios e contagens", () => {
+  const before = JSON.stringify(getInvestigationTrainingSuggestions("size"));
+  for (let index = 0; index < 5; index += 1) assert.equal(JSON.stringify(getInvestigationTrainingSuggestions("size")), before);
+  const source = readFileSync("lib/investigationTrainingBridge.ts", "utf8");
+  assert.doesNotMatch(source, /localStorage|from ["'][^"']*(?:storage|diagnostics|learningLoop|trainingEngine)|factorCount|lowOrUnclearCount|createActiveTrainingSession|registerLaunch/);
 });
 
-test("a ponte começa sem foco e não produz destino sem escolha", () => {
-  assert.equal(investigationTrainingLink("episode"), undefined);
-});
-
-test("todas as Skills atuais aparecem na ordem neutra dos labels humanos", () => {
+test("todas as Skills permanecem disponíveis entre relacionadas e outros focos", () => {
+  for (const factor of Object.keys(expected) as ReasoningFactor[]) {
+    const skills = [...getInvestigationTrainingSuggestions(factor), ...getOtherInvestigationTrainingSkillOptions(factor)].map(({ skill }) => skill);
+    assert.deepEqual(new Set(skills), new Set(investigationTrainingSkillOptions.map(({ skill }) => skill)));
+    assert.equal(skills.length, investigationTrainingSkillOptions.length);
+  }
   assert.deepEqual(investigationTrainingSkillOptions, Object.entries(realHandSkillLabels).map(([skill, label]) => ({ skill, label })));
 });
 
-test("cada escolha transporta Skill e episódio para o fluxo normal", () => {
-  for (const { skill } of investigationTrainingSkillOptions) assert.equal(investigationTrainingLink("episode", skill), `/session?focus=${skill}&investigation=episode`);
+test("completed com factorCount zero mantém a ponte e o mapa depende somente de episode.factor", () => {
+  const episode = completedWithoutRecurrence("size");
+  assert.equal(episode.completion, "completed");
+  assert.equal(summarizeRealHandInvestigationEpisode(episode).factorCount, 0);
+  assert.equal(canExploreInvestigationInTraining(episode.completion), true);
+  assert.deepEqual(getInvestigationTrainingSuggestions(episode.factor), getInvestigationTrainingSuggestions("size"));
+  const withDifferentCounts = { ...episode, factorCount: 5, lowOrUnclearCount: 5 };
+  assert.deepEqual(getInvestigationTrainingSuggestions(withDifferentCounts.factor), getInvestigationTrainingSuggestions(episode.factor));
 });
 
-test("fator e contagens diferentes não alteram opções nem selecionam foco", () => {
-  const snapshots = (["size", "board", "player-read", "configuration", "automatic"] as ReasoningFactor[]).map((factor, index) =>
-    createRealHandInvestigationEpisode({ ...active(factor, index % 2 === 0), ...(factor === "automatic" ? {} : { baselineLowOrUnclearCount: index % 4 }) }, "completed"),
-  );
-  const expected = investigationTrainingSkillOptions.map(({ skill }) => skill);
-  for (const episode of snapshots) {
-    assert.deepEqual(investigationTrainingSkillOptions.map(({ skill }) => skill), expected);
-    assert.equal(investigationTrainingLink(episode.id), undefined);
-    assert.equal(episode.completion, "completed");
-  }
+test("somente completed pode explorar e a ponte começa sem foco", () => {
+  assert.equal(canExploreInvestigationInTraining("completed"), true);
+  assert.equal(canExploreInvestigationInTraining("stopped"), false);
+  assert.equal(canExploreInvestigationInTraining("inconclusive"), false);
+  assert.equal(investigationTrainingLink("episode"), undefined);
 });
 
-test("usar a ponte não modifica o episódio histórico", () => {
-  const episode = createRealHandInvestigationEpisode(active("size"), "completed");
-  const before = JSON.stringify(episode);
-  assert.equal(investigationTrainingLink(episode.id, "sizing" satisfies Skill), `/session?focus=sizing&investigation=${episode.id}`);
-  assert.equal(JSON.stringify(episode), before);
+test("escolha explícita preserva o link existente", () => {
+  for (const { skill } of investigationTrainingSkillOptions) assert.equal(investigationTrainingLink("episode / exact", skill), `/session?focus=${skill}&investigation=episode%20%2F%20exact`);
+});
+
+test("UI separa sugestões, escolhas neutras e disclosure sem criar launch ao renderizar", () => {
+  const source = readFileSync("app/hands/page.tsx", "utf8");
+  assert.match(source, /getInvestigationTrainingSuggestions\(episode\.factor\)/);
+  assert.match(source, /Treinos relacionados/);
+  assert.match(source, /Sugerido/);
+  assert.match(source, /Você concluiu o acompanhamento de um padrão que decidiu observar/);
+  assert.match(source, /não uma conclusão sobre a causa/);
+  assert.doesNotMatch(source, /acompanhamento confirmou|padrão continuou aparecendo|observamos novamente esse padrão|acompanhamento observou um padrão|padrão foi validado/i);
+  assert.match(source, /neutral \? investigationTrainingSkillOptions : otherOptions/);
+  assert.match(source, /canExploreInvestigationInTraining\(episode\.completion\)/);
+  assert.match(source, /trainingBridge\.skill === skill/);
+  assert.doesNotMatch(source.slice(source.indexOf("bridgeIsOpen && (() =>")), /registerLaunchForNewTrainingSession|localStorage/);
 });

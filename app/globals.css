@@ -314,6 +314,14 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 .training-skill-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 14px 0; }
 .training-skill-option { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); cursor: pointer; font-weight: 700; }
 .training-skill-option.selected { border-color: var(--cyan); background: rgba(94, 231, 244, .1); }
+.training-bridge h4 { margin: 14px 0 8px; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase; }
+.training-suggestion-options { display: grid; gap: 8px; margin-top: 14px; }
+.training-suggestion-option { display: grid; grid-template-columns: minmax(130px, .7fr) minmax(0, 1.5fr); gap: 12px; width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); text-align: left; cursor: pointer; }
+.training-suggestion-option span { display: grid; gap: 4px; }
+.training-suggestion-option small { color: var(--cyan); font-weight: 800; }
+.training-suggestion-option.selected { border-color: var(--cyan); background: rgba(94, 231, 244, .1); }
+.training-other-options .training-skill-options { margin-top: 8px; }
+@media (max-width: 560px) { .training-suggestion-option { grid-template-columns: 1fr; } }
 .active-investigation { margin: -28px 0 48px; border-color: var(--accent); }
 .investigation-progress { display: block; margin: 18px 0 8px; font-size: 1.1rem; }
 .related-hands { display: grid; gap: 8px; margin-top: 12px; }

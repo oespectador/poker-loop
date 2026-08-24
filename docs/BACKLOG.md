@@ -2,6 +2,13 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.37 — Padrão observado → sugestão de próximo treino
+
+- mapa editorial puro destaca 1–2 caminhos relacionados para cinco fatores, sem equivaler `ReasoningFactor` a Skill;
+- `automatic` e `other` mantêm quatro escolhas neutras, e todas as Skills ficam disponíveis em qualquer fator;
+- nenhuma Skill começa selecionada; criação de sessão e provenance continuam dependentes da escolha explícita;
+- somente episódios `completed` são elegíveis, sem storage, schema ou mudança no motor pedagógico.
+
 ## Concluído na V0.36 — Revisão leve + progresso visível para padrões
 
 - milestone derivado de três revisões torna visível o caminho para começar a procurar recorrências, sem prometer que elas existirão;

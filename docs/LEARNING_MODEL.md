@@ -279,3 +279,8 @@ O batch GG/PokerCraft persiste somente um pool limitado de candidatas estruturai
 ## V0.31 — exploração estrutural continua fora da evidência
 
 O jogador pode recortar voluntariamente o pool V0.30 por decisão no river, agressão enfrentada no river, showdown com cartas reveladas, alta exposição, pressão em várias streets ou linha longa. As categorias são derivadas novamente do histórico bruto preservado e podem se sobrepor; elas descrevem somente características observáveis, sem classificar resultado, intenção, erro ou valor estratégico. A escolha do filtro é estado local de interface e não altera evidência pedagógica.
+
+
+## V0.37 — relação editorial entre fator e treino
+
+`ReasoningFactor` não é `Skill`. Depois de uma investigação prospectiva concluída, um fator pode ordenar caminhos possíveis de estudo, mas isso não identifica causa, domínio ou fraqueza e não atualiza `SkillState`. A seleção da Skill continua explícita e voluntária.
