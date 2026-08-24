@@ -15,6 +15,10 @@ npm run dev
 
 O runner recebe o diretório compilado de testes, sem depender de expansão de glob do shell, e cobre tanto o motor quanto o contrato estático da biblioteca e a classificação de suporte das tentativas.
 
+## V0.33 — próximo passo contextual na Home
+
+A suíte possui 561 testes. Os 25 testes de `tests/homeNextAction.test.ts` cobrem readiness inicialmente falso, leituras e atualizações antes de liberar a interface, Hero neutra sem CTA durante a preparação, sessão incompleta e completa, todas as precedências entre sessão, investigação, follow-up, sugestões e batch, contagens factuais, singular, fallback com foco fornecido pelo motor, URLs de retomada com e sem `focus`, pureza, ausência de writes/storage e preservação das integrações de `/hands` e `/session`. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## V0.32 — workspace de Mãos
 
 A suíte possui 536 testes. `tests/handsWorkspace.test.ts` contém 20 verificações para as três áreas exatas, três `tabpanel` sempre montados com IDs estáveis, ausência de `<main>` aninhado, visibilidade exclusiva por `hidden`, prioridade completa do helper inicial, inicialização única, navegação contextual ao salvar ou abrir mãos relacionadas, conteúdo de cada área, tabs/teclado/ARIA, empty states, ausência de storage e preservação do uso transacional da importação. As regressões V0.30/V0.31 continuam protegendo pool, +5/+10, filtros, surfaced IDs e rollback; as suítes anteriores continuam protegendo Quick Review e todo o acompanhamento longitudinal.

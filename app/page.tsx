@@ -4,14 +4,44 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "./components/AppShell";
 import { chooseFocus, deriveSkillState, getPendingLearningPackage, skillLabels } from "@/lib/trainingEngine";
-import { readAttempts } from "@/lib/storage";
+import { readActiveTrainingSession, readAttempts } from "@/lib/storage";
+import { readActiveRealHandInvestigation } from "@/lib/prospectiveRealHandInvestigation";
+import { findActivePostTrainingRealHandFollowUp, readPostTrainingRealHandFollowUps } from "@/lib/postTrainingRealHandFollowUps";
+import { readHandSuggestions } from "@/lib/handSuggestionStorage";
+import { readActiveGgImportBatch, remainingImportCandidates } from "@/lib/activeGgImportBatch";
+import { deriveHomeNextAction, type HomeOperationalState } from "@/lib/homeNextAction";
 import type { Attempt, Skill } from "@/lib/types";
+
+const emptyOperationalState: Omit<HomeOperationalState, "recommendedFocus"> = {
+  activeTrainingSession: null,
+  hasActiveInvestigation: false,
+  hasActiveFollowUp: false,
+  pendingSuggestionCount: 0,
+  remainingImportCandidates: 0,
+};
 
 export default function TodayPage() {
   const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const [operationalState, setOperationalState] = useState(emptyOperationalState);
+  const [operationalReady, setOperationalReady] = useState(false);
 
   useEffect(() => {
-    setAttempts(readAttempts());
+    const storedAttempts = readAttempts();
+    const activeTrainingSession = readActiveTrainingSession();
+    const hasActiveInvestigation = Boolean(readActiveRealHandInvestigation());
+    const hasActiveFollowUp = Boolean(findActivePostTrainingRealHandFollowUp(readPostTrainingRealHandFollowUps()));
+    const pendingSuggestionCount = readHandSuggestions().length;
+    const batch = readActiveGgImportBatch();
+
+    setAttempts(storedAttempts);
+    setOperationalState({
+      activeTrainingSession,
+      hasActiveInvestigation,
+      hasActiveFollowUp,
+      pendingSuggestionCount,
+      remainingImportCandidates: batch ? remainingImportCandidates(batch).length : 0,
+    });
+    setOperationalReady(true);
   }, []);
 
   const focus = useMemo(() => chooseFocus(attempts), [attempts]);
@@ -20,24 +50,38 @@ export default function TodayPage() {
   const secondaryState = deriveSkillState(attempts, secondary);
   const pendingPackage = attempts.length > 0 ? getPendingLearningPackage(attempts) : undefined;
 
+  if (!operationalReady) {
+    return (
+      <AppShell>
+        <section className="hero-grid" aria-live="polite">
+          <div className="eyebrow">POKER LOOP</div>
+          <h1>Preparando seu próximo passo…</h1>
+        </section>
+      </AppShell>
+    );
+  }
+
+  const nextAction = deriveHomeNextAction({ ...operationalState, recommendedFocus: focus });
+  const hasOpenTraining = Boolean(operationalState.activeTrainingSession);
+
   return (
     <AppShell>
       <section className="hero-grid">
-        <div className="eyebrow">TREINO DE HOJE</div>
-        <h1>Uma sessão curta. Um foco claro.</h1>
-        <p className="lead">12 decisões · ~10 min</p>
+        <div className="eyebrow">{nextAction.eyebrow}</div>
+        <h1>{nextAction.title}</h1>
+        <p className="lead">{nextAction.description}</p>
 
-        <div className="focus-row" aria-label="Foco recomendado">
+        {nextAction.kind === "recommended-training" && <div className="focus-row" aria-label="Foco recomendado">
           <span className="focus-chip">{skillLabels[focus]}</span>
           <span className="focus-chip muted">{skillLabels[secondary]}</span>
-        </div>
+        </div>}
 
-        <Link href={`/session?focus=${focus}`} className="primary-cta">Começar treino</Link>
-        <Link href="/train" className="quiet-link">Ajustar treino</Link>
+        <Link href={nextAction.href} className="primary-cta">{nextAction.ctaLabel}</Link>
+        {nextAction.kind === "recommended-training" && <Link href="/train" className="quiet-link">Ajustar treino</Link>}
         <Link href="/hands" className="quiet-link">Revisar uma mão real</Link>
       </section>
 
-      <section className="two-column">
+      {nextAction.kind === "recommended-training" && <section className="two-column">
         <article className="panel">
           <div className="eyebrow">POR QUE HOJE?</div>
           <h2>{skillLabels[focus]}</h2>
@@ -69,7 +113,16 @@ export default function TodayPage() {
             <div><span>{skillLabels[secondary]}</span><strong>{secondaryState}</strong></div>
           </div>
         </article>
-      </section>
+      </section>}
+
+      {!hasOpenTraining && nextAction.kind !== "recommended-training" && <section className="two-column">
+        <article className="panel">
+          <div className="eyebrow">TREINO RECOMENDADO</div>
+          <h2>{skillLabels[focus]}</h2>
+          <p>Disponível quando quiser iniciar uma nova sessão.</p>
+          <Link href={`/session?focus=${focus}`} className="quiet-link">Ver treino</Link>
+        </article>
+      </section>}
     </AppShell>
   );
 }

@@ -2,6 +2,13 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.33 — Próximo Passo Contextual na Home
+
+- a Home apresenta uma única ação principal derivada, priorizando sessão, acompanhamento, exploração de mãos e fallback de treino, nessa ordem;
+- sessão incompleta retoma o `focus` persistido e sessão completa abre o fechamento, sem classificação de aprendizagem;
+- acompanhamento, sugestões e candidatas restantes reutilizam `/hands`, cuja escolha inicial por intenção permanece responsável pelo workspace;
+- não há storage, write, schema ou mudança no motor pedagógico.
+
 ## Concluído na V0.32 — Mãos Organizadas pela Intenção do Jogador
 
 - `/hands` apresenta somente Explorar, Revisar ou Acompanhar por vez, preservando todas as capacidades existentes;

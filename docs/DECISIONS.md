@@ -156,3 +156,9 @@ A reflexão escrita é efêmera e não é persistida. O feedback continua sendo 
 **A V0.32 organiza a página Mãos por intenção do jogador — Explorar, Revisar e Acompanhar — sem alterar seleção, revisão, investigação ou evidência. A seção ativa é apenas estado de interface e não constitui dado pedagógico.**
 
 **Reduzir carga visual tem prioridade sobre expor simultaneamente todas as capacidades construídas.** A área inicial é derivada uma única vez dos estados já existentes; trocas posteriores são escolha do jogador ou navegação contextual explícita.
+
+## Frozen Decision — V0.33
+
+**A V0.33 pode priorizar na Home a continuação de fluxos operacionais já abertos — sessão, acompanhamento ou lote de mãos — antes de oferecer um novo treino. Essa prioridade organiza a experiência e não constitui diagnóstico, recomendação estratégica ou nova evidência pedagógica.**
+
+**A Home mostra uma ação principal por vez para reduzir carga decisória.** A ação é sempre derivada dos storages existentes, não é persistida e apenas navega. Uma sessão ativa mantém seu próprio `focus` e antecede os demais fluxos; o treino recomendado continua usando exclusivamente o motor atual quando não há compromisso operacional aberto.
