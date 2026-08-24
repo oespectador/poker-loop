@@ -1,5 +1,11 @@
 # Frozen Decisions — Poker Loop
 
+## Frozen Decision — V0.38.1
+
+**A presença de um all-in imediatamente antes da decisão não prova, sozinha, que Raise é ilegal em pots multiway. O replay só remove Raise quando essa indisponibilidade puder ser determinada com segurança pelos dados estruturados disponíveis.**
+
+Na V0.38.1, isso exige uma mesa explicitamente heads-up (`maxPlayers === 2`) e uma ação adversária de bet ou raise, all-in, imediatamente anterior e na mesma street. Em mesas multiway ou com `maxPlayers` desconhecido, Fold/Call/Raise permanecem como opções conservadoras. **A V0.38.1 não transforma o replay em um legal-action engine.**
+
 ## Frozen Decision — V0.38
 
 **A V0.38 permite refazer uma decisão real usando o mesmo corte temporal do Quick Review. A nova escolha é comparada apenas com o tipo de ação realizada na mesa e não possui resposta correta.**

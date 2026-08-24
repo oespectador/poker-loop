@@ -1,5 +1,9 @@
 # Testing Protocol
 
+## V0.38.1 — Raise após all-in no replay
+
+A suíte possui 603 testes. `tests/realHandDecisionReplay.test.ts` distingue bet e raise all-in heads-up, que oferecem somente Fold/Call, dos casos multiway e com `maxPlayers` desconhecido, que conservam Fold/Call/Raise. As regressões existentes continuam cobrindo famílias, ordem, unicidade, inclusão histórica, anti-hindsight, matching exato do snapshot e isolamento pedagógico. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## V0.38 — replay de decisão real
 
 A suíte possui 601 testes. `tests/realHandDecisionReplay.test.ts` cobre as cinco famílias, ordem e unicidade das opções, inclusão da ação histórica, all-in adversário, normalização de bet/raise com sizing ou all-in, comparação same/different, elegibilidade exata sem fallback, independência de resultado financeiro e corte anterior à ação no flop/turn. As regressões de composição protegem montagem condicional, copy antes/depois, `aria-expanded` sem `aria-controls` e ausência de storage, `Attempt`, snapshot ou dependências pedagógicas. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.

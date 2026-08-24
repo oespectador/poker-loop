@@ -17,7 +17,8 @@ export function replayActionFamily(action: { action?: string; type?: string }): 
   return candidate === "fold" || candidate === "check" || candidate === "call" || candidate === "bet" || candidate === "raise" ? candidate : undefined;
 }
 
-function immediatelyFacesAllIn(hand: ParsedGgHand, anchor: HeroDecisionAnchor): boolean {
+function raiseIsCertainlyUnavailableAfterAllIn(hand: ParsedGgHand, anchor: HeroDecisionAnchor): boolean {
+  if (hand.maxPlayers !== 2) return false;
   const previous = hand.actions[anchor.sequenceIndex - 1];
   return Boolean(previous && previous.street === anchor.street && previous.actor !== "Hero" &&
     (previous.type === "bet" || previous.type === "raise") && previous.allIn);
@@ -27,7 +28,7 @@ export function deriveReplayActionOptions(hand: ParsedGgHand, anchor: HeroDecisi
   const historical = replayActionFamily(anchor);
   if (!historical) return [];
   let options = historical === "check" || historical === "bet" ? [...passiveOptions] : [...facingAggressionOptions];
-  if (immediatelyFacesAllIn(hand, anchor) && historical !== "raise") options = options.filter((action) => action !== "raise");
+  if (raiseIsCertainlyUnavailableAfterAllIn(hand, anchor) && historical !== "raise") options = options.filter((action) => action !== "raise");
   if (!options.includes(historical)) options.push(historical);
   return [...new Set(options)];
 }
