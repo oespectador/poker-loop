@@ -1,4 +1,12 @@
-# Project State — V0.37
+# Project State — V0.38
+
+## V0.38 — rejogar uma decisão da própria mão
+
+Uma mão salva com Quick Review reconstruível oferece **Rejogar esta decisão**. A âncora vem exatamente de `RealHandReasoningSnapshot.sourceDecision`, validada por `matchSnapshotDecisionAnchor`; snapshots ausentes, legados ou incompatíveis com um histórico editado não recebem fallback. A visualização reutiliza a Decision View e termina imediatamente antes da ação do Herói que será refeita.
+
+As opções normalizam somente Fold/Check/Call/Bet/Raise: check/bet oferecem essas duas famílias, e fold/call/raise oferecem as três, exceto quando uma aposta ou raise adversária imediatamente anterior está factualmente all-in, caso em que Raise é omitido. Amount, sizing e all-in do Herói não criam nova família. A comparação relata apenas mesmo/diferente tipo de ação, sem resposta correta ou avaliação estratégica.
+
+O replay inteiro é estado React efêmero. Não cria storage, `Attempt`, `RealHandReasoningSnapshot`, investigação, launch, sessão, evidência pedagógica ou atualização de `SkillState`; a V0.37 permanece inalterada.
 
 ## V0.37 — padrão observado → sugestão de próximo treino
 
@@ -25,7 +33,7 @@ Stack:
 
 ## Versão atual
 
-**V0.37 — Padrão observado → sugestão de próximo treino**
+**V0.38 — Rejogar uma decisão da própria mão**
 
 ## V0.34 — Exploração por Ações no River
 
