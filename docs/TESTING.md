@@ -2,7 +2,7 @@
 
 ## V0.37 — sugestões editoriais para treino
 
-A suíte possui 589 testes. `tests/investigationTrainingBridge.test.ts` cobre os sete fatores, prioridades e ordem determinística, ausência de duplicatas, inventário válido e completo, pureza e independência de storage, Attempts, SkillState, resultado e contagens. As regressões de UI protegem grupos acessíveis, disclosure não causal, quatro Skills disponíveis, nenhuma pré-seleção, link exato, bloqueio de `stopped`/`inconclusive` e ausência de launch durante render. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+A suíte possui 590 testes. `tests/investigationTrainingBridge.test.ts` cobre os sete fatores, prioridades e ordem determinística, ausência de duplicatas, inventário válido e completo, pureza e independência de storage, Attempts, SkillState, resultado e contagens. As regressões de UI protegem grupos acessíveis, disclosure não causal, quatro Skills disponíveis, nenhuma pré-seleção, link exato, bloqueio de `stopped`/`inconclusive`, elegibilidade de `completed` com zero recorrências e ausência de launch durante render. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
 
 
 ## V0.36 — revisão leve e progresso factual

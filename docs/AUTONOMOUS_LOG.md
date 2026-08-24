@@ -757,3 +757,8 @@ Quick Review removeu textarea e apresentação de `thought`, mas uma edição re
 `getInvestigationTrainingSuggestions` concentra um mapa fixo: `size → sizing / integrated-decision`, `board → board-reading / integrated-decision`, e `previous-actions`, `configuration` e `player-read → range-reading / integrated-decision`. `automatic` e `other` não recebem destaque. A UI mantém as quatro Skills disponíveis, começa sem seleção e cria somente o link existente depois do clique explícito.
 
 A superfície não escreve storage nem cria session/launch ao renderizar. `canExploreInvestigationInTraining` continua aceitando somente `completed`; provenance, follow-up, comparação, thresholds, janela de cinco decisões, exercícios e motor pedagógico não mudaram. **Validação prevista:** 589 testes, typecheck, build e `git diff --check`. **Validação humana pendente:** confirmar em mobile se a distinção entre caminhos relacionados e outros focos permanece compacta e claramente não diagnóstica.
+
+
+### Correção semântica da ponte V0.37
+
+A copy da ponte agora descreve somente a conclusão da janela prospectiva, sem afirmar que o fator reapareceu. Um episódio `completed` com `factorCount = 0` continua elegível porque os caminhos editoriais derivam exclusivamente de `episode.factor`; contagens não confirmam nem alteram o mapa. A regressão explícita eleva a suíte a 590 testes. Arquitetura, storage, Skills disponíveis, seleção explícita, provenance, follow-up e motor pedagógico permanecem inalterados.
