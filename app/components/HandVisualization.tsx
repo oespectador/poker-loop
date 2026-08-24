@@ -10,8 +10,8 @@ export function PokerCard({ card }: { card: string }) {
   return <span className={`hand-card ${suit === "h" || suit === "d" ? "red-suit" : ""}`} aria-label={`${match[1]} ${suits[suit]}`}><span>{match[1]}</span><span>{suits[suit]}</span></span>;
 }
 
-export function HandVisualization({ hand, decision }: { hand: ParsedGgHand; decision?: HeroDecisionAnchor }) {
-  const visual = buildHandVisualModel(hand, decision);
+export function HandVisualization({ hand, decision, beforeDecision = false }: { hand: ParsedGgHand; decision?: HeroDecisionAnchor; beforeDecision?: boolean }) {
+  const visual = buildHandVisualModel(hand, decision, beforeDecision);
   if (!visual) return null;
 
   return <section className="hand-visual" aria-label={decision ? "Visualização da decisão" : "Visualização da mão"}>

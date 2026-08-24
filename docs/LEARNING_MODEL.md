@@ -215,6 +215,10 @@ O parser produz estruturas temporárias e a triagem reduz a sessão a no máximo
 
 Uma revisão rápida reconstrói apenas as informações disponíveis até uma ação escolhida do Herói e salva um `RealHandReasoningSnapshot`. O campo `selfRatedSupport` descreve quanto o próprio jogador achava que sua leitura estava sustentada naquele momento; não mede a sustentação real. Snapshot é material do jogador, separado de `Attempt`, diagnóstico, Skills, scheduler, recovery, retention e transfer.
 
+## V0.38 — replay de decisão real não é Attempt
+
+Refazer uma decisão de mão real é prática local de reconstrução e escolha, sem resposta correta. A comparação informa somente se Fold/Check/Call/Bet/Raise pertence à mesma família da ação histórica; sizing e all-in não criam categoria nova nem equivalência estratégica. O replay não cria `Attempt`, snapshot, evidência pedagógica, investigação ou atualização de `SkillState`.
+
 ## V0.18 — resumo longitudinal do autorrelato
 
 Contagens de fatores, sustentação percebida e streets descrevem apenas o que o jogador marcou. Um fator pode ficar visível após aparecer em três snapshots, mas frequência não é leak, erro, domínio nem evidência pedagógica. `automatic` não recebe sustentação implícita e fica fora desse denominador. O resumo não alimenta `Attempt`, `SkillState`, diagnóstico, scheduler ou o loop pedagógico.

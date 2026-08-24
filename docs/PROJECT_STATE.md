@@ -1,4 +1,16 @@
-# Project State — V0.37
+# Project State — V0.38.1
+
+## V0.38.1 — inferência conservadora após all-in
+
+Uma bet ou raise all-in imediatamente anterior só remove Raise das opções quando a mesa é explicitamente heads-up (`maxPlayers === 2`). Em pots multiway ou quando `maxPlayers` é desconhecido, os dados atuais não provam que não há adversário ativo para um side pot, portanto Raise permanece disponível. Esta é uma correção conservadora, não um legal-action engine; parser, replay, anti-hindsight e isolamento pedagógico não mudaram.
+
+## V0.38 — rejogar uma decisão da própria mão
+
+Uma mão salva com Quick Review reconstruível oferece **Rejogar esta decisão**. A âncora vem exatamente de `RealHandReasoningSnapshot.sourceDecision`, validada por `matchSnapshotDecisionAnchor`; snapshots ausentes, legados ou incompatíveis com um histórico editado não recebem fallback. A visualização reutiliza a Decision View e termina imediatamente antes da ação do Herói que será refeita.
+
+As opções normalizam somente Fold/Check/Call/Bet/Raise: check/bet oferecem essas duas famílias, e fold/call/raise oferecem as três. Raise só é omitido após bet ou raise all-in imediatamente anterior quando a mesa é explicitamente heads-up. Amount, sizing e all-in do Herói não criam nova família. A comparação relata apenas mesmo/diferente tipo de ação, sem resposta correta ou avaliação estratégica.
+
+O replay inteiro é estado React efêmero. Não cria storage, `Attempt`, `RealHandReasoningSnapshot`, investigação, launch, sessão, evidência pedagógica ou atualização de `SkillState`; a V0.37 permanece inalterada.
 
 ## V0.37 — padrão observado → sugestão de próximo treino
 
@@ -25,7 +37,7 @@ Stack:
 
 ## Versão atual
 
-**V0.37 — Padrão observado → sugestão de próximo treino**
+**V0.38 — Rejogar uma decisão da própria mão**
 
 ## V0.34 — Exploração por Ações no River
 

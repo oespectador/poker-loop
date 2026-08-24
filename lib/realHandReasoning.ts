@@ -65,14 +65,14 @@ export function formatAction(action: { action?: string; type?: string; amount?: 
 }
 
 /** UI-ready hand structure. Intentionally excludes rawHandText and never expands a Decision View. */
-export function buildHandVisualModel(hand: ParsedGgHand, anchor?: HeroDecisionAnchor) {
+export function buildHandVisualModel(hand: ParsedGgHand, anchor?: HeroDecisionAnchor, beforeDecision = false) {
   const decisionView = anchor ? buildHeroDecisionView(hand, anchor) : undefined;
   if (anchor && !decisionView) return null;
-  const actions = decisionView?.actionsThroughDecision ?? hand.actions;
+  const actions = decisionView ? (beforeDecision ? decisionView.actionsThroughDecision.slice(0, -1) : decisionView.actionsThroughDecision) : hand.actions;
   const board = decisionView?.board ?? { flop: hand.flop, turn: hand.turn, river: hand.river };
   return (["preflop", "flop", "turn", "river"] as const).flatMap((street) => {
     const streetBoard = street === "flop" ? board.flop : street === "turn" ? (board.turn ? [board.turn] : undefined) : street === "river" ? (board.river ? [board.river] : undefined) : undefined;
-    const streetActions = actions.flatMap((action, sequenceIndex) => action.street === street ? [{ ...action, sequenceIndex, selected: anchor?.sequenceIndex === sequenceIndex }] : []);
+    const streetActions = actions.flatMap((action, sequenceIndex) => action.street === street ? [{ ...action, sequenceIndex, selected: !beforeDecision && anchor?.sequenceIndex === sequenceIndex }] : []);
     return street === "preflop" || streetBoard || streetActions.length ? [{ street, board: streetBoard, actions: streetActions }] : [];
   });
 }
