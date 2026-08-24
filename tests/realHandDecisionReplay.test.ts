@@ -6,8 +6,8 @@ import { buildHandVisualModel, extractHeroDecisionAnchors } from "../lib/realHan
 import { buildReplayDecisionView, compareReplayAction, deriveRealHandReplayEligibility, deriveReplayActionOptions, replayActionFamily } from "../lib/realHandDecisionReplay";
 import type { RealHandReasoningSnapshot } from "../lib/types";
 
-const parse = (body: string, summary = "") => parseGgHand(`Poker Hand #REPLAY: Hold'em No Limit ($0.01/$0.02) - 2026/08/20 23:19:07\nTable 'T' 6-max Seat #1 is the button\nSeat 5: Hero ($2.00 in chips)\n*** HOLE CARDS ***\nDealt to Hero [Ah Qc]\n${body}\n*** SUMMARY ***\n${summary}`)!;
-const optionsFor = (line: string) => { const hand = parse(line); const anchor = extractHeroDecisionAnchors(hand).at(-1)!; return deriveReplayActionOptions(hand, anchor); };
+const parse = (body: string, summary = "", table = "Table 'T' 6-max Seat #1 is the button") => parseGgHand(`Poker Hand #REPLAY: Hold'em No Limit ($0.01/$0.02) - 2026/08/20 23:19:07\n${table}\nSeat 5: Hero ($2.00 in chips)\n*** HOLE CARDS ***\nDealt to Hero [Ah Qc]\n${body}\n*** SUMMARY ***\n${summary}`)!;
+const optionsFor = (line: string, table?: string) => { const hand = parse(line, "", table); const anchor = extractHeroDecisionAnchors(hand).at(-1)!; return deriveReplayActionOptions(hand, anchor); };
 
 test("check e bet oferecem check, bet em ordem determinística", () => {
   assert.deepEqual(optionsFor("Hero: checks"), ["check", "bet"]);
@@ -18,9 +18,16 @@ test("fold, call e raise enfrentando agressão oferecem as três famílias", () 
   assert.deepEqual(optionsFor("Villain: bets $0.20\nHero: calls $0.20"), ["fold", "call", "raise"]);
   assert.deepEqual(optionsFor("Villain: bets $0.20\nHero: raises $0.40 to $0.60"), ["fold", "call", "raise"]);
 });
-test("all-in imediatamente enfrentado remove raise sem excluir a ação histórica", () => {
-  assert.deepEqual(optionsFor("Villain: bets $2.00 and is all-in\nHero: calls $2.00 and is all-in"), ["fold", "call"]);
-  assert.deepEqual(optionsFor("Villain: raises $1.98 to $2.00 and is all-in\nHero: folds"), ["fold", "call"]);
+test("heads-up: bet ou raise all-in imediatamente enfrentado remove raise", () => {
+  const headsUp = "Table 'T' 2-max Seat #1 is the button";
+  assert.deepEqual(optionsFor("Villain: bets $2.00 and is all-in\nHero: calls $2.00 and is all-in", headsUp), ["fold", "call"]);
+  assert.deepEqual(optionsFor("Villain: raises $1.98 to $2.00 and is all-in\nHero: folds", headsUp), ["fold", "call"]);
+});
+test("multiway: all-in imediatamente enfrentado não basta para remover raise", () => {
+  assert.deepEqual(optionsFor("Villain: bets $2.00 and is all-in\nHero: calls $2.00 and is all-in"), ["fold", "call", "raise"]);
+});
+test("maxPlayers desconhecido: all-in imediatamente enfrentado não remove raise", () => {
+  assert.deepEqual(optionsFor("Villain: bets $2.00 and is all-in\nHero: calls $2.00 and is all-in", "Table 'T' Seat #1 is the button"), ["fold", "call", "raise"]);
 });
 test("all-in do Herói e sizing não criam família nova", () => {
   assert.equal(replayActionFamily({ action: "bet", amount: .75, allIn: true } as never), "bet");

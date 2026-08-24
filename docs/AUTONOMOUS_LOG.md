@@ -1,5 +1,13 @@
 # Autonomous Log
 
+## 2026-08-24 — V0.38.1 Raise conservador após all-in no replay
+
+**Hipótese de trabalho:** restringir a omissão de Raise ao único caso que os dados atuais provam com segurança evita apresentar uma falsa certeza sobre legal actions em pots multiway sem expandir o replay.
+
+O helper agora exige `maxPlayers === 2`, ação adversária imediatamente anterior na mesma street, bet ou raise e `allIn === true` para remover Raise. Mesas multiway e históricos com `maxPlayers` desconhecido mantêm Fold/Call/Raise como conjunto conservador; isso não afirma que Raise era legal naquela mão. A presença de um all-in imediatamente antes da decisão não prova, sozinha, que Raise é ilegal em pots multiway. O replay só remove Raise quando essa indisponibilidade puder ser determinada com segurança pelos dados estruturados disponíveis.
+
+A V0.38.1 não transforma o replay em um legal-action engine. Parser, snapshot, corte anti-hindsight, comparação por família e isolamento de storage, `Attempt`, `SkillState`, investigação e sessão permanecem inalterados. **Validação:** 603 testes, typecheck, build e `git diff --check`.
+
 ## 2026-08-24 — V0.38 Rejogar uma decisão da própria mão
 
 **Hipótese de trabalho:** refazer uma decisão real a partir do corte temporal já validado cria uma prática útil de reconstrução sem fingir que o produto conhece a ação estrategicamente melhor.

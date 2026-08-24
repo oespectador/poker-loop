@@ -1,4 +1,10 @@
-# Project State — V0.38
+# Project State — V0.38.1
+
+## V0.38.1 — correção conservadora de Raise após all-in
+
+A presença de um all-in imediatamente antes da decisão não prova, sozinha, que Raise é ilegal em pots multiway. O replay só remove Raise quando essa indisponibilidade puder ser determinada com segurança pelos dados estruturados disponíveis: mesa explicitamente heads-up (`maxPlayers === 2`) e bet ou raise all-in de outro jogador imediatamente antes da decisão, na mesma street.
+
+Em mesas multiway ou com `maxPlayers` desconhecido, Fold/Call/Raise permanecem disponíveis como conjunto conservador; isso não afirma que Raise era necessariamente legal na mão. A V0.38.1 não transforma o replay em um legal-action engine.
 
 ## V0.38 — rejogar uma decisão da própria mão
 
@@ -33,7 +39,7 @@ Stack:
 
 ## Versão atual
 
-**V0.38 — Rejogar uma decisão da própria mão**
+**V0.38.1 — Correção conservadora de Raise após all-in no replay**
 
 ## V0.34 — Exploração por Ações no River
 
