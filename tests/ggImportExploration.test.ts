@@ -89,5 +89,11 @@ test("novas tags se sobrepõem às tags V0.31 sem depender do motivo ou resultad
 test("grupos da UI mantêm seleção única e todos os novos labels factuais", () => {
   const source = readFileSync("app/hands/page.tsx", "utf8");
   assert.match(source, /SITUAÇÕES/); assert.match(source, /AÇÕES NO RIVER/); assert.equal((source.match(/useState<GgExplorationFilter>/g) ?? []).length, 1);
+  assert.match(source, /group\("situations", "SITUAÇÕES", GG_SITUATION_FILTERS\)/);
+  assert.match(source, /group\("river-actions", "AÇÕES NO RIVER", GG_RIVER_ACTION_FILTERS\)/);
+  assert.match(source, /const headingId = `filter-group-\$\{id\}`/);
+  assert.match(source, /aria-labelledby=\{headingId\}><h4 id=\{headingId\}>/);
+  assert.doesNotMatch(source, /filter-group-\$\{title\}/);
+  for (const headingId of ["filter-group-situations", "filter-group-river-actions"]) assert.doesNotMatch(headingId, /\s/);
   assert.equal(GG_EXPLORATION_FILTERS.length, 14);
 });

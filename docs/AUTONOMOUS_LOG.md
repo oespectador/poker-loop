@@ -1,5 +1,12 @@
 # Autonomous Log
 
+## 2026-08-24 — Correção acessível da V0.34
+
+- os headings dos grupos de filtros agora recebem os IDs estáveis `filter-group-situations` e `filter-group-river-actions`, separados da copy humana;
+- cada `aria-labelledby` reutiliza exatamente o ID calculado para seu heading, sem whitespace em IDREFs;
+- nenhuma lógica, filtro, state machine, seleção, persistência ou integração pedagógica foi alterada;
+- validação: `npm test` (568 testes), `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## 2026-08-24 — V0.34: Exploração por ações no river
 
 ### Hipótese
