@@ -297,6 +297,10 @@ h2 { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
 /* V0.17.1 — a mão visual é a superfície principal; o texto bruto fica como apoio. */
 .review-patterns { margin-bottom: 48px; border-color: rgba(94,231,244,.25); }
 .reviewed-count { display: block; margin-top: 22px; font-size: 20px; }
+.review-readiness { display: grid; gap: 10px; max-width: 680px; margin-top: 22px; }
+.review-readiness-progress { width: 100%; max-width: 420px; height: 8px; accent-color: var(--cyan); }
+.review-readiness-copy { margin: 0; color: var(--muted); }
+.review-readiness-copy p { margin: 0 0 6px; }
 .review-observations { display: grid; gap: 10px; margin: 18px 0 0; padding: 0; list-style: none; }
 .review-observations li { padding: 12px 14px; border-left: 3px solid var(--cyan); border-radius: 0 10px 10px 0; background: rgba(94,231,244,.05); color: #c5d2db; }
 .review-patterns .review-patterns-empty { margin-top: 16px; max-width: 680px; }

@@ -2,6 +2,14 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.36 — Revisão leve + progresso visível para padrões
+
+- milestone derivado de três revisões torna visível o caminho para começar a procurar recorrências, sem prometer que elas existirão;
+- Quick Review mantém autorrelato estruturado e remove escrita livre da experiência normal;
+- registro manual fica restrito a histórico obrigatório e título opcional;
+- campos legados permanecem no schema e são preservados em edição, sem migration ou storage novo;
+- thresholds V0.18/V0.19, investigações, ponte voluntária e motor pedagógico permanecem inalterados.
+
 ## Concluído na V0.35 — Revisão Visual das Situações Importadas
 
 - cards compactos reutilizam `PokerCard` para reconhecer as cartas do Herói, sem board ou explicação longa;

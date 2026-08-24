@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { reasoningFactorOrder, summarizeRealHandReviewPatterns } from "../lib/realHandReviewPatterns";
+import { MIN_REVIEWS_FOR_PATTERN_SCAN, reasoningFactorOrder, summarizeRealHandReviewPatterns } from "../lib/realHandReviewPatterns";
 import type { ReasoningFactor, SelfRatedSupport, StoredRealHandReasoningSnapshot } from "../lib/types";
 
 function snapshot(id: string, factors: ReasoningFactor[] = [], support?: SelfRatedSupport, street: "preflop" | "flop" | "turn" | "river" = "flop", legacy = false): StoredRealHandReasoningSnapshot {
@@ -15,8 +15,64 @@ test("zero snapshots produz contagens vazias e estado sem observações", () => 
   const summary = summarizeRealHandReviewPatterns([]);
   assert.equal(summary.reviewedHands, 0);
   assert.equal(summary.hasEnoughReviewsForObservations, false);
+  assert.equal(MIN_REVIEWS_FOR_PATTERN_SCAN, 3);
+  assert.equal(summary.minimumReviewsForObservations, 3);
+  assert.equal(summary.reviewsUntilObservationsPossible, 3);
   assert.deepEqual(summary.observations, []);
   assert.ok(Object.values(summary.factorCounts).every((count) => count === 0));
+});
+
+test("countdown factual termina no milestone e nunca fica negativo", () => {
+  assert.equal(summarizeRealHandReviewPatterns([snapshot("1")]).reviewsUntilObservationsPossible, 2);
+  assert.equal(summarizeRealHandReviewPatterns([snapshot("1"), snapshot("2")]).reviewsUntilObservationsPossible, 1);
+  const three = summarizeRealHandReviewPatterns([snapshot("1"), snapshot("2"), snapshot("3")]);
+  assert.equal(three.reviewsUntilObservationsPossible, 0);
+  assert.equal(three.hasEnoughReviewsForObservations, true);
+  assert.deepEqual(three.observations, []);
+  assert.equal(summarizeRealHandReviewPatterns(Array.from({ length: 10 }, (_, index) => snapshot(String(index)))).reviewsUntilObservationsPossible, 0);
+});
+
+test("milestone sem repetição não inventa observação", () => {
+  const summary = summarizeRealHandReviewPatterns([snapshot("1", ["size"]), snapshot("2", ["board"]), snapshot("3", ["player-read"])]);
+  assert.equal(summary.hasEnoughReviewsForObservations, true);
+  assert.deepEqual(summary.observations, []);
+});
+
+test("copy da superfície distingue countdown de leitura em andamento", () => {
+  const source = readFileSync("app/hands/page.tsx", "utf8");
+  assert.match(source, /para começarmos a procurar padrões recorrentes/);
+  assert.match(source, /Já há revisões suficientes para procurar recorrências/);
+  assert.match(source, /Continue revisando normalmente/);
+  assert.doesNotMatch(source, /revise mais X mãos/i);
+});
+
+test("progresso visual limita numerador ao marco e separa o total real", () => {
+  const source = readFileSync("app/hands/page.tsx", "utf8");
+  assert.match(source, /const milestoneProgress = Math\.min\(reviewPatterns\.reviewedHands, reviewPatterns\.minimumReviewsForObservations\)/);
+  assert.match(source, /max=\{reviewPatterns\.minimumReviewsForObservations\} value=\{milestoneProgress\}/);
+  assert.match(source, /aria-label=\{`\$\{milestoneProgress\} de \$\{reviewPatterns\.minimumReviewsForObservations\}/);
+  assert.doesNotMatch(source, /aria-label=\{`\$\{reviewPatterns\.reviewedHands\} de/);
+  assert.match(source, /Marco inicial concluído:/);
+  assert.match(source, /\{reviewPatterns\.reviewedHands\} decisões revisadas no total/);
+  assert.doesNotMatch(source, /\{reviewPatterns\.reviewedHands\} de \{reviewPatterns\.minimumReviewsForObservations\}/);
+});
+
+test("quatro e dez revisões mantêm progresso 3 de 3 e total separado", () => {
+  for (const reviewedHands of [4, 10]) {
+    const summary = summarizeRealHandReviewPatterns(Array.from({ length: reviewedHands }, (_, index) => snapshot(String(index))));
+    const milestoneProgress = Math.min(summary.reviewedHands, summary.minimumReviewsForObservations);
+    assert.equal(milestoneProgress, 3);
+    assert.ok(milestoneProgress <= summary.minimumReviewsForObservations);
+    assert.equal(summary.reviewedHands, reviewedHands);
+  }
+});
+
+test("zero, uma e duas revisões mantêm numerador e restante factuais", () => {
+  for (const [reviewedHands, remaining] of [[0, 3], [1, 2], [2, 1]] as const) {
+    const summary = summarizeRealHandReviewPatterns(Array.from({ length: reviewedHands }, (_, index) => snapshot(String(index))));
+    assert.equal(Math.min(summary.reviewedHands, summary.minimumReviewsForObservations), reviewedHands);
+    assert.equal(summary.reviewsUntilObservationsPossible, remaining);
+  }
 });
 
 test("uma ou duas revisões não produzem observação recorrente", () => {

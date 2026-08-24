@@ -739,3 +739,12 @@ A Hero possui uma única CTA principal. Quando não há sessão ativa, um card s
 ### Correção de readiness da Home
 
 A primeira renderização agora mantém uma Hero neutra — **POKER LOOP / Preparando seu próximo passo…** — sem links ou CTAs. O estado React efêmero `operationalReady` só passa a `true` depois de todas as leituras locais e da atualização dos estados derivados, evitando que o fallback de treino fique acionável antes de a Home conhecer compromissos operacionais existentes. Nenhum acesso a storage foi movido para render/server render; `deriveHomeNextAction`, prioridades e fluxos de destino permaneceram inalterados. **Validação:** 561 testes, typecheck, build e `git diff --check`.
+## 2026-08-24 — V0.36 Revisão leve + progresso visível para padrões
+
+**Hipótese de trabalho:** tornar visível o milestone factual já existente e retirar escrita livre do caminho principal reduz atrito sem transformar autorrelato em diagnóstico nem perder compatibilidade histórica.
+
+`MIN_REVIEWS_FOR_PATTERN_SCAN = 3` centraliza o critério já usado pela V0.18. O resumo puro agora deriva mínimo, restante com piso zero e milestone atingido. `/hands` mostra 0/3, 1/3 e 2/3 para começar a procurar recorrências; depois disso informa que a leitura está em andamento e que nenhum fator apareceu três vezes, sem countdown fictício. Os thresholds das observações e de `deriveRealHandInvestigations` não mudaram.
+
+**Correção do progresso:** o numerador visual e acessível agora usa `milestoneProgress`, limitado ao mínimo de três, enquanto `reviewedHands` aparece separadamente como total real depois do marco. Assim, quatro ou dez revisões continuam mostrando marco 3/3, nunca 4/3 ou 10/3. A correção acrescenta três regressões e eleva a suíte a 583 testes, sem tocar storage, critérios de recorrência/investigação ou motor pedagógico.
+
+Quick Review removeu textarea e apresentação de `thought`, mas uma edição reaproveita silenciosamente o valor legado. Novos snapshots não incluem o campo. A visualização da mão removeu a reflexão detalhada, e registro/edição manual exibem somente histórico e título. Os campos legados permanecem no modelo e são carregados de volta na edição, sem migration, schema ou storage novo. `investigationTrainingBridge`, mapping para Skill e motor pedagógico ficaram fora. **Validação:** 583 testes, typecheck, build e `git diff --check` aprovados. **Validação humana pendente:** confirmar a clareza e densidade do novo painel de progresso no navegador.
