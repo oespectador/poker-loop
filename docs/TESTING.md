@@ -1,5 +1,9 @@
 # Testing Protocol
 
+## V0.38 — replay de decisão real
+
+A suíte possui 601 testes. `tests/realHandDecisionReplay.test.ts` cobre as cinco famílias, ordem e unicidade das opções, inclusão da ação histórica, all-in adversário, normalização de bet/raise com sizing ou all-in, comparação same/different, elegibilidade exata sem fallback, independência de resultado financeiro e corte anterior à ação no flop/turn. As regressões de composição protegem montagem condicional, copy antes/depois, `aria-expanded` sem `aria-controls` e ausência de storage, `Attempt`, snapshot ou dependências pedagógicas. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## V0.37 — sugestões editoriais para treino
 
 A suíte possui 590 testes. `tests/investigationTrainingBridge.test.ts` cobre os sete fatores, prioridades e ordem determinística, ausência de duplicatas, inventário válido e completo, pureza e independência de storage, Attempts, SkillState, resultado e contagens. As regressões de UI protegem grupos acessíveis, disclosure não causal, quatro Skills disponíveis, nenhuma pré-seleção, link exato, bloqueio de `stopped`/`inconclusive`, elegibilidade de `completed` com zero recorrências e ausência de launch durante render. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
