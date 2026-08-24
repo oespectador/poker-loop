@@ -1,4 +1,10 @@
-# Project State — V0.36
+# Project State — V0.37
+
+## V0.37 — padrão observado → sugestão de próximo treino
+
+A ponte de episódios `completed` agora deriva de `episode.factor` um mapa editorial fixo com um caminho primário e outro secundário para `size`, `board`, `previous-actions`, `configuration` e `player-read`. `automatic` e `other` mantêm as quatro Skills como escolhas neutras. Todas as Skills permanecem acessíveis, nenhuma começa selecionada e somente o clique explícito reutiliza `/session?focus=<Skill>&investigation=<episodeId>`.
+
+A sugestão é apresentação efêmera: não cria storage, launch, sessão ou evidência e não altera `SkillState`. Episódios `stopped` e `inconclusive` continuam inelegíveis. O motor pedagógico, thresholds, janela prospectiva e provenance V0.23–V0.26 permanecem intactos.
 
 ## V0.35 — revisão visual das situações importadas
 
@@ -19,7 +25,7 @@ Stack:
 
 ## Versão atual
 
-**V0.34 — Exploração por Ações no River**
+**V0.37 — Padrão observado → sugestão de próximo treino**
 
 ## V0.34 — Exploração por Ações no River
 

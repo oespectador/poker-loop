@@ -179,3 +179,10 @@ A reflexão escrita é efêmera e não é persistida. O feedback continua sendo 
 **A V0.36 torna explícito o milestone factual de três revisões necessário para começar a procurar recorrências no autorrelato. Atingir esse milestone não garante a existência de um padrão e não constitui diagnóstico.**
 
 **A revisão padrão passa a priorizar escolhas estruturadas. Campos textuais antigos permanecem compatíveis no armazenamento, mas deixam de fazer parte da experiência principal.** Remover uma superfície de coleta não autoriza apagar dados históricos existentes.
+
+
+## Frozen Decision — V0.37
+
+**A V0.37 pode sugerir Skills relacionadas a um `ReasoningFactor` somente como atalho editorial para exploração em treino. A relação não constitui diagnóstico, inferência causal, evidência de domínio ou atualização de `SkillState`.**
+
+**Nenhuma Skill é iniciada automaticamente. O jogador sempre confirma explicitamente o foco antes de iniciar uma sessão.** `automatic` e `other` não recebem Skill sugerida porque não apontam sozinhos para uma dimensão estratégica específica. Todas as quatro Skills continuam disponíveis, e apenas episódios `completed` atravessam a ponte existente.
