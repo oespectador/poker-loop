@@ -1,5 +1,13 @@
 # Autonomous Log
 
+## 2026-08-24 — V0.35 Revisão Visual das Situações Importadas
+
+**Hipótese de trabalho:** reconhecer rapidamente cartas, data e motivo e abrir o detalhe no mesmo ponto da grade reduz busca visual, especialmente no celular, sem mudar quais mãos são selecionadas nem como são interpretadas.
+
+Extraído `HandSuggestionCard`, principalmente apresentacional. O resumo reutiliza `PokerCard`, omite board e `reasonMessage` e dá primazia a **Revisar situação**, mantendo Salvar e Descartar como ações secundárias diretas. A única seleção efêmera existente controla uma expansão inline que ocupa toda a grade e reutiliza `ParsedHandVisualization`, seguida de histórico bruto, motivo factual, disclosure e ações completas. Abrir outra sugestão substitui a anterior; abrir a mesma novamente fecha.
+
+Persistência, promoção para Revisar, descarte, `surfacedSuggestionIds`, lote, filtros e state machine V0.34 não mudaram. Home V0.33, Quick Review, Decision View, corte anti-hindsight e motor pedagógico também permaneceram inalterados. Nenhuma chave de storage, análise de poker ou uso de resultado financeiro foi criado. **Validação:** 573 testes, typecheck, build e `git diff --check`; validação humana deve confirmar a leitura e o fluxo inline em telas pequenas.
+
 ## 2026-08-24 — Correção acessível da V0.34
 
 - os headings dos grupos de filtros agora recebem os IDs estáveis `filter-group-situations` e `filter-group-river-actions`, separados da copy humana;

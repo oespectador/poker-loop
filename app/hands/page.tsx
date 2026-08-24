@@ -11,7 +11,6 @@ import { createRealHand, deleteRealHand, readRealHands, realHandSkillLabels, rea
 import type { HandReviewSuggestion, RealHandReview, RealHandReviewInput, RealHandStreet, ReasoningFactor, Skill, StoredRealHandReasoningSnapshot } from "@/lib/types";
 import { QuickReview } from "./QuickReview";
 import { deleteReasoningSnapshotForHand, readReasoningSnapshots } from "@/lib/reasoningSnapshotStorage";
-import { ParsedHandVisualization } from "../components/HandVisualization";
 import { summarizeRealHandReviewPatterns } from "@/lib/realHandReviewPatterns";
 import { deriveRealHandInvestigations } from "@/lib/realHandInvestigations";
 import { reasoningFactorLabels } from "@/lib/realHandReasoning";
@@ -26,10 +25,10 @@ import { deriveRealHandWindowRelation, describeRealHandWindowRelation } from "@/
 import { countRemainingCandidatesByFilter, GG_RIVER_ACTION_FILTERS, GG_SITUATION_FILTERS, ggExplorationFilterLabels, surfaceImportCandidatesForFilter, type GgExplorationFilter } from "@/lib/ggImportExploration";
 import { chooseInitialHandsWorkspaceSection, type HandsWorkspaceSection } from "@/lib/handsWorkspace";
 import { HandsWorkspaceNav } from "./HandsWorkspaceNav";
+import { HandSuggestionCard } from "./HandSuggestionCard";
+import { toggleSuggestionExpansion } from "@/lib/suggestionExpansion";
 
 const emptyForm: RealHandReviewInput = { rawHandText: "", doubt: "", rangeRead: "", objective: "", targetsAndSizeResponse: "" };
-const cardLabel = (card: string) => card.replace("h", "♥").replace("d", "♦").replace("c", "♣").replace("s", "♠");
-const dateLabel = (value: string) => new Date(value).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 const observationText = (factor: ReasoningFactor, summary: WindowObservationSummary) => `${reasoningFactorLabels[factor]} apareceu em ${summary.factorCount} das ${summary.reviewedCount} revisões.`;
 const supportText = (summary: WindowObservationSummary) => `Sustentação Baixa ou Não estava claro: ${summary.lowOrUnclearCount} de ${summary.supportRecordedCount} ocorrências com sustentação registrada.`;
 async function fingerprint(text: string) { const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join(""); }
@@ -76,7 +75,7 @@ export default function HandsPage() {
   const prospectiveResult = deriveProspectiveInvestigation(activeInvestigation, reasoningSnapshots);
   const activeFollowUp = findActivePostTrainingRealHandFollowUp(followUps); const activeFollowUpSummary = activeFollowUp ? summarizePostTrainingRealHandFollowUp(activeFollowUp) : undefined;
   const comparisons = deriveRealHandWindowComparisons(history, followUps, trainingLaunches, trainingCompletions);
-  const selected = hands.find(({ id }) => id === selectedId); const selectedSuggestion = suggestions.find(({ id }) => id === selectedSuggestionId);
+  const selected = hands.find(({ id }) => id === selectedId);
   function openDetail(kind: "saved" | "suggestion", id: string) { const next = selectHandDetail(kind, id); setSelectedId(next.selectedId); setSelectedSuggestionId(next.selectedSuggestionId); if (kind === "saved") setWorkspaceSection("review"); }
   function change<K extends keyof RealHandReviewInput>(key: K, value: RealHandReviewInput[K]) { setForm((current) => ({ ...current, [key]: value })); }
   async function importFile(file?: File) {
@@ -186,11 +185,8 @@ export default function HandsPage() {
     </section>}
 
     <section className="section-block"><div className="suggestion-heading"><div><div className="eyebrow">SUGESTÕES DA SESSÃO</div><p className="lead">Situações expostas voluntariamente, escolhidas somente pela estrutura da mão.</p></div>{suggestions.length > 0 && <button className="text-button danger-text" type="button" onClick={discardAll}>Descartar todas as sugestões</button>}</div>
-      {!suggestions.length && <p className="lead">Nenhuma sugestão pendente.</p>}<div className="suggestion-grid">{suggestions.map((item) => <article className="panel suggestion-card" key={item.id}><div className="hero-cards">{item.heroCards.map(cardLabel).join(" ")}</div><span>{dateLabel(item.playedAt)}</span><div className="eyebrow">{item.reasonLabel}</div><p>{item.reasonMessage}</p><div className="suggestion-actions"><button className="text-button" onClick={() => openDetail("suggestion", item.id)}>Ver mão</button><button className="text-button danger-text" onClick={() => discard(item)}>Descartar</button><button className="primary-cta compact" onClick={() => promote(item)}>Salvar para revisão</button></div></article>)}</div>
+      {!suggestions.length && <p className="lead">Nenhuma sugestão pendente.</p>}<div className="suggestion-grid">{suggestions.map((item) => <HandSuggestionCard key={item.id} suggestion={item} expanded={selectedSuggestionId === item.id} onToggle={() => setSelectedSuggestionId((current) => toggleSuggestionExpansion(current, item.id))} onSave={() => promote(item)} onDiscard={() => discard(item)}/>)}</div>
     </section>
-
-    {selectedSuggestion && <article className="panel hand-detail"><div className="eyebrow">MÃO JOGADA</div><h2>{selectedSuggestion.heroCards.map(cardLabel).join(" ")} · {dateLabel(selectedSuggestion.playedAt)}</h2><ParsedHandVisualization rawHandText={selectedSuggestion.rawHandText}/><details className="raw-history"><summary>Ver histórico bruto</summary><pre className="raw-hand-text">{selectedSuggestion.rawHandText}</pre></details><div className="eyebrow reflection-heading">POR QUE ELA APARECEU AQUI?</div><h2>{selectedSuggestion.reasonLabel}</h2><p>{selectedSuggestion.reasonMessage}</p><p>Essa seleção considera apenas a estrutura da mão. Ela não indica que sua decisão foi correta ou incorreta.</p><div className="suggestion-actions"><button className="text-button danger-text" onClick={() => discard(selectedSuggestion)}>Descartar</button><button className="primary-cta compact" onClick={() => promote(selectedSuggestion)}>Salvar para revisão</button></div></article>}
-
     </section>
 
     <section id="hands-panel-review" className="hands-workspace" role="tabpanel" aria-labelledby="hands-tab-review" tabIndex={0} hidden={workspaceSection !== "review"}>
