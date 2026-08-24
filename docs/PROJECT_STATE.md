@@ -1,4 +1,4 @@
-# Project State — V0.32
+# Project State — V0.33
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,13 @@ Stack:
 
 ## Versão atual
 
-**V0.32 — Mãos Organizadas pela Intenção do Jogador**
+**V0.33 — Próximo Passo Contextual na Home**
+
+## V0.33 — Próximo Passo Contextual na Home
+
+A Home deriva uma única ação principal dos estados locais existentes. A prioridade operacional exata é: sessão ativa (continuação ou fechamento), acompanhamento ativo, sugestões pendentes, candidatas restantes do lote e, por fim, treino recomendado pelo motor existente. A retomada usa o `focus` persistido na sessão, inclusive a URL sem query quando ele é `null`.
+
+Essa escolha não é persistida e não produz writes. A Home somente lê pelas APIs defensivas existentes e navega para `/session` ou `/hands`; criação, avanço e conclusão continuam nos fluxos responsáveis. Nenhum storage, schema, `Attempt` ou regra pedagógica mudou.
 
 ## V0.32 — Mãos Organizadas pela Intenção do Jogador
 
