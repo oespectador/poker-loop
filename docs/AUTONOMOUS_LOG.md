@@ -12,7 +12,7 @@ A V0.38.1 não transforma o replay em um legal-action engine. Parser, snapshot, 
 
 **Hipótese de trabalho:** refazer uma decisão real a partir do corte temporal já validado cria uma prática útil de reconstrução sem fingir que o produto conhece a ação estrategicamente melhor.
 
-Foi criado um helper puro para resolver a elegibilidade por matching exato do snapshot, normalizar famílias de ação, derivar opções conservadoras e comparar somente mesmo/diferente tipo. Um componente dedicado monta a visualização apenas após o CTA, omite a ação original e todo o futuro, coleta uma escolha efêmera e só então mostra a ação histórica com disclosure não avaliativo. All-in adversário imediatamente anterior remove Raise; sizing e all-in do Herói continuam Bet ou Raise.
+Foi criado um helper puro para resolver a elegibilidade por matching exato do snapshot, normalizar famílias de ação, derivar opções conservadoras e comparar somente mesmo/diferente tipo. Um componente dedicado monta a visualização apenas após o CTA, omite a ação original e todo o futuro, coleta uma escolha efêmera e só então mostra a ação histórica com disclosure não avaliativo. A regra inicial de omitir Raise diante de all-in adversário imediatamente anterior foi restringida pela correção V0.38.1 documentada acima; sizing e all-in do Herói continuam Bet ou Raise.
 
 Não foram criados storage, schema, `Attempt`, snapshot, investigação, launch, sessão, score ou explicação estratégica. Quick Review e a ponte V0.37 permanecem donas de seus contratos. **Validação:** 601 testes, typecheck, build e `git diff --check`; validação humana deve confirmar conforto e clareza do replay em mobile.
 

@@ -10,7 +10,7 @@ Em mesas multiway ou com `maxPlayers` desconhecido, Fold/Call/Raise permanecem d
 
 Uma mão salva com Quick Review reconstruível oferece **Rejogar esta decisão**. A âncora vem exatamente de `RealHandReasoningSnapshot.sourceDecision`, validada por `matchSnapshotDecisionAnchor`; snapshots ausentes, legados ou incompatíveis com um histórico editado não recebem fallback. A visualização reutiliza a Decision View e termina imediatamente antes da ação do Herói que será refeita.
 
-As opções normalizam somente Fold/Check/Call/Bet/Raise: check/bet oferecem essas duas famílias, e fold/call/raise oferecem as três, exceto quando uma aposta ou raise adversária imediatamente anterior está factualmente all-in, caso em que Raise é omitido. Amount, sizing e all-in do Herói não criam nova família. A comparação relata apenas mesmo/diferente tipo de ação, sem resposta correta ou avaliação estratégica.
+As opções normalizam somente Fold/Check/Call/Bet/Raise: check/bet oferecem essas duas famílias, e fold/call/raise oferecem as três. Raise só é omitido quando a mesa é explicitamente heads-up e uma aposta ou raise adversária imediatamente anterior, na mesma street, está factualmente all-in; multiway ou `maxPlayers` desconhecido mantêm as três opções como conjunto conservador, sem afirmar sua legalidade. Amount, sizing e all-in do Herói não criam nova família. A comparação relata apenas mesmo/diferente tipo de ação, sem resposta correta ou avaliação estratégica.
 
 O replay inteiro é estado React efêmero. Não cria storage, `Attempt`, `RealHandReasoningSnapshot`, investigação, launch, sessão, evidência pedagógica ou atualização de `SkillState`; a V0.37 permanece inalterada.
 

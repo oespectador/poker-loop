@@ -2,11 +2,11 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
-## Concluído na V0.38 — Rejogar uma decisão da própria mão
+## Concluído na V0.38/V0.38.1 — Rejogar uma decisão da própria mão
 
 - CTA aparece apenas na mão salva com snapshot cujo `sourceDecision` ainda possui matching exato;
 - Decision View termina antes da ação refeita e nunca revela automaticamente futuro ou resultado;
-- opções locais trabalham somente com famílias de ação e removem Raise diante de all-in adversário imediatamente reconhecido;
+- opções locais trabalham somente com famílias de ação; Raise só é omitido com heads-up explícito e bet/raise adversário all-in imediatamente anterior na mesma street, enquanto multiway ou `maxPlayers` desconhecido o mantêm como opção conservadora, sem constituir um legal-action engine;
 - comparação factual ignora sizing e não afirma acerto, erro ou decisão melhor;
 - replay é efêmero e não toca storage, `Attempt`, snapshot, investigação, Skill, launch ou sessão.
 
