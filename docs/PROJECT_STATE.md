@@ -1,4 +1,4 @@
-# Project State — V0.35
+# Project State — V0.36
 
 ## V0.35 — revisão visual das situações importadas
 
@@ -355,3 +355,8 @@ A triagem inicial continua expondo no máximo cinco situações. A mesma ordena�
 ## V0.31 — exploração de situações específicas no lote GG/PokerCraft
 
 O lote ativo oferece seis filtros estruturais derivados do `rawHandText` das candidatas já limitadas pela V0.30: decisão no river, agressão enfrentada no river, showdown com cartas reveladas, alta exposição, pressão em várias streets e linha longa. Uma mão pode contar em várias categorias, mas deixa de estar disponível em todas assim que entra no fluxo. **Mostrar até 5** mantém a ordem do pool, o teto compartilhado de 15 e a mesma transação com rollback de +5/+10. Raw inválida recebe zero tags e continua disponível para exploração geral. Filtro escolhido, tags e contagens não são persistidos; schemas, storage e motor pedagógico não mudaram.
+## V0.36 — revisão leve e progresso factual para padrões
+
+O acompanhamento deriva dos snapshots um milestone explícito de três revisões: 0/3, 1/3 e 2/3 mostram quantas decisões ainda faltam apenas para começar a procurar recorrências. A partir de 3/3, a UI informa que a leitura está em andamento e não promete quantas revisões produzirão uma observação. Os thresholds factuais V0.18 e de investigação V0.19 permanecem inalterados.
+
+Quick Review coleta somente `ReasoningFactor` e `SelfRatedSupport` quando aplicável. Registro e edição manual mostram apenas histórico bruto e título opcional; a visualização da mão não apresenta mais reflexão detalhada. `thought` e todos os campos legados de `RealHandReview` continuam válidos e são preservados em edições, sem migration, schema ou chave de storage nova. Não há mapping `ReasoningFactor → Skill` nem alteração do motor pedagógico.

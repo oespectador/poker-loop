@@ -174,3 +174,8 @@ A reflexão escrita é efêmera e não é persistida. O feedback continua sendo 
 **A V0.33 pode priorizar na Home a continuação de fluxos operacionais já abertos — sessão, acompanhamento ou lote de mãos — antes de oferecer um novo treino. Essa prioridade organiza a experiência e não constitui diagnóstico, recomendação estratégica ou nova evidência pedagógica.**
 
 **A Home mostra uma ação principal por vez para reduzir carga decisória.** A ação é sempre derivada dos storages existentes, não é persistida e apenas navega. Uma sessão ativa mantém seu próprio `focus` e antecede os demais fluxos; o treino recomendado continua usando exclusivamente o motor atual quando não há compromisso operacional aberto.
+## Frozen Decision — V0.36
+
+**A V0.36 torna explícito o milestone factual de três revisões necessário para começar a procurar recorrências no autorrelato. Atingir esse milestone não garante a existência de um padrão e não constitui diagnóstico.**
+
+**A revisão padrão passa a priorizar escolhas estruturadas. Campos textuais antigos permanecem compatíveis no armazenamento, mas deixam de fazer parte da experiência principal.** Remover uma superfície de coleta não autoriza apagar dados históricos existentes.

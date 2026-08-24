@@ -55,7 +55,7 @@ export function saveRealHand(hand: RealHandReview): RealHandReview {
 export function updateRealHand(id: string, input: RealHandReviewInput): RealHandReview | null {
   const current = readRealHands().find((hand) => hand.id === id);
   if (!current) return null;
-  return saveRealHand(createRealHand(input, current.id, current.createdAt));
+  return saveRealHand(createRealHand({ ...current, ...input }, current.id, current.createdAt));
 }
 export function deleteRealHand(id: string): void { writeRealHands(readRealHands().filter((hand) => hand.id !== id)); }
 export function clearRealHands(): void {

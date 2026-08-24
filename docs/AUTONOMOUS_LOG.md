@@ -739,3 +739,10 @@ A Hero possui uma única CTA principal. Quando não há sessão ativa, um card s
 ### Correção de readiness da Home
 
 A primeira renderização agora mantém uma Hero neutra — **POKER LOOP / Preparando seu próximo passo…** — sem links ou CTAs. O estado React efêmero `operationalReady` só passa a `true` depois de todas as leituras locais e da atualização dos estados derivados, evitando que o fallback de treino fique acionável antes de a Home conhecer compromissos operacionais existentes. Nenhum acesso a storage foi movido para render/server render; `deriveHomeNextAction`, prioridades e fluxos de destino permaneceram inalterados. **Validação:** 561 testes, typecheck, build e `git diff --check`.
+## 2026-08-24 — V0.36 Revisão leve + progresso visível para padrões
+
+**Hipótese de trabalho:** tornar visível o milestone factual já existente e retirar escrita livre do caminho principal reduz atrito sem transformar autorrelato em diagnóstico nem perder compatibilidade histórica.
+
+`MIN_REVIEWS_FOR_PATTERN_SCAN = 3` centraliza o critério já usado pela V0.18. O resumo puro agora deriva mínimo, restante com piso zero e milestone atingido. `/hands` mostra 0/3, 1/3 e 2/3 para começar a procurar recorrências; depois disso informa que a leitura está em andamento e que nenhum fator apareceu três vezes, sem countdown fictício. Os thresholds das observações e de `deriveRealHandInvestigations` não mudaram.
+
+Quick Review removeu textarea e apresentação de `thought`, mas uma edição reaproveita silenciosamente o valor legado. Novos snapshots não incluem o campo. A visualização da mão removeu a reflexão detalhada, e registro/edição manual exibem somente histórico e título. Os campos legados permanecem no modelo e são carregados de volta na edição, sem migration, schema ou storage novo. `investigationTrainingBridge`, mapping para Skill e motor pedagógico ficaram fora. **Validação:** 580 testes e typecheck aprovados; build e `git diff --check` executados na validação final. **Validação humana pendente:** confirmar a clareza e densidade do novo painel de progresso no navegador.

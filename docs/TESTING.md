@@ -1,5 +1,9 @@
 # Testing Protocol
 
+## V0.36 — revisão leve e progresso factual
+
+A suíte possui 580 testes. As regressões V0.36 cobrem a constante pública igual a três, countdown 0/3–2/3, milestone sem observação automática, piso zero, recorrência V0.18 preservada, copy sem promessa pós-milestone, Quick Review sem textarea e com preservação de `thought` legado, remoção da reflexão detalhada, formulário manual mínimo, campos históricos preservados em edição e chave `REAL_HANDS_KEY` inalterada. Os testes anteriores continuam protegendo os thresholds V0.19, Decision View, futuras streets, importação e rollback, filtros, acompanhamento prospectivo, ponte voluntária, Home e motor pedagógico. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## V0.35 — revisão visual das situações importadas
 
 A suíte possui 573 testes e cobre a troca/fechamento determinístico de uma única expansão e os contratos de composição do novo `HandSuggestionCard`: `PokerCard`, data, `reasonLabel`, ausência de `reasonMessage` e board no resumo, `aria-expanded`, ações diretas, `ParsedHandVisualization`, histórico bruto, motivo e ações na expansão, largura total da grade e ausência de storage ou dependências pedagógicas. As regressões existentes continuam protegendo promoção, descarte, surfaced, descarte total, os 14 filtros e a state machine V0.34, além de Home, Quick Review e Decision View. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
