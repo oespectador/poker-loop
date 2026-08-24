@@ -4,6 +4,10 @@ Estas decisões foram tomadas durante exploração e testes. Agentes autônomos 
 
 ## Produto
 
+> **V0.34:** A V0.34 amplia a exploração GG/PokerCraft com filtros factuais de ações no river derivados da sequência cronológica preservada pelo parser. Ações observadas não são interpretadas como bluff, value, erro ou evidência pedagógica.
+
+> Bet, raise, call, fold e check descrevem ações observadas. Seu significado estratégico depende de contexto que a V0.34 deliberadamente não infere.
+
 1. Exercícios são o coração do produto.
 2. Teoria aparece principalmente em exemplos/feedback, não como cursos longos.
 3. Home recomenda o próximo treino; `Treinar` permite escolha deliberada.

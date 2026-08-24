@@ -44,9 +44,9 @@ test("salvar sugestão seleciona a mão e a leva para Revisar", () => {
   assert.match(page, /kind === "saved"\) setWorkspaceSection\("review"\)/);
 });
 test("mãos relacionadas usam a mesma navegação contextual para Revisar", () => assert.match(page, /related-hands[\s\S]*openDetail\("saved", hand\.id\)/));
-test("Explorar contém importador, expansão e filtros V0.31", () => {
+test("Explorar contém importador, expansão e os dois grupos de filtros", () => {
   const explore = page.slice(page.indexOf('id="hands-panel-explore"'), page.indexOf('id="hands-panel-review"'));
-  assert.match(explore, /IMPORTAR SESSÃO GG\/POKERCRAFT/); assert.match(explore, /surfaceMore\(5\)/); assert.match(explore, /surfaceMore\(10\)/); assert.match(explore, /GG_EXPLORATION_FILTERS/);
+  assert.match(explore, /IMPORTAR SESSÃO GG\/POKERCRAFT/); assert.match(explore, /surfaceMore\(5\)/); assert.match(explore, /surfaceMore\(10\)/); assert.match(explore, /GG_SITUATION_FILTERS/); assert.match(explore, /GG_RIVER_ACTION_FILTERS/);
 });
 test("Revisar contém mãos salvas, Quick Review e registro manual", () => {
   const review = page.slice(page.indexOf('id="hands-panel-review"'));

@@ -69,6 +69,8 @@ Depois de apresentado, o item pode entrar no scheduler adaptativo e variar posi�
 
 ## Evidência
 
+Filtros factuais V0.34 de ações no river permanecem fora da evidência pedagógica. Bet, raise, call, fold e check observados não criam `Attempt`, diagnóstico ou inferência de aprendizagem.
+
 Diferenciar conceitualmente:
 
 - correto com pista;
