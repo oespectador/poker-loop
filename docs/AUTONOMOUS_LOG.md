@@ -1,5 +1,30 @@
 # Autonomous Log
 
+## 2026-08-24 — Correção acessível da V0.34
+
+- os headings dos grupos de filtros agora recebem os IDs estáveis `filter-group-situations` e `filter-group-river-actions`, separados da copy humana;
+- cada `aria-labelledby` reutiliza exatamente o ID calculado para seu heading, sem whitespace em IDREFs;
+- nenhuma lógica, filtro, state machine, seleção, persistência ou integração pedagógica foi alterada;
+- validação: `npm test` (568 testes), `npm run typecheck`, `npm run build` e `git diff --check`.
+
+## 2026-08-24 — V0.34: Exploração por ações no river
+
+### Hipótese
+
+Filtros derivados da cronologia das ações tornam intenções concretas de revisão encontráveis sem converter ações observadas em interpretação estratégica.
+
+### Alterações e auditoria de escopo
+
+- adicionadas cinco ações do Hero e três relações factuais de agressão no river;
+- centralizada uma state machine pura que distingue bet/raise e funciona em multiway;
+- agrupados filtros em Situações e Ações no river, preservando seleção única e comportamento de zero resultados;
+- preservados pool, ordem, surfaced, pending, teto de 15 e transação compartilhada com +5/+10;
+- confirmados sem resultado financeiro, bluff/value/erro, novo storage, Home V0.33 ou motor pedagógico.
+
+### Validação
+
+`npm test` (568 testes), `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## 2026-08-23 — V0.32: Mãos por intenção
 
 ### Hipótese

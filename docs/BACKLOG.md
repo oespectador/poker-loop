@@ -2,6 +2,13 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.34 — Exploração por Ações no River
+
+- oito filtros factuais derivam ações do Hero e agressão imediatamente enfrentada da ordem de `ParsedGgHand.actions`;
+- state machine distingue bet de raise, preserva agressão através de ações passivas de terceiros e reconhece bet → raise → nova decisão do Hero;
+- Situações e Ações no river formam dois grupos visuais com uma única seleção;
+- pool, surfaced, pending, limites e transação V0.31 permanecem intactos, sem storage ou interpretação estratégica.
+
 ## Concluído na V0.33 — Próximo Passo Contextual na Home
 
 - a Home apresenta uma única ação principal derivada, priorizando sessão, acompanhamento, exploração de mãos e fallback de treino, nessa ordem;

@@ -4,6 +4,8 @@ import test from "node:test";
 import { ACTIVE_GG_IMPORT_BATCH_KEY, nextImportCandidates, persistGgImportTransition, type ActiveGgImportBatch } from "../lib/activeGgImportBatch";
 import { countRemainingCandidatesByFilter, deriveCandidateStructuralTags, GG_EXPLORATION_FILTERS, nextImportCandidatesForFilter, surfaceImportCandidatesForFilter } from "../lib/ggImportExploration";
 import { HAND_SUGGESTIONS_KEY, MAX_PENDING_HAND_SUGGESTIONS } from "../lib/handSuggestionStorage";
+import { parseGgHand } from "../lib/ggHandParser";
+import { deriveHeroRiverFacedAggressions, hasHeroRiverAction, heroBetThenFacedRiverRaise, heroFacedRiverBet, heroFacedRiverRaise } from "../lib/ggHandStructuralPredicates";
 import type { HandReviewSuggestion, HandReviewSuggestionReason } from "../lib/types";
 
 const now = "2026-08-23T12:00:00.000Z";
@@ -16,13 +18,18 @@ function batch(candidates: HandReviewSuggestion[], surfacedSuggestionIds: string
 function failingStorage(values: Map<string, string>) { let writes = 0; Object.defineProperty(globalThis, "window", { configurable: true, value: { localStorage: { getItem: (key: string) => values.get(key) ?? null, removeItem: (key: string) => values.delete(key), setItem: (key: string, value: string) => { writes++; if (writes === 2) throw new Error("write 2"); values.set(key, value); } } } }); }
 const cleanup = () => delete (globalThis as { window?: unknown }).window;
 
+function parsedRiver(actions: string[], ending = "Hero collected $20 from pot") {
+  const text = [`Poker Hand #state-machine: Hold'em No Limit ($1/$2) - 2026/08/23 12:00:00`, "Table 'Alpha' 6-max Seat #1 is the button", "Seat 1: Hero ($100 in chips)", "Seat 2: Villain A ($100 in chips)", "Seat 3: Villain B ($100 in chips)", "Dealt to Hero [Ah Kh]", "*** FLOP *** [As 7d 2c]", "Hero: checks", "*** TURN *** [As 7d 2c] [9h]", "Hero: checks", "*** RIVER *** [As 7d 2c 9h] [3s]", ...actions, ending].join("\n");
+  const hand = parseGgHand(text); assert.ok(hand); return hand;
+}
+
 test("river-decision exige uma decisão do Herói no river", () => { assert.ok(deriveCandidateStructuralTags(candidate("river", { river: true })).includes("river-decision")); assert.ok(!deriveCandidateStructuralTags(candidate("turn")).includes("river-decision")); });
 test("river-facing-aggression exige agressão enfrentada especificamente no river", () => { assert.ok(deriveCandidateStructuralTags(candidate("river-agg", { riverAggression: true })).includes("river-facing-aggression")); assert.ok(!deriveCandidateStructuralTags(candidate("flop-only", { river: true })).includes("river-facing-aggression")); });
 test("hero-showdown usa Hero shows, não apenas a seção SHOW DOWN", () => { assert.ok(deriveCandidateStructuralTags(candidate("shows", { shows: true })).includes("hero-showdown")); assert.ok(!deriveCandidateStructuralTags(candidate("section-only")).includes("hero-showdown")); });
 test("high-commitment mantém all-in ou ratio de pelo menos 0.25 com decisão", () => { assert.ok(deriveCandidateStructuralTags(candidate("allin", { river: true, allIn: true })).includes("high-commitment")); assert.ok(deriveCandidateStructuralTags(candidate("boundary", { river: true, contribution: 18 })).includes("high-commitment")); assert.ok(!deriveCandidateStructuralTags(candidate("below", { river: true, contribution: 17 })).includes("high-commitment")); });
 test("multi-street-pressure mantém agressão enfrentada em duas streets", () => { assert.ok(deriveCandidateStructuralTags(candidate("pressure", { turnPressure: true })).includes("multi-street-pressure")); });
 test("long-line mantém decisões no flop, turn e river", () => { assert.ok(deriveCandidateStructuralTags(candidate("long", { river: true })).includes("long-line")); assert.ok(!deriveCandidateStructuralTags(candidate("short")).includes("long-line")); });
-test("uma mão recebe múltiplas tags independentemente de suggestion.reason", () => { const item = candidate("multi", { riverAggression: true, shows: true, allIn: true, turnPressure: true }, "high-commitment"); const tags = deriveCandidateStructuralTags(item); assert.deepEqual(tags, GG_EXPLORATION_FILTERS); assert.ok(tags.includes("river-decision")); });
+test("uma mão recebe múltiplas tags independentemente de suggestion.reason", () => { const item = candidate("multi", { riverAggression: true, shows: true, allIn: true, turnPressure: true }, "high-commitment"); const tags = deriveCandidateStructuralTags(item); for (const tag of ["river-decision", "river-facing-aggression", "hero-showdown", "high-commitment", "multi-street-pressure", "long-line", "hero-river-raise", "river-facing-bet"] as const) assert.ok(tags.includes(tag)); });
 test("raw inválida retorna zero tags sem alterar candidate", () => { const item = { ...candidate("bad"), rawHandText: "inválida" }; const before = structuredClone(item); assert.deepEqual(deriveCandidateStructuralTags(item), []); assert.deepEqual(item, before); });
 test("resultado financeiro e vencedor não participam das tags", () => { const hero = candidate("same", { riverAggression: true, shows: true, winner: "Hero" }); const villain = { ...hero, rawHandText: raw("same", { riverAggression: true, shows: true, winner: "Villain" }) }; assert.deepEqual(deriveCandidateStructuralTags(hero), deriveCandidateStructuralTags(villain)); });
 test("contagens incluem somente não surfaced e permitem sobreposição", () => { const a = candidate("a", { riverAggression: true, shows: true }); const b = candidate("b", { river: true }); const current = batch([a, b]); const counts = countRemainingCandidatesByFilter(current); assert.equal(counts["river-decision"], 2); assert.equal(counts["hero-showdown"], 1); assert.ok(Object.values(counts).reduce((sum, count) => sum + count, 0) > current.candidates.length); assert.equal(countRemainingCandidatesByFilter(batch([a, b], [a.id]))["hero-showdown"], 0); });
@@ -35,3 +42,58 @@ test("transação filtrada faz rollback no segundo write e mantém disponibilida
 test("caminho normal produz pending e surfaced coerentes para reload", () => { const item = candidate("1", { river: true }); const next = surfaceImportCandidatesForFilter(batch([item]), "river-decision", 5, []); assert.deepEqual(next.suggestions, [item]); assert.deepEqual(next.batch.surfacedSuggestionIds, [item.id]); assert.equal(countRemainingCandidatesByFilter(structuredClone(next.batch))["river-decision"], 0); });
 test("UI mantém filtro em estado React local e usa a transação V0.30", () => { const source = readFileSync("app/hands/page.tsx", "utf8"); assert.match(source, /useState<GgExplorationFilter>/); assert.match(source, /persistGgImportTransition\(activeImportBatch, suggestions, next\.batch, next\.suggestions\)/); assert.ok(!source.includes("writeSelectedImportFilter")); });
 test("exploração não cria storage, classificação estratégica ou dependência pedagógica", () => { const source = readFileSync("lib/ggImportExploration.ts", "utf8"); for (const forbidden of ["localStorage", "trainingEngine", "diagnostics", "learningLoop", "bluff", "thin value", "winner", "loser", "profit", "loss", "net result", "Skill"]) assert.equal(source.includes(forbidden), false); });
+
+test("ações do Hero qualificam somente o tipo observado no river", () => {
+  for (const [line, type] of [["Hero: bets $10", "bet"], ["Hero: checks", "check"], ["Hero: calls $10", "call"], ["Hero: raises $10 to $30", "raise"], ["Hero: folds", "fold"]] as const) {
+    const hand = parsedRiver([line]);
+    assert.equal(hasHeroRiverAction(hand, type), true);
+  }
+  assert.equal(hasHeroRiverAction(parseGgHand(raw("flop-bet"))!, "bet"), false);
+});
+
+test("bet adversária seguida de call, fold ou raise do Hero continua sendo facing-bet", () => {
+  for (const heroAction of ["Hero: calls $10", "Hero: folds", "Hero: raises $10 to $30"]) {
+    const hand = parsedRiver(["Villain A: bets $10", heroAction]);
+    assert.equal(heroFacedRiverBet(hand), true); assert.equal(heroFacedRiverRaise(hand), false);
+  }
+});
+
+test("raise adversária seguida de call, fold ou raise do Hero é facing-raise, não facing-bet", () => {
+  for (const heroAction of ["Hero: calls $30", "Hero: folds", "Hero: raises $20 to $50"]) {
+    const hand = parsedRiver(["Villain A: raises $10 to $30", heroAction]);
+    assert.equal(heroFacedRiverRaise(hand), true); assert.equal(heroFacedRiverBet(hand), false);
+  }
+});
+
+test("state machine multiway mantém agressão por ações passivas e supersede bet por raise", () => {
+  assert.deepEqual(deriveHeroRiverFacedAggressions(parsedRiver(["Villain A: bets $10", "Villain B: calls $10", "Hero: calls $10"])), ["bet"]);
+  assert.deepEqual(deriveHeroRiverFacedAggressions(parsedRiver(["Villain A: bets $10", "Villain B: raises $10 to $30", "Hero: calls $30"])), ["raise"]);
+});
+
+test("bet do Hero seguida de raise exige uma nova decisão do Hero", () => {
+  for (const response of ["Hero: calls $30", "Hero: folds", "Hero: raises $20 to $50"]) assert.equal(heroBetThenFacedRiverRaise(parsedRiver(["Hero: bets $10", "Villain A: raises $10 to $30", response])), true);
+  assert.equal(heroBetThenFacedRiverRaise(parsedRiver(["Hero: bets $10", "Villain A: folds"])), false);
+  assert.equal(heroBetThenFacedRiverRaise(parsedRiver(["Hero: bets $10", "Villain A: raises $10 to $30"])), false);
+});
+
+test("novas tags se sobrepõem às tags V0.31 sem depender do motivo ou resultado", () => {
+  const actions = ["Hero: bets $10", "Villain A: raises $10 to $30", "Hero: calls $30"];
+  const base = candidate("action-tags", { river: true }, "long-line");
+  const heroWins = { ...base, rawHandText: parsedRiver(actions).rawHandText };
+  const villainWins = { ...base, rawHandText: parsedRiver(actions, "Villain A collected $80 from pot").rawHandText };
+  const tags = deriveCandidateStructuralTags(heroWins);
+  for (const tag of ["river-decision", "hero-river-bet", "hero-river-call", "river-facing-aggression", "river-facing-raise", "river-bet-faced-raise"] as const) assert.ok(tags.includes(tag));
+  assert.deepEqual(tags, deriveCandidateStructuralTags(villainWins));
+});
+
+test("grupos da UI mantêm seleção única e todos os novos labels factuais", () => {
+  const source = readFileSync("app/hands/page.tsx", "utf8");
+  assert.match(source, /SITUAÇÕES/); assert.match(source, /AÇÕES NO RIVER/); assert.equal((source.match(/useState<GgExplorationFilter>/g) ?? []).length, 1);
+  assert.match(source, /group\("situations", "SITUAÇÕES", GG_SITUATION_FILTERS\)/);
+  assert.match(source, /group\("river-actions", "AÇÕES NO RIVER", GG_RIVER_ACTION_FILTERS\)/);
+  assert.match(source, /const headingId = `filter-group-\$\{id\}`/);
+  assert.match(source, /aria-labelledby=\{headingId\}><h4 id=\{headingId\}>/);
+  assert.doesNotMatch(source, /filter-group-\$\{title\}/);
+  for (const headingId of ["filter-group-situations", "filter-group-river-actions"]) assert.doesNotMatch(headingId, /\s/);
+  assert.equal(GG_EXPLORATION_FILTERS.length, 14);
+});

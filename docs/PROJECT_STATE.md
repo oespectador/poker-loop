@@ -1,4 +1,4 @@
-# Project State — V0.33
+# Project State — V0.34
 
 Atualizado para o handoff autônomo inicial.
 
@@ -15,7 +15,13 @@ Stack:
 
 ## Versão atual
 
-**V0.33 — Próximo Passo Contextual na Home**
+**V0.34 — Exploração por Ações no River**
+
+## V0.34 — Exploração por Ações no River
+
+A exploração GG/PokerCraft mantém as seis situações V0.31 e acrescenta oito filtros factuais: ações de bet, check, call, raise e fold do Hero no river; bet ou raise adversária imediatamente enfrentada; e bet do Hero seguida de raise e nova decisão do Hero. A sequência vem exclusivamente de `ParsedGgHand.actions`, inclusive em potes multiway, sem consultar resultado financeiro.
+
+Tags, contagens e seleção continuam derivadas e efêmeras. O pool, a ordem, os limites, os IDs surfaced e a transação V0.30/V0.31 permanecem comuns a filtros e +5/+10. Não há novo storage, interpretação de bluff/value/erro, evidência pedagógica ou mudança na Home V0.33.
 
 ## V0.33 — Próximo Passo Contextual na Home
 

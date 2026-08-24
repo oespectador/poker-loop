@@ -15,6 +15,10 @@ npm run dev
 
 O runner recebe o diretório compilado de testes, sem depender de expansão de glob do shell, e cobre tanto o motor quanto o contrato estático da biblioteca e a classificação de suporte das tentativas.
 
+## V0.34 — ações no river
+
+A suíte possui 568 testes. Os testes comportamentais de `tests/ggImportExploration.test.ts` constroem históricos válidos e exercitam os predicates reais para as cinco ações do Hero, distinção bet/raise, sequência multiway, agressão supersedida e bet → raise → nova decisão. Também protegem sobreposição com V0.31, independência de motivo/resultado, contagens, ordem, pending, teto, consumo comum, parse inválido e ausência de storage ou dependências pedagógicas. `tests/handsWorkspace.test.ts` protege os dois grupos visuais. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## V0.33 — próximo passo contextual na Home
 
 A suíte possui 561 testes. Os 25 testes de `tests/homeNextAction.test.ts` cobrem readiness inicialmente falso, leituras e atualizações antes de liberar a interface, Hero neutra sem CTA durante a preparação, sessão incompleta e completa, todas as precedências entre sessão, investigação, follow-up, sugestões e batch, contagens factuais, singular, fallback com foco fornecido pelo motor, URLs de retomada com e sem `focus`, pureza, ausência de writes/storage e preservação das integrações de `/hands` e `/session`. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
