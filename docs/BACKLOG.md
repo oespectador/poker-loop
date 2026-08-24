@@ -2,6 +2,13 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.35 — Revisão Visual das Situações Importadas
+
+- cards compactos reutilizam `PokerCard` para reconhecer as cartas do Herói, sem board ou explicação longa;
+- **Revisar situação** domina a hierarquia, enquanto salvar e descartar permanecem acessíveis diretamente;
+- uma única sugestão expande inline por vez e ocupa toda a grade com a visualização existente, histórico, motivo e ações;
+- expansão é estado React efêmero, sem storage, análise de poker ou alteração da seleção V0.34, Quick Review e motor pedagógico.
+
 ## Concluído na V0.34 — Exploração por Ações no River
 
 - oito filtros factuais derivam ações do Hero e agressão imediatamente enfrentada da ordem de `ParsedGgHand.actions`;

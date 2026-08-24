@@ -1,5 +1,9 @@
 # Testing Protocol
 
+## V0.35 — revisão visual das situações importadas
+
+A suíte possui 573 testes e cobre a troca/fechamento determinístico de uma única expansão e os contratos de composição do novo `HandSuggestionCard`: `PokerCard`, data, `reasonLabel`, ausência de `reasonMessage` e board no resumo, `aria-expanded`, ações diretas, `ParsedHandVisualization`, histórico bruto, motivo e ações na expansão, largura total da grade e ausência de storage ou dependências pedagógicas. As regressões existentes continuam protegendo promoção, descarte, surfaced, descarte total, os 14 filtros e a state machine V0.34, além de Home, Quick Review e Decision View. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
 ## Estado atual
 
 A baseline possui scripts:
