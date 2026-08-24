@@ -17,7 +17,7 @@ O runner recebe o diretório compilado de testes, sem depender de expansão de g
 
 ## V0.33 — próximo passo contextual na Home
 
-A suíte possui 557 testes. Os 21 testes de `tests/homeNextAction.test.ts` cobrem sessão incompleta e completa, todas as precedências entre sessão, investigação, follow-up, sugestões e batch, contagens factuais, singular, fallback com foco fornecido pelo motor, URLs de retomada com e sem `focus`, pureza, leituras defensivas, ausência de writes/storage e preservação das integrações de `/hands` e `/session`. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+A suíte possui 561 testes. Os 25 testes de `tests/homeNextAction.test.ts` cobrem readiness inicialmente falso, leituras e atualizações antes de liberar a interface, Hero neutra sem CTA durante a preparação, sessão incompleta e completa, todas as precedências entre sessão, investigação, follow-up, sugestões e batch, contagens factuais, singular, fallback com foco fornecido pelo motor, URLs de retomada com e sem `focus`, pureza, ausência de writes/storage e preservação das integrações de `/hands` e `/session`. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
 
 ## V0.32 — workspace de Mãos
 

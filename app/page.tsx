@@ -23,17 +23,25 @@ const emptyOperationalState: Omit<HomeOperationalState, "recommendedFocus"> = {
 export default function TodayPage() {
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [operationalState, setOperationalState] = useState(emptyOperationalState);
+  const [operationalReady, setOperationalReady] = useState(false);
 
   useEffect(() => {
-    setAttempts(readAttempts());
+    const storedAttempts = readAttempts();
+    const activeTrainingSession = readActiveTrainingSession();
+    const hasActiveInvestigation = Boolean(readActiveRealHandInvestigation());
+    const hasActiveFollowUp = Boolean(findActivePostTrainingRealHandFollowUp(readPostTrainingRealHandFollowUps()));
+    const pendingSuggestionCount = readHandSuggestions().length;
     const batch = readActiveGgImportBatch();
+
+    setAttempts(storedAttempts);
     setOperationalState({
-      activeTrainingSession: readActiveTrainingSession(),
-      hasActiveInvestigation: Boolean(readActiveRealHandInvestigation()),
-      hasActiveFollowUp: Boolean(findActivePostTrainingRealHandFollowUp(readPostTrainingRealHandFollowUps())),
-      pendingSuggestionCount: readHandSuggestions().length,
+      activeTrainingSession,
+      hasActiveInvestigation,
+      hasActiveFollowUp,
+      pendingSuggestionCount,
       remainingImportCandidates: batch ? remainingImportCandidates(batch).length : 0,
     });
+    setOperationalReady(true);
   }, []);
 
   const focus = useMemo(() => chooseFocus(attempts), [attempts]);
@@ -41,6 +49,18 @@ export default function TodayPage() {
   const focusState = deriveSkillState(attempts, focus);
   const secondaryState = deriveSkillState(attempts, secondary);
   const pendingPackage = attempts.length > 0 ? getPendingLearningPackage(attempts) : undefined;
+
+  if (!operationalReady) {
+    return (
+      <AppShell>
+        <section className="hero-grid" aria-live="polite">
+          <div className="eyebrow">POKER LOOP</div>
+          <h1>Preparando seu próximo passo…</h1>
+        </section>
+      </AppShell>
+    );
+  }
+
   const nextAction = deriveHomeNextAction({ ...operationalState, recommendedFocus: focus });
   const hasOpenTraining = Boolean(operationalState.activeTrainingSession);
 

@@ -27,6 +27,25 @@ const initial: HomeOperationalState = {
   recommendedFocus: "board-reading",
 };
 
+test("Home começa sem readiness operacional", () => assert.match(page, /const \[operationalReady, setOperationalReady\] = useState\(false\)/));
+test("readiness só é confirmado depois de todas as leituras e atualizações", () => {
+  const effect = page.slice(page.indexOf("useEffect(() =>"), page.indexOf("}, []);"));
+  const readyAt = effect.indexOf("setOperationalReady(true)");
+  for (const operation of ["readAttempts()", "readActiveTrainingSession()", "readActiveRealHandInvestigation()", "readPostTrainingRealHandFollowUps()", "readHandSuggestions()", "readActiveGgImportBatch()", "setAttempts(storedAttempts)", "setOperationalState("]) {
+    assert.ok(effect.indexOf(operation) >= 0 && effect.indexOf(operation) < readyAt, `${operation} deve ocorrer antes do ready`);
+  }
+});
+test("antes do ready a Hero é neutra e não renderiza CTA", () => {
+  const preparation = page.slice(page.indexOf("if (!operationalReady)"), page.indexOf("const nextAction"));
+  assert.match(preparation, /POKER LOOP/);
+  assert.match(preparation, /Preparando seu próximo passo…/);
+  assert.doesNotMatch(preparation, /<Link|primary-cta|Começar treino|Continuar treino|Ver fechamento|Ver acompanhamento|Continuar revisão|Continuar explorando/);
+});
+test("readiness permanece efêmero e não alcança o helper puro", () => {
+  assert.doesNotMatch(helper, /operationalReady|Preparando seu próximo passo/);
+  assert.doesNotMatch(page, /localStorage|sessionStorage|writeOperational|persistOperational/);
+});
+
 test("sessão incompleta é retomada com progresso factual", () => {
   const action = deriveHomeNextAction({ ...initial, activeTrainingSession: active() });
   assert.equal(action.kind, "resume-training");
