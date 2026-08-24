@@ -22,9 +22,9 @@ test("resumo usa PokerCard, data e reasonLabel sem texto analítico ou board", (
   assert.doesNotMatch(compact, /heroCards\.join/);
 });
 
-test("ação principal controla conteúdo inline acessível e ações diretas permanecem", () => {
-  assert.match(component, /aria-expanded=\{expanded\}/);
-  assert.match(component, /aria-controls=\{contentId\}/);
+test("ação principal é button com aria-expanded, sem associação a conteúdo ausente", () => {
+  assert.match(component, /<button[^>]*aria-expanded=\{expanded\}[^>]*onClick=\{onToggle\}/);
+  assert.doesNotMatch(component, /aria-controls|contentId/);
   assert.match(component, /Revisar situação/);
   assert.match(component, /!expanded[\s\S]*?>Salvar<\/button>[\s\S]*?>Descartar<\/button>/);
   assert.match(page, /expanded=\{selectedSuggestionId === item\.id\}/);
@@ -32,7 +32,8 @@ test("ação principal controla conteúdo inline acessível e ações diretas pe
 });
 
 test("expansão reutiliza visualização completa, raw recolhido, motivo e ações", () => {
-  assert.match(component, /expanded &&[\s\S]*?<ParsedHandVisualization rawHandText=\{suggestion\.rawHandText\}/);
+  assert.match(component, /return <article[\s\S]*?\{expanded && <div className="suggestion-expanded-content">[\s\S]*?<ParsedHandVisualization rawHandText=\{suggestion\.rawHandText\}/);
+  assert.equal((component.match(/<ParsedHandVisualization/g) ?? []).length, 1);
   assert.match(component, /<details className="raw-history">[\s\S]*?<pre className="raw-hand-text">/);
   assert.match(component, /POR QUE ELA APARECEU AQUI\?/);
   assert.match(component, /suggestion\.reasonMessage/);

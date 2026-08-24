@@ -1,5 +1,9 @@
 # Autonomous Log
 
+## 2026-08-24 — Correção ARIA da V0.35
+
+Removidos `aria-controls` e o `contentId` do controle de expansão porque o alvo só existe no DOM enquanto a sugestão está aberta. O botão mantém `aria-expanded`, e o detalhe continua condicional e imediatamente dentro do mesmo card. Apresentação, seleção única, promoção, descarte, storage e demais contratos V0.35 não mudaram. **Validação:** 573 testes, typecheck, build e `git diff --check`.
+
 ## 2026-08-24 — V0.35 Revisão Visual das Situações Importadas
 
 **Hipótese de trabalho:** reconhecer rapidamente cartas, data e motivo e abrir o detalhe no mesmo ponto da grade reduz busca visual, especialmente no celular, sem mudar quais mãos são selecionadas nem como são interpretadas.

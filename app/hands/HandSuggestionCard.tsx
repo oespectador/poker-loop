@@ -12,8 +12,6 @@ interface HandSuggestionCardProps {
 const dateLabel = (value: string) => new Date(value).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
 export function HandSuggestionCard({ suggestion, expanded, onToggle, onSave, onDiscard }: HandSuggestionCardProps) {
-  const contentId = `suggestion-detail-${suggestion.id.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
-
   return <article className={`panel suggestion-card${expanded ? " expanded" : ""}`}>
     <header className="suggestion-card-header">
       <div className="suggestion-card-cards" aria-label="Cartas do Herói">
@@ -23,7 +21,7 @@ export function HandSuggestionCard({ suggestion, expanded, onToggle, onSave, onD
       <div className="eyebrow">{suggestion.reasonLabel}</div>
     </header>
 
-    <button className="primary-cta compact suggestion-review-action" type="button" aria-expanded={expanded} aria-controls={contentId} onClick={onToggle}>
+    <button className="primary-cta compact suggestion-review-action" type="button" aria-expanded={expanded} onClick={onToggle}>
       {expanded ? "Fechar mão" : "Revisar situação"}
     </button>
 
@@ -32,7 +30,7 @@ export function HandSuggestionCard({ suggestion, expanded, onToggle, onSave, onD
       <button className="text-button danger-text" type="button" onClick={onDiscard}>Descartar</button>
     </div>}
 
-    {expanded && <div className="suggestion-expanded-content" id={contentId}>
+    {expanded && <div className="suggestion-expanded-content">
       <ParsedHandVisualization rawHandText={suggestion.rawHandText}/>
       <details className="raw-history"><summary>Ver histórico bruto</summary><pre className="raw-hand-text">{suggestion.rawHandText}</pre></details>
       <div className="eyebrow reflection-heading">POR QUE ELA APARECEU AQUI?</div>
