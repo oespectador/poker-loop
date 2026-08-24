@@ -46,6 +46,35 @@ test("copy da superfície distingue countdown de leitura em andamento", () => {
   assert.doesNotMatch(source, /revise mais X mãos/i);
 });
 
+test("progresso visual limita numerador ao marco e separa o total real", () => {
+  const source = readFileSync("app/hands/page.tsx", "utf8");
+  assert.match(source, /const milestoneProgress = Math\.min\(reviewPatterns\.reviewedHands, reviewPatterns\.minimumReviewsForObservations\)/);
+  assert.match(source, /max=\{reviewPatterns\.minimumReviewsForObservations\} value=\{milestoneProgress\}/);
+  assert.match(source, /aria-label=\{`\$\{milestoneProgress\} de \$\{reviewPatterns\.minimumReviewsForObservations\}/);
+  assert.doesNotMatch(source, /aria-label=\{`\$\{reviewPatterns\.reviewedHands\} de/);
+  assert.match(source, /Marco inicial concluído:/);
+  assert.match(source, /\{reviewPatterns\.reviewedHands\} decisões revisadas no total/);
+  assert.doesNotMatch(source, /\{reviewPatterns\.reviewedHands\} de \{reviewPatterns\.minimumReviewsForObservations\}/);
+});
+
+test("quatro e dez revisões mantêm progresso 3 de 3 e total separado", () => {
+  for (const reviewedHands of [4, 10]) {
+    const summary = summarizeRealHandReviewPatterns(Array.from({ length: reviewedHands }, (_, index) => snapshot(String(index))));
+    const milestoneProgress = Math.min(summary.reviewedHands, summary.minimumReviewsForObservations);
+    assert.equal(milestoneProgress, 3);
+    assert.ok(milestoneProgress <= summary.minimumReviewsForObservations);
+    assert.equal(summary.reviewedHands, reviewedHands);
+  }
+});
+
+test("zero, uma e duas revisões mantêm numerador e restante factuais", () => {
+  for (const [reviewedHands, remaining] of [[0, 3], [1, 2], [2, 1]] as const) {
+    const summary = summarizeRealHandReviewPatterns(Array.from({ length: reviewedHands }, (_, index) => snapshot(String(index))));
+    assert.equal(Math.min(summary.reviewedHands, summary.minimumReviewsForObservations), reviewedHands);
+    assert.equal(summary.reviewsUntilObservationsPossible, remaining);
+  }
+});
+
 test("uma ou duas revisões não produzem observação recorrente", () => {
   assert.deepEqual(summarizeRealHandReviewPatterns([snapshot("1", ["size"])]).observations, []);
   assert.deepEqual(summarizeRealHandReviewPatterns([snapshot("1", ["size"]), snapshot("2", ["size"])]).observations, []);

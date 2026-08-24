@@ -2,7 +2,7 @@
 
 ## V0.36 — revisão leve e progresso factual
 
-A suíte possui 580 testes. As regressões V0.36 cobrem a constante pública igual a três, countdown 0/3–2/3, milestone sem observação automática, piso zero, recorrência V0.18 preservada, copy sem promessa pós-milestone, Quick Review sem textarea e com preservação de `thought` legado, remoção da reflexão detalhada, formulário manual mínimo, campos históricos preservados em edição e chave `REAL_HANDS_KEY` inalterada. Os testes anteriores continuam protegendo os thresholds V0.19, Decision View, futuras streets, importação e rollback, filtros, acompanhamento prospectivo, ponte voluntária, Home e motor pedagógico. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+A suíte possui 583 testes. As regressões V0.36 cobrem a constante pública igual a três, countdown 0/3–2/3, milestone sem observação automática, piso zero, recorrência V0.18 preservada, copy sem promessa pós-milestone, limite 3/3 para quatro e dez revisões, `value <= max`, numerador acessível limitado e total real separado, Quick Review sem textarea e com preservação de `thought` legado, remoção da reflexão detalhada, formulário manual mínimo, campos históricos preservados em edição e chave `REAL_HANDS_KEY` inalterada. Os testes anteriores continuam protegendo os thresholds V0.19, Decision View, futuras streets, importação e rollback, filtros, acompanhamento prospectivo, ponte voluntária, Home e motor pedagógico. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
 
 ## V0.35 — revisão visual das situações importadas
 
