@@ -2,6 +2,14 @@
 
 Este backlog é ordenado por segurança/valor, não por promessa de roadmap. Antes de executar um item, confirmar se ele continua coerente com `PROJECT_STATE.md` e `DECISIONS.md`.
 
+## Concluído na V0.39 — Loop de Estudo Integrado
+
+- fila contínua derivada conduz de uma Quick Review à próxima situação, sem índice ou workflow persistido;
+- fechamento mostra consideradas, Quick Reviews e pendências como fatos operacionais;
+- transição leva às observações existentes sem fabricar recorrência;
+- acompanhamento, treino voluntário, pós-treino, Home e replay foram auditados e preservados;
+- nenhum storage, schema, `Attempt`, `SkillState` ou comportamento do motor foi alterado.
+
 ## Concluído na V0.38/V0.38.1 — Rejogar uma decisão da própria mão
 
 - CTA aparece apenas na mão salva com snapshot cujo `sourceDecision` ainda possui matching exato;

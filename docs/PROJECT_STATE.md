@@ -1,4 +1,10 @@
-# Project State — V0.38.1
+# Project State — V0.39
+
+## V0.39 — Loop de Estudo Integrado
+
+A fila da rodada GG/PokerCraft agora é derivada do batch, sugestões, mãos salvas e Quick Reviews existentes. Depois de salvar explicitamente e registrar voluntariamente o autorrelato, **Próxima situação** conduz à próxima mão salva sem revisão ou à próxima sugestão. O painel mostra somente contagens operacionais e oferece a transição para observações quando a rodada termina. Não há índice persistido, storage, schema ou evidência nova.
+
+Acompanhamento, ponte editorial para treino, completion, follow-up, comparação, Home contextual e replay permanecem nos contratos V0.18–V0.38.1; esta entrega integra a continuidade sem mudar sua semântica.
 
 ## V0.38.1 — correção conservadora de Raise após all-in
 
@@ -39,7 +45,7 @@ Stack:
 
 ## Versão atual
 
-**V0.38.1 — Correção conservadora de Raise após all-in no replay**
+**V0.39 — Loop de Estudo Integrado**
 
 ## V0.34 — Exploração por Ações no River
 

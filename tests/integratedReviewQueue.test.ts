@@ -1,0 +1,16 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { deriveReviewRound } from "../lib/integratedReviewQueue";
+import type { ActiveGgImportBatch } from "../lib/activeGgImportBatch";
+import type { HandReviewSuggestion, RealHandReview, StoredRealHandReasoningSnapshot } from "../lib/types";
+const suggestion=(id:string):HandReviewSuggestion=>({id,source:"gg-pokercraft",sourceHandId:id,reason:"long-line",createdAt:"2026-01-01T00:00:00Z",playedAt:"2026-01-01T00:00:00Z",heroCards:["As","Kd"],reasonLabel:"Linha",reasonMessage:"Fato",rawHandText:`hand ${id}`});
+const items=[suggestion("a"),suggestion("b"),suggestion("c")];
+const batch:ActiveGgImportBatch={version:1,fingerprint:"f",importedAt:"2026-01-01T00:00:00Z",recognizedHands:3,ignoredHands:0,candidates:items,surfacedSuggestionIds:items.map(({id})=>id)};
+const hand=(item:HandReviewSuggestion):RealHandReview=>({id:`saved-${item.id}`,createdAt:"2026-01-01T00:00:00Z",rawHandText:item.rawHandText,doubt:"",rangeRead:"",objective:"",targetsAndSizeResponse:""});
+const snapshot=(handReviewId:string):StoredRealHandReasoningSnapshot=>({id:`snap-${handReviewId}`,handReviewId,createdAt:"2026-01-02T00:00:00Z",sourceHandId:handReviewId,sourceDecision:{street:"river",sequenceIndex:1,action:"call"},factors:["size"],selfRatedSupport:"medium"});
+test("não há rodada sem lote identificado",()=>assert.equal(deriveReviewRound(null,items,[],[]),null));
+test("fila começa pela sugestão sem criar revisão",()=>{const x=deriveReviewRound(batch,items,[],[])!;assert.equal(x.nextSuggestionId,"a");assert.deepEqual([x.considered,x.quickReviewed],[0,0]);});
+test("promoção explícita expõe mão salva",()=>{const saved=hand(items[0]);const x=deriveReviewRound(batch,items.slice(1),[saved],[])!;assert.equal(x.nextSavedHandId,saved.id);assert.equal(x.withoutQuickReview,1);});
+test("Quick Review avança e mantém progresso factual",()=>{const saved=hand(items[0]);const x=deriveReviewRound(batch,items.slice(1),[saved],[snapshot(saved.id)],saved.id)!;assert.equal(x.nextSuggestionId,"b");assert.deepEqual([x.considered,x.quickReviewed],[1,1]);});
+test("fim parcial encontra mão sem Quick Review e fim total fecha",()=>{const saved=items.map(hand);const partial=deriveReviewRound(batch,[],saved,saved.slice(0,2).map(({id})=>snapshot(id)))!;assert.equal(partial.nextSavedHandId,saved[2].id);const complete=deriveReviewRound(batch,[],saved,saved.map(({id})=>snapshot(id)))!;assert.equal(complete.complete,true);assert.deepEqual([complete.total,complete.considered,complete.quickReviewed],[3,3,3]);});
+test("derivação não muta entradas",()=>{const before=JSON.stringify({batch,items});deriveReviewRound(batch,items,[],[]);assert.equal(JSON.stringify({batch,items}),before);});
