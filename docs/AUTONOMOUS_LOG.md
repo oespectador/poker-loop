@@ -778,3 +778,12 @@ A superfície não escreve storage nem cria session/launch ao renderizar. `canEx
 ### Correção semântica da ponte V0.37
 
 A copy da ponte agora descreve somente a conclusão da janela prospectiva, sem afirmar que o fator reapareceu. Um episódio `completed` com `factorCount = 0` continua elegível porque os caminhos editoriais derivam exclusivamente de `episode.factor`; contagens não confirmam nem alteram o mapa. A regressão explícita eleva a suíte a 590 testes. Arquitetura, storage, Skills disponíveis, seleção explícita, provenance, follow-up e motor pedagógico permanecem inalterados.
+
+
+## 2026-08-26 — V0.39 Loop de Estudo Integrado
+
+**Hipótese de trabalho:** derivar a continuidade dos estados existentes reduz cliques e carga cognitiva sem transformar autorrelato em evidência nem criar uma máquina global de jornada.
+
+Foi adicionada uma projeção pura da rodada de importação. Ela identifica factual e deterministicamente situações consideradas, mãos promovidas ainda sem Quick Review, autorrelatos registrados e o próximo item. A UI oferece **Próxima situação**, progresso acessível e fechamento compacto. Promoção, Quick Review e transição para acompanhamento continuam explícitas.
+
+Milestones: A e B entregues; C–F integrados pela auditoria e pela continuidade entre as superfícies existentes, sem mudança semântica; G aplicado ao CTA, fechamento e hierarquia da rodada. Nenhum storage/schema foi criado ou modificado. `Attempt`, `SkillState`, `trainingEngine`, scheduler, diagnóstico, recovery, retention, transfer, relação ReasoningFactor/Skill, follow-up/comparação e replay ficaram inalterados. **Validação humana pendente:** avaliar densidade e foco visual do fechamento em mobile e com lotes de 15 sugestões.

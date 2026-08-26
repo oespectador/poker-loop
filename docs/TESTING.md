@@ -261,3 +261,8 @@ A suíte possui 497 testes. Os testes de `tests/activeGgImportBatch.test.ts`, so
 ## V0.31 — exploração estrutural específica
 
 A suíte possui 516 testes. Os 19 testes de `tests/ggImportExploration.test.ts` cobrem as seis tags, sobreposição e independência de `suggestion.reason`, parse inválido, independência de resultado/vencedor, contagens somente não surfaced, ordem e limites da seleção, consumo compartilhado com +5/+10, imutabilidade, rollback, reload factual, estado React local e ausência de storage/classificação estratégica/dependências pedagógicas. As regressões anteriores preservam os cinco iniciais e a exploração geral. Executar `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.
+
+
+## V0.39 — Loop de Estudo Integrado
+
+`tests/integratedReviewQueue.test.ts` cobre ausência de rodada, próxima sugestão, promoção explícita, próxima mão sem Quick Review, avanço após autorrelato, fechamento parcial/total e imutabilidade. A suíte completa protege os contratos existentes de acompanhamento, treino, provenance, completion, follow-up, comparação, Home e replay. Execute `npm test`, `npm run typecheck`, `npm run build` e `git diff --check`.

@@ -1,5 +1,9 @@
 # Frozen Decisions — Poker Loop
 
+## Frozen Decision — V0.39
+
+**A continuidade da rodada de revisão é uma projeção factual dos estados V0.16–V0.18, não um novo estado global de jornada.** Salvar a sugestão e criar Quick Review continuam escolhas explícitas. A contagem da fila é operacional: não é score, desempenho, domínio ou evidência pedagógica.
+
 ## Frozen Decision — V0.38.1
 
 **A presença de um all-in imediatamente antes da decisão não prova, sozinha, que Raise é ilegal em pots multiway. O replay só remove Raise quando essa indisponibilidade puder ser determinada com segurança pelos dados estruturados disponíveis.**
